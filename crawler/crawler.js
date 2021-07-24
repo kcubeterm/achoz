@@ -2,6 +2,10 @@ const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').exec
 const officeParser = require('officeparser');
+
+
+
+
 var walkSync = function(dir, filelist) {
   var fs = fs || require('fs'),
       files = fs.readdirSync(dir);
@@ -130,7 +134,7 @@ function textHandler(filePath) {
 		console.err(err);
 		return;
 	}
-	fileinfo.type = text
+	fileinfo.type = 'text'
 	jsonWriter(fileinfo);
 }
 
@@ -139,7 +143,11 @@ function htmlHandler(filePath) {
 }
 function docHandler(filePath){
         var fileinfo = getGeneralInfo(filePath);
+<<<<<<< HEAD
+        if (typeof fileinfo == 'undefined') {
+=======
         if (fileinfo == 'undefined') {
+>>>>>>> master
                 return;
         }
         exec(`antiword ${filePath}`, (err, stdout, stderr) => {
@@ -161,6 +169,9 @@ function docHandler(filePath){
 
 function officeFileHandler(filePath) {
 	var fileinfo = getGeneralInfo(filePath);
+	if (typeof fileinfo == 'undefined') {
+		return;
+	}
 
 	officeParser.parseOffice(filepath, function(data, err){
         // "data" string in the callback here is the text parsed from the office file passed in the first argument above
@@ -171,12 +182,25 @@ function officeFileHandler(filePath) {
 
 }
 function pdfHandler(filePath) {
-	
+	fileinfo = getGeneralinfo(filepath);
+	if (typeof fileinfo == 'undefined') {
+		return;
+	}
+	exec()
 }
 
 function compressedFileHandler(filePath) {
 	console.log(filePath)
 }
 
-console.log(universalFileIndexer('lolbcdfg.txt'))
+
+function defaultFileHandler(filepath) {
+	fileinfo = getGeneralinfo(filepath);
+	if (typeof fileinfo == 'undefined') {
+		return;
+	}
+	return jsonWriter(fileinfo)
+}
+console.log(universalFileIndexer('sample.txt'))
+
 
