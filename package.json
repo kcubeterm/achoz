@@ -1,0 +1,26 @@
+{
+  "name": "achoz",
+  "version": "0.1.0",
+  "description": "Search your documents like heaven",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kcubeterm/achoz.git"
+  },
+  "keywords": [
+    "search-engines"
+  ],
+  "author": "Kcubeterm",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/kcubeterm/achoz/issues"
+  },
+  "homepage": "https://github.com/kcubeterm/achoz#readme",
+  "dependencies": {
+    "officeparser": "^2.2.2",
+    "xml2js": "^0.4.23"
+  }
+}
