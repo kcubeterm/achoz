@@ -2,6 +2,8 @@ const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').exec
 const officeParser = require('officeparser');
+
+
 var walkSync = function(dir, filelist) {
   var fs = fs || require('fs'),
       files = fs.readdirSync(dir);
@@ -130,7 +132,7 @@ function textHandler(filePath) {
 		console.err(err);
 		return;
 	}
-	fileinfo.type = text
+	fileinfo.type = 'text'
 	jsonWriter(fileinfo);
 }
 
@@ -161,7 +163,9 @@ function docHandler(filePath){
 
 function officeFileHandler(filePath) {
 	var fileinfo = getGeneralInfo(filePath);
-
+	if (typeof fileinfo == 'undefined') {
+		return;
+	}
 	officeParser.parseOffice(filepath, function(data, err){
         // "data" string in the callback here is the text parsed from the office file passed in the first argument above
         if (err) return console.log(err);
@@ -189,5 +193,5 @@ function defaultFileHandler(filepath) {
 	}
 	return jsonWriter(fileinfo)
 }
-console.log(universalFileIndexer('lolbcdfg.txt'))
+console.log(universalFileIndexer('sample.txt'))
 
