@@ -139,7 +139,7 @@ function htmlHandler(filePath) {
 }
 function docHandler(filePath){
         var fileinfo = getGeneralInfo(filePath);
-        if (fileinfo == 'undefined') {
+        if (typeof fileinfo == 'undefined') {
                 return;
         }
         exec(`antiword ${filePath}`, (err, stdout, stderr) => {
@@ -171,12 +171,23 @@ function officeFileHandler(filePath) {
 
 }
 function pdfHandler(filePath) {
-	
+	fileinfo = getGeneralinfo(filepath);
+	if (typeof fileinfo == 'undefined') {
+		return;
+	}
+	exec()
 }
 
 function compressedFileHandler(filePath) {
 	console.log(filePath)
 }
 
+function defaultFileHandler(filepath) {
+	fileinfo = getGeneralinfo(filepath);
+	if (typeof fileinfo == 'undefined') {
+		return;
+	}
+	return jsonWriter(fileinfo)
+}
 console.log(universalFileIndexer('lolbcdfg.txt'))
 
