@@ -48,10 +48,14 @@ function universalFileIndexer (filePath) {
 			return textHandler(filePath);
 			break;
 		case '.doc':
-			return docHandler(filePath);
-			break;
 		case '.docx':
-			return docxHandler(filePath);
+		case '.odt':
+		case '.odp':
+		case '.ods':
+		case '.ppt':
+		case '.pptx':
+		case '.xlsx':
+			return officeFileHandler(filePath);
 			break;
 		case '.zip':
 		case '.tar':
@@ -139,26 +143,17 @@ function htmlHandler(filePath) {
 	console.log(filePath)	
 }
 
-function docHandler(filePath){
+function officeFileHandler(filePath) {
 	var fileinfo = getGeneralInfo(filePath);
-	if (fileinfo == 'undefined') {
-		return;
-	}
-	exec(`antiword ${filePath}`, (err, stdout, stderr) => {
-        if (err) {
-        	console.log(err)
-        	return;
-        }
-        if (stderr) {
-        	console.log(err)
-        	return;
-        }
-        
-        fileinfo.content = stdout.replace(/\s+/g, " ")
-        fileinfo.type = doc;
-        jsonWriter(fileinfo);
-	})
-	
+	const officeParser = require('officeparser');
+
+	officeParser.parseOffice(filepath, function(data, err){
+        // "data" string in the callback here is the text parsed from the office file passed in the first argument above
+        if (err) return console.log(err);
+        fileinfo.content = data
+        return jsonWriter(fileinfo);
+})
+
 }
 function pdfHandler(filePath) {
 	
