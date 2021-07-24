@@ -121,7 +121,7 @@ function getGeneralInfo(filePath) {
 
 function textHandler(filePath) {
 	var	fileinfo = getGeneralInfo(filePath);
-	if (fileinfo == 'undefined') {
+	if ( typeof fileinfo == 'undefined') {
 		return;
 		
 	}
