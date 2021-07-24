@@ -1,8 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-//const tr = require('textract')
 const exec = require('child_process').exec
-
+const officeParser = require('officeparser');
 var walkSync = function(dir, filelist) {
   var fs = fs || require('fs'),
       files = fs.readdirSync(dir);
@@ -18,9 +17,6 @@ var walkSync = function(dir, filelist) {
   return filelist;
 };
 
-//out = JSON.stringify(walkSync("./"));
-//fs.writeFileSync('lol.js', out);
-
 function localFileIndexer(arrayFilePath) {
 	array_output = JSON.parse(fs.readFileSync(arrayFilePath));
 
@@ -29,8 +25,6 @@ function localFileIndexer(arrayFilePath) {
 	
 	}
 }
-/// Function responsible for text based file indexing
-
 function universalFileIndexer (filePath) {
 	var extension = path.extname(filePath).toLowerCase()
 	switch (extension) {
@@ -48,11 +42,12 @@ function universalFileIndexer (filePath) {
 			return textHandler(filePath);
 			break;
 		case '.doc':
+			return docHandler(filePatb);
+			break;
 		case '.docx':
 		case '.odt':
 		case '.odp':
 		case '.ods':
-		case '.ppt':
 		case '.pptx':
 		case '.xlsx':
 			return officeFileHandler(filePath);
@@ -142,10 +137,30 @@ function textHandler(filePath) {
 function htmlHandler(filePath) {
 	console.log(filePath)	
 }
+function docHandler(filePath){
+        var fileinfo = getGeneralInfo(filePath);
+        if (fileinfo == 'undefined') {
+                return;
+        }
+        exec(`antiword ${filePath}`, (err, stdout, stderr) => {
+        if (err) {
+                console.log(err)
+                return;
+        }
+        if (stderr) {
+                console.log(err)
+                return;
+        }
+
+        fileinfo.content = stdout.replace(/\s+/g, " ")
+        fileinfo.type = doc;
+        jsonWriter(fileinfo);
+        })
+
+}
 
 function officeFileHandler(filePath) {
 	var fileinfo = getGeneralInfo(filePath);
-	const officeParser = require('officeparser');
 
 	officeParser.parseOffice(filepath, function(data, err){
         // "data" string in the callback here is the text parsed from the office file passed in the first argument above
@@ -158,11 +173,10 @@ function officeFileHandler(filePath) {
 function pdfHandler(filePath) {
 	
 }
-// compressed files like .zip,.gz and tar file handler
+
 function compressedFileHandler(filePath) {
 	console.log(filePath)
 }
 
 console.log(universalFileIndexer('lolbcdfg.txt'))
-//console.log(textHandler('sample.txt'))
-//console.log(getGeneralInfo('sample.txt'))
+
