@@ -4,6 +4,8 @@ const exec = require('child_process').exec
 const officeParser = require('officeparser');
 
 
+
+
 var walkSync = function(dir, filelist) {
   var fs = fs || require('fs'),
       files = fs.readdirSync(dir);
@@ -141,7 +143,11 @@ function htmlHandler(filePath) {
 }
 function docHandler(filePath){
         var fileinfo = getGeneralInfo(filePath);
+<<<<<<< HEAD
         if (typeof fileinfo == 'undefined') {
+=======
+        if (fileinfo == 'undefined') {
+>>>>>>> master
                 return;
         }
         exec(`antiword ${filePath}`, (err, stdout, stderr) => {
@@ -166,6 +172,7 @@ function officeFileHandler(filePath) {
 	if (typeof fileinfo == 'undefined') {
 		return;
 	}
+
 	officeParser.parseOffice(filepath, function(data, err){
         // "data" string in the callback here is the text parsed from the office file passed in the first argument above
         if (err) return console.log(err);
@@ -186,6 +193,7 @@ function compressedFileHandler(filePath) {
 	console.log(filePath)
 }
 
+
 function defaultFileHandler(filepath) {
 	fileinfo = getGeneralinfo(filepath);
 	if (typeof fileinfo == 'undefined') {
@@ -194,4 +202,5 @@ function defaultFileHandler(filepath) {
 	return jsonWriter(fileinfo)
 }
 console.log(universalFileIndexer('sample.txt'))
+
 
