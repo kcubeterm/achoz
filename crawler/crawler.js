@@ -143,11 +143,7 @@ function htmlHandler(filePath) {
 }
 function docHandler(filePath){
         var fileinfo = getGeneralInfo(filePath);
-<<<<<<< HEAD
         if (typeof fileinfo == 'undefined') {
-=======
-        if (fileinfo == 'undefined') {
->>>>>>> master
                 return;
         }
         exec(`antiword ${filePath}`, (err, stdout, stderr) => {
@@ -188,7 +184,26 @@ function pdfHandler(filePath) {
 	}
 	exec()
 }
+function docHandler(filePath){
+	var fileinfo = getGeneralInfo(filePath);
+    if (typeof fileinfo == 'undefined') {
+    	return;   
+    }
+    exec(`pdftotext ${filePath} - `, (err, stdout, stderr) => {
+        if (err) {
+                console.log(err)
+                return;
+        }                                                                     if (stderr) {
+                console.log(err)
+                return;
+        }
 
+        fileinfo.content = stdout.replace(/\s+/g, " ")
+        fileinfo.type = pdf;
+        jsonWriter(fileinfo);
+        });
+
+}
 function compressedFileHandler(filePath) {
 	console.log(filePath)
 }
