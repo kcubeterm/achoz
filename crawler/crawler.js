@@ -3,7 +3,27 @@ const path = require('path');
 const exec = require('child_process').exec
 const officeParser = require('officeparser');
 const { convert } = require('html-to-text')
+const appRoot = require('app-root-path');
 
+function init() {
+	try {
+		config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
+	} catch(err) {
+		if (err.code == 'ENOENT') {
+			return console.log("config.json not found");
+		}
+	}
+	config = JSON.parse(config);
+	config.DirToIndex.forEach( (dir, index) => {
+		console.log(dir)
+	})
+	
+	
+}
+
+function watchDirChanges(dir) {
+	
+}
 var walkSync = function(dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
@@ -32,7 +52,7 @@ function universalFileIndexer(filePath) {
     switch (extension) {
         case '.htm':
         case '.html':
-            return htmlhandler(filePath);
+            return htmlHandler(filePath);
             break;
         case '.xml':
             return xmlHandler(filePath);
@@ -44,7 +64,7 @@ function universalFileIndexer(filePath) {
             return textHandler(filePath);
             break;
         case '.doc':
-            return docHandler(filePatb);
+            return docHandler(filePath);
             break;
         case '.docx':
         case '.odt':
@@ -70,7 +90,7 @@ function universalFileIndexer(filePath) {
                     console.error(stderr)
                 }
 
-                mimeType = stdout.split(':')[1].trim();
+                var mimeType = stdout.split(':')[1].trim();
 
                 mimeTypeSwitch(mimeType, filePath);
 
@@ -92,14 +112,14 @@ function mimeTypeSwitch(mimeType, filePath) {
         pdfHandler(filePath);
 
     } else {
-        defaultFileHandler(filePath);
+        defaultFileHandler(filePath, mimeType);
     }
 }
 
 
-function jsonWriter(json) {
+function jsonWriter(fileinfo) {
 
-    return;
+    return console.log(fileinfo)
 }
 
 
@@ -110,8 +130,10 @@ function getGeneralInfo(filePath) {
     try {
         var stats = fs.statSync(filePath);
     } catch (err) {
-        console.log(err)
+    	if (err.code == 'ENOENT') {
+    		console.log(`${filePath} not found`);
         return;
+        }
     }
     fileinfo.atime = stats.atime
     fileinfo.ctime = stats.ctime
@@ -127,7 +149,7 @@ function textHandler(filePath) {
 
     }
     try {
-        fileinfo.content = fs.readFileSync(filePath, 'utf8').trim();
+        fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
     } catch (err) {
         console.err(err);
         return;
@@ -138,15 +160,15 @@ function textHandler(filePath) {
 
 function htmlHandler(filePath) {
     var fileinfo = getGeneralInfo(filePath);
-    if (tyoeof fileinfo == 'undefined') {
+    if (typeof fileinfo == 'undefined') {
     	return;
     }
 	const htmls = fs.readFileSync(filePath, 'utf8');
 	const texts = convert(htmls)
 
-	fileinfo.type = html
 	fileinfo.content = texts.replace(/\s+/g, " ");
-	jsonWriter(fileinfo);
+	fileinfo.type = 'html'
+	return jsonWriter(fileinfo);
 }
 
 function docHandler(filePath) {
@@ -165,10 +187,10 @@ function docHandler(filePath) {
         }
 
         fileinfo.content = stdout.replace(/\s+/g, " ")
-        fileinfo.type = doc;
-        jsonWriter(fileinfo);
+        fileinfo.type = 'officedoc';
+        return jsonWriter(fileinfo);
     })
-
+	return;
 }
 
 function officeFileHandler(filePath) {
@@ -177,13 +199,14 @@ function officeFileHandler(filePath) {
         return;
     }
 
-    officeParser.parseOffice(filepath, function(data, err) {
+    officeParser.parseOffice(filePath, function(data, err) {
         // "data" string in the callback here is the text parsed from the office file passed in the first argument above
         if (err) return console.log(err);
         fileinfo.content = data
+        fileinfo.type = 'officedoc'
         return jsonWriter(fileinfo);
     });
-
+	
 }
 
 function pdfHandler(filePath) {
@@ -212,12 +235,19 @@ function compressedFileHandler(filePath) {
     console.log(filePath)
 }
 
+function xmlHandler(filePath) {
+	defaultFileHandler(filePath, 'xml')
+}
 
-function defaultFileHandler(filepath) {
-    fileinfo = getGeneralinfo(filepath);
+function defaultFileHandler(filePath, filetype) {
+    var  fileinfo = getGeneralInfo(filePath);
     if (typeof fileinfo == 'undefined') {
         return;
     }
+    if (filetype) {
+    	fileinfo.type = filetype;
+    }
     return jsonWriter(fileinfo)
 }
-console.log(universalFileIndexer('sample.txt'))
+//console.log(universalFileIndexer('sample/sple.xml'))
+init()
