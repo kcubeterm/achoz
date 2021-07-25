@@ -141,7 +141,7 @@ function textHandler(filePath) {
 function htmlHandler(filePath) {
 	console.log(filePath)	
 }
-function docHandler(filePath){
+function pdfHandler(filePath){
         var fileinfo = getGeneralInfo(filePath);
         if (typeof fileinfo == 'undefined') {
                 return;
