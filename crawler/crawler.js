@@ -2,9 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').exec
 const officeParser = require('officeparser');
-
-
-
+const { convert } = require('html-to-text')
 
 var walkSync = function(dir, filelist) {
     var fs = fs || require('fs'),
@@ -139,7 +137,18 @@ function textHandler(filePath) {
 }
 
 function htmlHandler(filePath) {
-    console.log(filePath)
+    var fileinfio = getGeneralInfo(filePath);
+    if (tyoeof fileinfo == 'undefined') {
+    	return;
+    }
+	const htmls = fs.readFileSync(pdfPath, 'utf8');
+	const texts = convert(htmls, {
+        wordwrap: 180
+	})
+
+	fileinfo.type = html
+	fileinfo.content = texts.replace(/\s+/g, " ");
+	jsonWriter(fileinfo)
 }
 
 function docHandler(filePath) {
