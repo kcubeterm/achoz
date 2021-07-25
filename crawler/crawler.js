@@ -141,7 +141,7 @@ function textHandler(filePath) {
 function htmlHandler(filePath) {
 	console.log(filePath)	
 }
-function pdfHandler(filePath){
+function docHandler(filePath){
         var fileinfo = getGeneralInfo(filePath);
         if (typeof fileinfo == 'undefined') {
                 return;
@@ -174,17 +174,11 @@ function officeFileHandler(filePath) {
         if (err) return console.log(err);
         fileinfo.content = data
         return jsonWriter(fileinfo);
-})
+	});
 
 }
-function pdfHandler(filePath) {
-	fileinfo = getGeneralinfo(filepath);
-	if (typeof fileinfo == 'undefined') {
-		return;
-	}
-	exec()
-}
-function docHandler(filePath){
+
+function pdfHandler(filePath){
 	var fileinfo = getGeneralInfo(filePath);
     if (typeof fileinfo == 'undefined') {
     	return;   
