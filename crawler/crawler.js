@@ -137,18 +137,16 @@ function textHandler(filePath) {
 }
 
 function htmlHandler(filePath) {
-    var fileinfio = getGeneralInfo(filePath);
+    var fileinfo = getGeneralInfo(filePath);
     if (tyoeof fileinfo == 'undefined') {
     	return;
     }
-	const htmls = fs.readFileSync(pdfPath, 'utf8');
-	const texts = convert(htmls, {
-        wordwrap: 180
-	})
+	const htmls = fs.readFileSync(filePath, 'utf8');
+	const texts = convert(htmls)
 
 	fileinfo.type = html
 	fileinfo.content = texts.replace(/\s+/g, " ");
-	jsonWriter(fileinfo)
+	jsonWriter(fileinfo);
 }
 
 function docHandler(filePath) {
