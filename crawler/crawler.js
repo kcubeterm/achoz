@@ -4,7 +4,7 @@ const exec = require('child_process').exec
 const officeParser = require('officeparser');
 const { convert } = require('html-to-text')
 const appRoot = require('app-root-path');
-
+const os = require('os')
 function init() {
 	try {
 		config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
@@ -13,12 +13,20 @@ function init() {
 			return console.log("config.json not found");
 		}
 	}
+	
 	config = JSON.parse(config);
+	var absDir = []
 	config.DirToIndex.forEach( (dir, index) => {
+		dir = dir.replace("~", os.homedir())
+		absDir.push(path.resolve(dir));
+	});
+	// Prevent repeation of dir
+	let uniqueDir = [...new Set(absDir)]
+	uniqueDir.forEach( (dir, index) => {
 		console.log(dir)
-	})
-	
-	
+		console.log(walkSync(dir + '/'))
+	});
+		
 }
 
 function watchDirChanges(dir) {
@@ -26,15 +34,20 @@ function watchDirChanges(dir) {
 }
 var walkSync = function(dir, filelist) {
     var fs = fs || require('fs'),
-        files = fs.readdirSync(dir);
+    files = fs.readdirSync(dir);
     filelist = filelist || [];
-    files.forEach(function(file) {
-        if (fs.statSync(dir + file).isDirectory()) {
-            filelist = walkSync(dir + file + '/', filelist);
-        } else {
-            filelist.push(path.join(__dirname, dir, "/", file));
+   	files.forEach(function(file) {
+    	try{
+	        if (fs.statSync(dir + file).isDirectory()) {
+    	        filelist = walkSync(dir + file + '/', filelist);
+        	} else {
+            	filelist.push(path.join(__dirname, dir, "/", file));
+        	}
+        } catch(err) {
+        	console.log(err)
         }
-    });
+    	});
+    
     return filelist;
 };
 
