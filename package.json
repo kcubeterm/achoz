@@ -21,6 +21,7 @@
   "homepage": "https://github.com/kcubeterm/achoz#readme",
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "hidefile": "^3.0.0",
     "html-to-text": "^8.0.0",
     "officeparser": "^2.2.2",
     "pdf2json": "^1.2.3",

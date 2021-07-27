@@ -1,63 +1,80 @@
 const fs = require('fs');
 const path = require('path');
-const exec = require('child_process').exec
+const exec = require('child_process').execSync
 const officeParser = require('officeparser');
-const { convert } = require('html-to-text')
+const {
+    convert
+} = require('html-to-text')
 const appRoot = require('app-root-path');
 const os = require('os')
+const hidefile = require('hidefile')
+
 function init() {
-	try {
-		config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
-	} catch(err) {
-		if (err.code == 'ENOENT') {
-			return console.log("config.json not found");
-		}
-	}
-	
-	config = JSON.parse(config);
-	var absDir = []
-	config.DirToIndex.forEach( (dir, index) => {
-		dir = dir.replace("~", os.homedir())
-		absDir.push(path.resolve(dir));
-	});
-	// Prevent repeation of dir
-	let uniqueDir = [...new Set(absDir)]
-	uniqueDir.forEach( (dir, index) => {
-		console.log(dir)
-		console.log(walkSync(dir + '/'))
-	});
-		
+    try {
+        config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
+    } catch (err) {
+        if (err.code == 'ENOENT') {
+            return console.log("config.json not found");
+        }
+    }
+
+    config = JSON.parse(config);
+    var absDir = []
+    config.DirToIndex.forEach((dir, index) => {
+        var dir = dir.replace("~", os.homedir())
+        absDir.push(path.resolve(dir));
+    });
+    // Prevent repeation of dir
+    let uniqueDir = [...new Set(absDir)]
+    var filelist = [];
+    uniqueDir.forEach((dir, index) => {
+        //console.log(dir)
+        file = walkSync(dir + '/')
+        filelist = filelist.concat(file);
+
+
+    });
+    let uniqueFilelist = [...new Set(filelist)]
+    //let uniqueFilelist = filelist
+    jsonWriter(uniqueFilelist)
+    localFileIndexer("filelist.json")
 }
 
 function watchDirChanges(dir) {
-	
+
 }
 var walkSync = function(dir, filelist) {
     var fs = fs || require('fs'),
-    files = fs.readdirSync(dir);
+        files = fs.readdirSync(dir);
     filelist = filelist || [];
-   	files.forEach(function(file) {
-    	try{
-	        if (fs.statSync(dir + file).isDirectory()) {
-    	        filelist = walkSync(dir + file + '/', filelist);
-        	} else {
-            	filelist.push(path.join(__dirname, dir, "/", file));
-        	}
-        } catch(err) {
-        	console.log(err)
+    files.forEach(function(file) {
+        try {
+            if (fs.statSync(dir + file).isDirectory()) {
+                if (!hidefile.isDotPrefixed(file)) {
+                    filelist = walkSync(dir + file + '/', filelist);
+                }
+            } else {
+                if (!hidefile.isDotPrefixed(file)) {
+                    filelist.push(path.join(dir, "/", file));
+                }
+            }
+        } catch (err) {
+            console.log(err)
         }
-    	});
-    
+    });
+
     return filelist;
 };
 
 function localFileIndexer(arrayFilePath) {
     array_output = JSON.parse(fs.readFileSync(arrayFilePath));
-
-    for (let i = 0; i < array_output.length; i++) {
-        console.log(array_output[i])
-
-    }
+    let writeJsonData = fs.createWriteStream("IndexData.jsonln")
+    array_output.forEach((dir, index) => {
+        console.log(dir, index)
+        var jsonData = JSON.stringify(universalFileIndexer(dir))
+        writeJsonData.write(jsonData + "\n")
+    });
+    writeJsonData.end()
 }
 
 function universalFileIndexer(filePath) {
@@ -114,6 +131,10 @@ function universalFileIndexer(filePath) {
     return;
 }
 
+function callback(out) {
+    return out
+}
+
 function mimeTypeSwitch(mimeType, filePath) {
     if (mimeType.indexOf('text') != -1) {
         textHandler(filePath);
@@ -130,9 +151,17 @@ function mimeTypeSwitch(mimeType, filePath) {
 }
 
 
-function jsonWriter(fileinfo) {
+function jsonWriter(json, whereToWrite) {
+    var fileDestination = "filelist.json"
+    if (whereToWrite) {
+        fileDestination = whereToWrite
+    }
 
-    return console.log(fileinfo)
+    try {
+        fs.writeFileSync(fileDestination, JSON.stringify(json))
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 
@@ -143,9 +172,9 @@ function getGeneralInfo(filePath) {
     try {
         var stats = fs.statSync(filePath);
     } catch (err) {
-    	if (err.code == 'ENOENT') {
-    		console.log(`${filePath} not found`);
-        return;
+        if (err.code == 'ENOENT') {
+            console.log(`${filePath} not found`);
+            return;
         }
     }
     fileinfo.atime = stats.atime
@@ -168,20 +197,20 @@ function textHandler(filePath) {
         return;
     }
     fileinfo.type = 'text'
-    jsonWriter(fileinfo);
+    return fileinfo
 }
 
 function htmlHandler(filePath) {
     var fileinfo = getGeneralInfo(filePath);
     if (typeof fileinfo == 'undefined') {
-    	return;
+        return;
     }
-	const htmls = fs.readFileSync(filePath, 'utf8');
-	const texts = convert(htmls)
+    const htmls = fs.readFileSync(filePath, 'utf8');
+    const texts = convert(htmls)
 
-	fileinfo.content = texts.replace(/\s+/g, " ");
-	fileinfo.type = 'html'
-	return jsonWriter(fileinfo);
+    fileinfo.content = texts.replace(/\s+/g, " ");
+    fileinfo.type = 'html'
+    return fileinfo;
 }
 
 function docHandler(filePath) {
@@ -189,21 +218,11 @@ function docHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    exec(`antiword ${filePath}`, (err, stdout, stderr) => {
-        if (err) {
-            console.log(err)
-            return;
-        }
-        if (stderr) {
-            console.log(err)
-            return;
-        }
+    var content = exec(`antiword ${filePath}`, 'utf8').toString()
+    fileinfo.content = content.replace(/\s+/g, " ")
+    fileinfo.type = 'officedoc';
+    return fileinfo;
 
-        fileinfo.content = stdout.replace(/\s+/g, " ")
-        fileinfo.type = 'officedoc';
-        return jsonWriter(fileinfo);
-    })
-	return;
 }
 
 function officeFileHandler(filePath) {
@@ -217,9 +236,9 @@ function officeFileHandler(filePath) {
         if (err) return console.log(err);
         fileinfo.content = data
         fileinfo.type = 'officedoc'
-        return jsonWriter(fileinfo);
+        callback(fileinfo);
     });
-	
+
 }
 
 function pdfHandler(filePath) {
@@ -227,40 +246,32 @@ function pdfHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    exec(`pdftotext ${filePath} - `, (err, stdout, stderr) => {
-        if (err) {
-            console.log(err)
-            return;
-        }
-        if (stderr) {
-            console.log(err)
-            return;
-        }
-
-        fileinfo.content = stdout.replace(/\s+/g, " ")
-        fileinfo.type = pdf;
-        jsonWriter(fileinfo);
-    });
+    var content = exec(`pdftotext ${filePath} -`, 'utf8').toString()
+    fileinfo.content = content.replace(/\s+/g, " ")
+    fileinfo.type = 'pdf';
+    return fileinfo;
 
 }
 
 function compressedFileHandler(filePath) {
     console.log(filePath)
+    return;
 }
 
 function xmlHandler(filePath) {
-	defaultFileHandler(filePath, 'xml')
+    return defaultFileHandler(filePath, 'xml')
+
 }
 
 function defaultFileHandler(filePath, filetype) {
-    var  fileinfo = getGeneralInfo(filePath);
+    var fileinfo = getGeneralInfo(filePath);
     if (typeof fileinfo == 'undefined') {
         return;
     }
     if (filetype) {
-    	fileinfo.type = filetype;
+        fileinfo.type = filetype;
     }
-    return jsonWriter(fileinfo)
+    return fileinfo;
 }
 //console.log(universalFileIndexer('sample/sple.xml'))
 init()
