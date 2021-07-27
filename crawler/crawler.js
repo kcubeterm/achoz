@@ -1,30 +1,80 @@
 const fs = require('fs');
 const path = require('path');
-const exec = require('child_process').exec
+const exec = require('child_process').execSync
 const officeParser = require('officeparser');
-const { convert } = require('html-to-text')
+const {
+    convert
+} = require('html-to-text')
+const appRoot = require('app-root-path');
+const os = require('os')
+const hidefile = require('hidefile')
 
+function init() {
+    try {
+        config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
+    } catch (err) {
+        if (err.code == 'ENOENT') {
+            return console.log("config.json not found");
+        }
+    }
+
+    config = JSON.parse(config);
+    var absDir = []
+    config.DirToIndex.forEach((dir, index) => {
+        var dir = dir.replace("~", os.homedir())
+        absDir.push(path.resolve(dir));
+    });
+    // Prevent repeation of dir
+    let uniqueDir = [...new Set(absDir)]
+    var filelist = [];
+    uniqueDir.forEach((dir, index) => {
+        //console.log(dir)
+        file = walkSync(dir + '/')
+        filelist = filelist.concat(file);
+
+
+    });
+    let uniqueFilelist = [...new Set(filelist)]
+    //let uniqueFilelist = filelist
+    jsonWriter(uniqueFilelist)
+    localFileIndexer("filelist.json")
+}
+
+function watchDirChanges(dir) {
+
+}
 var walkSync = function(dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
     filelist = filelist || [];
     files.forEach(function(file) {
-        if (fs.statSync(dir + file).isDirectory()) {
-            filelist = walkSync(dir + file + '/', filelist);
-        } else {
-            filelist.push(path.join(__dirname, dir, "/", file));
+        try {
+            if (fs.statSync(dir + file).isDirectory()) {
+                if (!hidefile.isDotPrefixed(file)) {
+                    filelist = walkSync(dir + file + '/', filelist);
+                }
+            } else {
+                if (!hidefile.isDotPrefixed(file)) {
+                    filelist.push(path.join(dir, "/", file));
+                }
+            }
+        } catch (err) {
+            console.log(err)
         }
     });
+
     return filelist;
 };
 
 function localFileIndexer(arrayFilePath) {
     array_output = JSON.parse(fs.readFileSync(arrayFilePath));
-
-    for (let i = 0; i < array_output.length; i++) {
-        console.log(array_output[i])
-
-    }
+    let writeJsonData = fs.createWriteStream("IndexData.jsonln")
+    array_output.forEach((dir, index) => {
+        console.log(dir, index)
+        var jsonData = JSON.stringify(universalFileIndexer(dir))
+        writeJsonData.write(jsonData + "\n")
+    });
+    writeJsonData.end()
 }
 
 function universalFileIndexer(filePath) {
@@ -32,7 +82,7 @@ function universalFileIndexer(filePath) {
     switch (extension) {
         case '.htm':
         case '.html':
-            return htmlhandler(filePath);
+            return htmlHandler(filePath);
             break;
         case '.xml':
             return xmlHandler(filePath);
@@ -44,7 +94,7 @@ function universalFileIndexer(filePath) {
             return textHandler(filePath);
             break;
         case '.doc':
-            return docHandler(filePatb);
+            return docHandler(filePath);
             break;
         case '.docx':
         case '.odt':
@@ -70,7 +120,7 @@ function universalFileIndexer(filePath) {
                     console.error(stderr)
                 }
 
-                mimeType = stdout.split(':')[1].trim();
+                var mimeType = stdout.split(':')[1].trim();
 
                 mimeTypeSwitch(mimeType, filePath);
 
@@ -79,6 +129,10 @@ function universalFileIndexer(filePath) {
     }
 
     return;
+}
+
+function callback(out) {
+    return out
 }
 
 function mimeTypeSwitch(mimeType, filePath) {
@@ -92,14 +146,22 @@ function mimeTypeSwitch(mimeType, filePath) {
         pdfHandler(filePath);
 
     } else {
-        defaultFileHandler(filePath);
+        defaultFileHandler(filePath, mimeType);
     }
 }
 
 
-function jsonWriter(json) {
+function jsonWriter(json, whereToWrite) {
+    var fileDestination = "filelist.json"
+    if (whereToWrite) {
+        fileDestination = whereToWrite
+    }
 
-    return;
+    try {
+        fs.writeFileSync(fileDestination, JSON.stringify(json))
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 
@@ -110,8 +172,10 @@ function getGeneralInfo(filePath) {
     try {
         var stats = fs.statSync(filePath);
     } catch (err) {
-        console.log(err)
-        return;
+        if (err.code == 'ENOENT') {
+            console.log(`${filePath} not found`);
+            return;
+        }
     }
     fileinfo.atime = stats.atime
     fileinfo.ctime = stats.ctime
@@ -127,26 +191,26 @@ function textHandler(filePath) {
 
     }
     try {
-        fileinfo.content = fs.readFileSync(filePath, 'utf8').trim();
+        fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
     } catch (err) {
         console.err(err);
         return;
     }
     fileinfo.type = 'text'
-    jsonWriter(fileinfo);
+    return fileinfo
 }
 
 function htmlHandler(filePath) {
     var fileinfo = getGeneralInfo(filePath);
-    if (tyoeof fileinfo == 'undefined') {
-    	return;
+    if (typeof fileinfo == 'undefined') {
+        return;
     }
-	const htmls = fs.readFileSync(filePath, 'utf8');
-	const texts = convert(htmls)
+    const htmls = fs.readFileSync(filePath, 'utf8');
+    const texts = convert(htmls)
 
-	fileinfo.type = html
-	fileinfo.content = texts.replace(/\s+/g, " ");
-	jsonWriter(fileinfo);
+    fileinfo.content = texts.replace(/\s+/g, " ");
+    fileinfo.type = 'html'
+    return fileinfo;
 }
 
 function docHandler(filePath) {
@@ -154,20 +218,10 @@ function docHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    exec(`antiword ${filePath}`, (err, stdout, stderr) => {
-        if (err) {
-            console.log(err)
-            return;
-        }
-        if (stderr) {
-            console.log(err)
-            return;
-        }
-
-        fileinfo.content = stdout.replace(/\s+/g, " ")
-        fileinfo.type = doc;
-        jsonWriter(fileinfo);
-    })
+    var content = exec(`antiword ${filePath}`, 'utf8').toString()
+    fileinfo.content = content.replace(/\s+/g, " ")
+    fileinfo.type = 'officedoc';
+    return fileinfo;
 
 }
 
@@ -177,11 +231,12 @@ function officeFileHandler(filePath) {
         return;
     }
 
-    officeParser.parseOffice(filepath, function(data, err) {
+    officeParser.parseOffice(filePath, function(data, err) {
         // "data" string in the callback here is the text parsed from the office file passed in the first argument above
         if (err) return console.log(err);
         fileinfo.content = data
-        return jsonWriter(fileinfo);
+        fileinfo.type = 'officedoc'
+        callback(fileinfo);
     });
 
 }
@@ -191,33 +246,32 @@ function pdfHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    exec(`pdftotext ${filePath} - `, (err, stdout, stderr) => {
-        if (err) {
-            console.log(err)
-            return;
-        }
-        if (stderr) {
-            console.log(err)
-            return;
-        }
-
-        fileinfo.content = stdout.replace(/\s+/g, " ")
-        fileinfo.type = pdf;
-        jsonWriter(fileinfo);
-    });
+    var content = exec(`pdftotext ${filePath} -`, 'utf8').toString()
+    fileinfo.content = content.replace(/\s+/g, " ")
+    fileinfo.type = 'pdf';
+    return fileinfo;
 
 }
 
 function compressedFileHandler(filePath) {
     console.log(filePath)
+    return;
 }
 
+function xmlHandler(filePath) {
+    return defaultFileHandler(filePath, 'xml')
 
-function defaultFileHandler(filepath) {
-    fileinfo = getGeneralinfo(filepath);
+}
+
+function defaultFileHandler(filePath, filetype) {
+    var fileinfo = getGeneralInfo(filePath);
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    return jsonWriter(fileinfo)
+    if (filetype) {
+        fileinfo.type = filetype;
+    }
+    return fileinfo;
 }
-console.log(universalFileIndexer('sample.txt'))
+//console.log(universalFileIndexer('sample/sple.xml'))
+init()
