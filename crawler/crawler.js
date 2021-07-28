@@ -8,6 +8,7 @@ const {
 const appRoot = require('app-root-path');
 const os = require('os')
 const hidefile = require('hidefile')
+writeJsonData = fs.createWriteStream("IndexData.jsonln")
 
 function init() {
     try {
@@ -68,13 +69,17 @@ var walkSync = function(dir, filelist) {
 
 function localFileIndexer(arrayFilePath) {
     array_output = JSON.parse(fs.readFileSync(arrayFilePath));
-    let writeJsonData = fs.createWriteStream("IndexData.jsonln")
     array_output.forEach((dir, index) => {
         console.log(dir, index)
-        var jsonData = JSON.stringify(universalFileIndexer(dir))
-        writeJsonData.write(jsonData + "\n")
+        universalFileIndexer(dir)
+
     });
-    writeJsonData.end()
+    fs.unlinkSync(arrayFilePath)
+}
+
+function writeMetadata(data) {
+    data = JSON.stringify(data)
+    writeJsonData.write(data + "\n")
 }
 
 function universalFileIndexer(filePath) {
@@ -82,19 +87,19 @@ function universalFileIndexer(filePath) {
     switch (extension) {
         case '.htm':
         case '.html':
-            return htmlHandler(filePath);
+            htmlHandler(filePath);
             break;
         case '.xml':
-            return xmlHandler(filePath);
+            xmlHandler(filePath);
             break;
         case '.pdf':
-            return pdfHandler(filePath);
+            pdfHandler(filePath);
             break;
         case '.txt':
-            return textHandler(filePath);
+            textHandler(filePath);
             break;
         case '.doc':
-            return docHandler(filePath);
+            docHandler(filePath);
             break;
         case '.docx':
         case '.odt':
@@ -102,12 +107,12 @@ function universalFileIndexer(filePath) {
         case '.ods':
         case '.pptx':
         case '.xlsx':
-            return officeFileHandler(filePath);
+            officeFileHandler(filePath);
             break;
         case '.zip':
         case '.tar':
         case '.gz':
-            return compressedFileHandler(filePath);
+            compressedFileHandler(filePath);
             break;
             // Files without extension or unrecognised extension will be 
             // processed through mimetypes
@@ -131,9 +136,6 @@ function universalFileIndexer(filePath) {
     return;
 }
 
-function callback(out) {
-    return out
-}
 
 function mimeTypeSwitch(mimeType, filePath) {
     if (mimeType.indexOf('text') != -1) {
@@ -197,7 +199,7 @@ function textHandler(filePath) {
         return;
     }
     fileinfo.type = 'text'
-    return fileinfo
+    writeMetadata(fileinfo)
 }
 
 function htmlHandler(filePath) {
@@ -210,7 +212,7 @@ function htmlHandler(filePath) {
 
     fileinfo.content = texts.replace(/\s+/g, " ");
     fileinfo.type = 'html'
-    return fileinfo;
+    writeMetadata(fileinfo);
 }
 
 function docHandler(filePath) {
@@ -221,24 +223,25 @@ function docHandler(filePath) {
     var content = exec(`antiword ${filePath}`, 'utf8').toString()
     fileinfo.content = content.replace(/\s+/g, " ")
     fileinfo.type = 'officedoc';
-    return fileinfo;
+    writeMetadata(fileinfo);
 
 }
 
-function officeFileHandler(filePath) {
+function officeFileHandler(filePath, callback) {
     var fileinfo = getGeneralInfo(filePath);
     if (typeof fileinfo == 'undefined') {
+        console.log('fileinfo getting undefined')
         return;
     }
 
-    officeParser.parseOffice(filePath, function(data, err) {
-        // "data" string in the callback here is the text parsed from the office file passed in the first argument above
-        if (err) return console.log(err);
-        fileinfo.content = data
+    officeParser.parseOffice(filePath, (data, err) => {
+        if (err) {
+            return console.log(err);
+        }
+        fileinfo.content = data.replace(/\s+/g, " ").toString()
         fileinfo.type = 'officedoc'
-        callback(fileinfo);
+        writeMetadata(fileinfo);
     });
-
 }
 
 function pdfHandler(filePath) {
@@ -249,17 +252,19 @@ function pdfHandler(filePath) {
     var content = exec(`pdftotext ${filePath} -`, 'utf8').toString()
     fileinfo.content = content.replace(/\s+/g, " ")
     fileinfo.type = 'pdf';
-    return fileinfo;
+    writeMetadata(fileinfo);
 
 }
 
 function compressedFileHandler(filePath) {
-    console.log(filePath)
-    return;
+    return defaultFileHandler(filePath, 'compressed')
+
+    // WIP
 }
 
 function xmlHandler(filePath) {
     return defaultFileHandler(filePath, 'xml')
+    // WIP
 
 }
 
@@ -271,7 +276,7 @@ function defaultFileHandler(filePath, filetype) {
     if (filetype) {
         fileinfo.type = filetype;
     }
-    return fileinfo;
+    writeMetadata(fileinfo);
 }
-//console.log(universalFileIndexer('sample/sple.xml'))
+
 init()
