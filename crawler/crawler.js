@@ -117,10 +117,10 @@ function universalFileIndexer(filePath) {
             // Files without extension or unrecognised extension will be 
             // processed through mimetypes
         default:
-        	
-        	 stdout = exec(`file --mime-type ${filePath}`).toString()
-             var mimeType = stdout.split(':')[1].trim();
-              mimeTypeSwitch(mimeType, filePath)
+
+            stdout = exec(`file --mime-type ${filePath}`).toString()
+            var mimeType = stdout.split(':')[1].trim();
+            mimeTypeSwitch(mimeType, filePath)
 
     }
 
