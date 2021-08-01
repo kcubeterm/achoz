@@ -5,12 +5,12 @@ const appRoot = require('app-root-path');
 port = 8080
 app.get('/', landing);
 app.get('/search', search);
-//app.get('/search-api', search-api);
+app.get('/search-api', searchApi);
 
 //app.use(express.static(`${appRoot}/public`))
 app.use("/public", express.static('public'))
 app.listen(port, () => {
-	console.log('app is running')
+	console.log('app is running on 8080')
 })
 
 function landing(req, res) {
@@ -18,5 +18,10 @@ function landing(req, res) {
 }
 
 function search(req, res) {
-	res.send(req.query)
+	
+	res.sendFile(appRoot + '/public/search.html')
+}
+
+function searchApi(req, res) {
+	
 }
