@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/kcubeterm/achoz#readme",
   "dependencies": {
+<<<<<<< HEAD
     "app-root-path": "3.0.0",
     "express": "^4.17.1",
     "hidefile": "3.0.0",
@@ -27,5 +28,14 @@
     "officeparser": "2.2.2",
     "pdf2json": "1.2.3",
     "xml2js": "0.4.23"
+=======
+    "app-root-path": "^3.0.0",
+    "hidefile": "^3.0.0",
+    "html-to-text": "^8.0.0",
+    "officeparser": "^2.2.2",
+    "pdf2json": "^1.2.3",
+    "pug": "^3.0.2",
+    "xml2js": "^0.4.23"
+>>>>>>> 32740fb0adedce3efee1a6fbfd5863d3e5d30335
   }
 }
