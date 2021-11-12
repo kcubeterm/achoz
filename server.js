@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const appRoot = require('app-root-path');
+const fetch = require('node-fetch')
 
 port = 8080
 app.get('/', landing);
@@ -25,6 +26,21 @@ function search(req, res) {
 
 function searchApi(req, res) {
 
-
-    res.send(req.query)
+    var typesense_api = 'VyC9h8Fy83QTK8rN9HRqBgXmvcNrbED4JDXKfW6K6DLLVpRl'
+    input = req.query.q
+    url = `https://achoz.ahoxus.org/search/collections/files/documents/search?q=${input}&query_by=FileName`
+    fetch(url, {
+        headers: {
+            'X-TYPESENSE-API-KEY': 'VyC9h8Fy83ED4JDXKfW6K6DLLVpRl' // demo 
+        }
+    })
+        .then(function (response) {
+            return response.json();
+        })
+        .then(function (data) {
+            res.send(data);
+        })
+        .catch(function (err) {
+            console.log(err);
+        });
 }
