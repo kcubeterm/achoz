@@ -1,4 +1,7 @@
 {
 	"DirToIndex":["~/achoz/crawler/sample"],
-	"TypesenseHost":["https://achoz.ahoxus.org"]
+	"TypesenseHost":"https://achoz.ahoxus.org",
+	"TypesenseApi":"VyC9h8Fy83QTK8rN9HRqBgXmvcNrbED4JDXKfW6K6DLLVpRl",
+	"AchozPort":8080
+
 }
