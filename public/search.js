@@ -2,8 +2,8 @@ function search() {
     var json_data
     const params = new URLSearchParams(window.location.search)
     input = params.get('q')
-
-    url = `/search-api?q=${input}`
+    page_no = params.get('page') || 1;
+    url = `/search-api?q=${input}&page=${page_no}`
     fetch(url)
         .then(function (response) {
             return response.json();
@@ -28,8 +28,17 @@ function appendData(data) {
     }
     out.innerHTML = search_list
     if (input == "") {
-        out.innerHTML = ""
+        out.innerHTML = "no more"
 
     }
+    nextHandler()
+}
+
+function nextHandler() {
+    page_no++;
+    document.getElementById('next').href = `/search?q=${input}&page=${page_no}`
+    page_no = page_no - 2;
+    document.getElementById('previous').href = `/search?q=${input}&page=${page_no}`
+
 }
 search()

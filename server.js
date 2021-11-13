@@ -27,8 +27,9 @@ function search(req, res) {
 function searchApi(req, res) {
 
     var typesense_api = 'VyC9h8Fy83QTK8rN9HRqBgXmvcNrbED4JDXKfW6K6DLLVpRl'
-    input = req.query.q
-    url = `https://achoz.ahoxus.org/search/collections/files/documents/search?q=${input}&query_by=FileName`
+    var input = req.query.q
+    var page_no = req.query.page || 1;
+    url = `https://achoz.ahoxus.org/search/collections/files/documents/search?q=${input}&query_by=FileName&page=${page_no}`
     fetch(url, {
         headers: {
             'X-TYPESENSE-API-KEY': typesense_api  // demo 
