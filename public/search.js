@@ -18,6 +18,7 @@ function search() {
 }
 
 function appendData(data) {
+    document.getElementById("search_input").value = input
     var out = document.getElementById("results");
     out.innerHTML = ""
     var search_list = ""

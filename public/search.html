@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -7,10 +8,23 @@
     <link rel="stylesheet" href="/public/app.css">
     <title>Document</title>
 </head>
+
 <body>
-<script src="/public/search.js"></script>
-   <ul id="results"></ul>
-<a href="#" id="previous"> Previous</a>
-<a href="#" id="next">Next</a>
+    <script src="/public/search.js"></script>
+    <div id=search_div>
+        <div id=input1>
+            <form action="/search">
+                <input id="search_input" type="text" placeholder="Type here.." name="q">
+                <button> <i class="search" style="font-size: 18px;"> Search </i></button>
+            </form>
+        </div>
+    </div>
+        <ul id="results"></ul>
+
+    <div id="next-pre" >
+        <a href="#" id="previous"> Previous</a>
+        <a href="#" id="next">Next</a>
+    </div>
 </body>
+
 </html>

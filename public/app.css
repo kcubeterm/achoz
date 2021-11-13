@@ -44,3 +44,10 @@ input:focus {
     padding:10px;
     text-align:center ;
 }
+#next-pre {
+    text-align: center;
+}
+#next {
+    padding:10px;
+    align: center;
+}
