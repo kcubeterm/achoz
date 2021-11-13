@@ -31,7 +31,7 @@ function searchApi(req, res) {
     url = `https://achoz.ahoxus.org/search/collections/files/documents/search?q=${input}&query_by=FileName`
     fetch(url, {
         headers: {
-            'X-TYPESENSE-API-KEY': 'VyC9h8Fy83ED4JDXKfW6K6DLLVpRl' // demo 
+            'X-TYPESENSE-API-KEY': typesense_api  // demo 
         }
     })
         .then(function (response) {
