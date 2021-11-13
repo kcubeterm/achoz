@@ -3,16 +3,29 @@ const app = express()
 const path = require('path')
 const appRoot = require('app-root-path');
 const fetch = require('node-fetch')
+const fs = require('fs')
 
-port = 8080
+try {
+    var config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
+} catch (err) {
+    if (err.code == 'ENOENT') {
+        return console.log("config.json not found");
+    }
+}
+
+config = JSON.parse(config);
+TypesenseHost = config.TypesenseHost
+Typesense_api = config.TypesenseApi
+Port = config.AchozPort
+
 app.get('/', landing);
 app.get('/search', search);
 app.get('/search-api', searchApi);
 
 //app.use(express.static(`${appRoot}/public`))
 app.use("/public", express.static('public'))
-app.listen(port, () => {
-    console.log('app is running on 8080')
+app.listen(Port, () => {
+    console.log(`Server is running on ${Port}`)
 })
 
 function landing(req, res) {
@@ -26,13 +39,12 @@ function search(req, res) {
 
 function searchApi(req, res) {
 
-    var typesense_api = 'VyC9h8Fy83QTK8rN9HRqBgXmvcNrbED4JDXKfW6K6DLLVpRl'
     var input = req.query.q
     var page_no = req.query.page || 1;
-    url = `https://achoz.ahoxus.org/search/collections/files/documents/search?q=${input}&query_by=FileName&page=${page_no}`
+    url = `${TypesenseHost}/search/collections/files/documents/search?q=${input}&query_by=FileName&page=${page_no}`
     fetch(url, {
         headers: {
-            'X-TYPESENSE-API-KEY': typesense_api  // demo 
+            'X-TYPESENSE-API-KEY': Typesense_api  // demo 
         }
     })
         .then(function (response) {

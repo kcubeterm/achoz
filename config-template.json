@@ -1,3 +1,4 @@
 {
-	"DirToIndex":["~/achoz/crawler/sample"]
+	"DirToIndex":["~/achoz/crawler/sample"],
+	"TypesenseHost":["https://achoz.ahoxus.org"]
 }
