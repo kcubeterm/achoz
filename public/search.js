@@ -2,7 +2,9 @@ function search() {
     var json_data
     const params = new URLSearchParams(window.location.search)
     input = params.get('q')
+    alert(input)
     page_no = params.get('page') || 1;
+    document.getElementById("search_input").value = input
     url = `/search-api?q=${input}&page=${page_no}`
     fetch(url)
         .then(function (response) {
@@ -18,7 +20,6 @@ function search() {
 }
 
 function appendData(data) {
-    document.getElementById("search_input").value = input
     var out = document.getElementById("results");
     out.innerHTML = ""
     var search_list = ""
