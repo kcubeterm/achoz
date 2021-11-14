@@ -74,7 +74,7 @@ function localFileIndexer(arrayFilePath) {
         universalFileIndexer(dir)
 
     });
-    fs.unlinkSync(arrayFilePath)
+    //fs.unlinkSync(arrayFilePath)
 }
 
 function writeMetadata(data) {
@@ -117,8 +117,8 @@ function universalFileIndexer(filePath) {
             // Files without extension or unrecognised extension will be 
             // processed through mimetypes
         default:
-
-            stdout = exec(`file --mime-type ${filePath}`).toString()
+            //filePath = filePath.replace(/(\s)/g, '\\$1')
+            stdout = exec(`file --mime-type '${filePath}'`).toString()
             var mimeType = stdout.split(':')[1].trim();
             mimeTypeSwitch(mimeType, filePath)
 
@@ -240,8 +240,14 @@ function pdfHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    var content = exec(`pdftotext ${filePath} -`, 'utf8').toString()
-    fileinfo.content = content.replace(/\s+/g, " ")
+    //filePath = filePath.replace(/(\s)/g, '\\$1')
+    try {
+        var content = exec(`pdftotext '${filePath}' -`, 'utf8').toString()
+        fileinfo.content = content.replace(/\s+/g, " ")
+    } catch (err) {
+        console.log(err)
+        return;
+    }
     fileinfo.type = 'pdf';
     writeMetadata(fileinfo);
 
