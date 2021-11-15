@@ -41,7 +41,9 @@ function searchApi(req, res) {
 
     var input = req.query.q
     var page_no = req.query.page || 1;
-    url = `${TypesenseHost}/search/collections/test/documents/search?q=${input}&query_by=content&page=${page_no}`
+    url = `${TypesenseHost}/collections/test2/documents/\
+search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
+page=${page_no}&highlight_affix_num_tokens=10`
     fetch(url, {
         headers: {
             'X-TYPESENSE-API-KEY': Typesense_api  // demo 
