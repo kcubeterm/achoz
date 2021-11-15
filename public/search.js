@@ -25,7 +25,7 @@ function appendData(data) {
     var search_list = ""
     for (var i = 0; i < data.hits.length; i++) {
         var div = document.createElement("div");
-        filename = data.hits[i].document.FileName
+        filename = data.hits[i].document.name
         search_list += `<li id=result> <p> ${filename} </p> </li>`
     }
     out.innerHTML = search_list

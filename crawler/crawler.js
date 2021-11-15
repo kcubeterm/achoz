@@ -172,7 +172,7 @@ function getGeneralInfo(filePath) {
     }
     fileinfo.atime = stats.atime
     fileinfo.ctime = stats.ctime
-    fileinfo.mtime = stats.ctime
+    fileinfo.mtimeMs = stats.mtimeMs
     return fileinfo
 
 }

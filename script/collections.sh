@@ -1,19 +1,23 @@
-
-
-TYPESENSE_API_KEY=4u5YKY5LFlM58GVmdnt8NckPxmjBPlKsbC4Qkzu5go4fvGhZ # sample api key
-
-curl "http://localhost:8108/collections" \
+#!/bin/bash 
+host=`cat ~/project/achoz/config.json | jq -r .TypesenseHost`
+api=`cat ~/project/achoz/config.json | jq -r .TypesenseApi`
+echo $host $api
+collection_name="test4"
+curl "${host}/collections" \
        -X POST \
        -H "Content-Type: application/json" \
-       -H "X-TYPESENSE-API-KEY: ${TYPESENSE_API_KEY}" \
+       -H "X-TYPESENSE-API-KEY: ${api}" \
        -d '{
-         "name": "files",
+         "name": "test",
          "fields": [
            {"name": "name", "type": "string" },
            {"name": "abspath", "type": "string" },
-           {"name": "atime", "type": "int32"},
-           {"name": "mtime", "type": "string"},
-           {"name": "type", "type": "string", "facet": true }
+           {"name": "atime", "type": "string"},
+           {"name": "ctime", "type": "string"},
+           {"name": "mtimeMs", "type": "float"},
+           {"name": "type", "type": "string", "facet": true },
+           {"name": "content", "type": "string", "optional": true}
+
          ],
-         "default_sorting_field": "atime"
+         "default_sorting_field": "mtimeMs"
        }'
