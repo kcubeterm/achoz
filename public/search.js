@@ -2,7 +2,6 @@ function search() {
     var json_data
     const params = new URLSearchParams(window.location.search)
     input = params.get('q')
-    alert(input)
     page_no = params.get('page') || 1;
     document.getElementById("search_input").value = input
     url = `/search-api?q=${input}&page=${page_no}`
@@ -26,11 +25,13 @@ function appendData(data) {
     for (var i = 0; i < data.hits.length; i++) {
         var div = document.createElement("div");
         filename = data.hits[i].document.name
-        search_list += `<li id=result> <p> ${filename} </p> </li>`
+        description = data.hits[i].highlights[0].snippet
+        search_list += `<li id=result> <p class="filename"> ${filename} </p>
+        ${description} </li>`
     }
     out.innerHTML = search_list
     if (input == "") {
-        out.innerHTML = "no more"
+        out.innerHTML = "virgin"
 
     }
     nextHandler()

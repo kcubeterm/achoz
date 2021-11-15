@@ -1,13 +1,12 @@
 body {
-     background-color: #7f5a83;
-	background-image: linear-gradient(315deg, #7f5a83 0%, #0d324d 74%);
+     background-color: #f0a6f8;
     background-repeat:no-repeat ;
     background-size:cover;
 /*background-image:url("https://i.ibb.co/QHFLWq2/photo-1503756234508-e32369269deb.jpg");*/
 }
 #achoz {
     display:flex;
-    color:#FF4500;
+    color:#7e7a79;
     align-items: center;
     justify-content: center;
     font-family: "Times New Roman", Times,serif;
@@ -17,7 +16,7 @@ ul {
 }
 #result {
     list-style-type:none ;
-    background-color:white;
+    background-color:rgb(218, 201, 201);
     border-radius:5px;
     padding:10px 20px;
     display:grid;
@@ -26,23 +25,38 @@ ul {
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
-#searchbar {
-    width: 75%;
-    height: 32px;
-    border-radius: 10px;
-    border: 1px solid #eaeaea;
-    padding: 5px 10px;
-    font-size: 15px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+.filename {
+    color: navy;
 }
-
+input {
+    width: 75%;
+    height: 40px;
+    border-radius: 15px;
+    border: 2px solid #eaeaea;
+    padding: 5px 10px;
+    font-size: 13px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    box-sizing: border-box;
+}
+#sbutton {
+    background-color: rgb(89, 104, 185);
+    color: white;
+    border-radius: 15px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    height: 40%;
+}
 input:focus {
     outline:none;
 }
 
 #input1 {
     padding:10px;
+    top: 50%;
+    left: 50%;
     text-align:center ;
+    box-sizing: border-box;
+    border-radius: 15px;
+
 }
 #next-pre {
     text-align: center;
