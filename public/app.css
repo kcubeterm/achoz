@@ -1,12 +1,17 @@
+/*body {
+    background: url(/public/bg.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+/*background-image:url("https://i.ibb.co/QHFLWq2/photo-1503756234508-e32369269deb.jpg");*/ 
+
 body {
-     background-color: #f0a6f8;
-    background-repeat:no-repeat ;
-    background-size:cover;
-/*background-image:url("https://i.ibb.co/QHFLWq2/photo-1503756234508-e32369269deb.jpg");*/
+    background-color:rgb(48,48,48);
 }
 #achoz {
     display:flex;
-    color:#7e7a79;
+    color:#f76927ef;
     align-items: center;
     justify-content: center;
     font-family: "Times New Roman", Times,serif;
@@ -14,35 +19,49 @@ body {
 ul {
     padding:3px;
 }
-#result {
+.result {
     list-style-type:none ;
-    background-color:rgb(218, 201, 201);
+    background-color:rgb(48,48,48);
     border-radius:5px;
-    padding:10px 20px;
-    display:grid;
+    border: 1px solid;
+    border-color: #999797;
+    padding:10px 10px;
     width:100%;
     margin-bottom:10px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    margin-right: 10%;
+    color: honeydew;
+    line-height:5px;
+
+    
 }
 
 .filename {
-    color: navy;
+    color: rgba(151, 212, 9, 0.966);
+}
+.description {
+    font-size: 15px;
+    color: rgb(233, 250, 81);
+}
+.abspath {
+    font-size: small;
+    margin-bottom: 1px;
 }
 input {
-    width: 75%;
+    width: 60%;
     height: 40px;
     border-radius: 15px;
-    border: 2px solid #eaeaea;
+    border: 2px solid #807474;
     padding: 5px 10px;
-    font-size: 13px;
+    font-size: 15px;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
     box-sizing: border-box;
+    background-color:rgb(235, 169, 116)
 }
 #sbutton {
-    background-color: rgb(89, 104, 185);
+    background-color: rgb(231, 178, 31);
     color: white;
     border-radius: 15px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    box-shadow: rgba(233, 46, 21, 0.2) 0px 8px 24px;
     height: 40%;
 }
 input:focus {
@@ -61,7 +80,15 @@ input:focus {
 #next-pre {
     text-align: center;
 }
-#next {
-    padding:10px;
-    align: center;
+.next, .previous {
+    padding:5px;
+    border: gray solid;
+    border-style: outset;
+    border-radius: 10px;
+    font-size: x-large;
+    margin: 20px;
+}
+#results {
+    margin-right: 10%;
+    margin-left: 10%;
 }

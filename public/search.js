@@ -26,8 +26,10 @@ function appendData(data) {
         var div = document.createElement("div");
         filename = data.hits[i].document.name
         description = data.hits[i].highlights[0].snippet
-        search_list += `<li id=result> <p class="filename"> ${filename} </p>
-        ${description} </li>`
+        abspath = data.hits[i].document.abspath
+        search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> 
+        <h3 class="filename"> ${filename} </h3>
+        <p class="description" > ${description} </p></div>`
     }
     out.innerHTML = search_list
     if (input == "") {
