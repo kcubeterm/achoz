@@ -24,14 +24,20 @@ function appendData(data) {
     var search_list = ""
     for (var i = 0; i < data.hits.length; i++) {
         var div = document.createElement("div");
-        filename = data.hits[i].document.name
-        description = data.hits[i].highlights[0].snippet
         abspath = data.hits[i].document.abspath
+        filename = data.hits[i].document.name
+        if (data.hits[i].highlights.hasOwnProperty('snippet')) {
+
+            var description = data.hits[i].highlights[0].snippet
+        } else {
+            description=' '
+        }
         search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> 
         <h3 class="filename"> ${filename} </h3>
         <p class="description" > ${description} </p></div>`
+        out.innerHTML = search_list
+
     }
-    out.innerHTML = search_list
     if (input == "") {
         out.innerHTML = "virgin"
 
@@ -41,9 +47,9 @@ function appendData(data) {
 
 function nextHandler() {
     page_no++;
-    document.getElementById('next').href = `/search?q=${input}&page=${page_no}`
+    document.getElementsByClassName('next').href = `/search?q=${input}&page=${page_no}`
     page_no = page_no - 2;
-    document.getElementById('previous').href = `/search?q=${input}&page=${page_no}`
+    document.getElementsByClassName('previous').href = `/search?q=${input}&page=${page_no}`
 
 }
 search()

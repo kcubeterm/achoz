@@ -6,7 +6,7 @@ api=`cat ~/project/achoz/config.json | jq -r .TypesenseApi`
 
 
  
- collection_name="test3"
+ collection_name="test"
  curl "${host}/collections/${collection_name}/documents/import?action=create" \
        -X POST \
        -H "X-TYPESENSE-API-KEY: ${api}" \

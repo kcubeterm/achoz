@@ -41,7 +41,7 @@ function searchApi(req, res) {
 
     var input = req.query.q
     var page_no = req.query.page || 1;
-    url = `${TypesenseHost}/collections/test2/documents/\
+    url = `${TypesenseHost}/collections/test/documents/\
 search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
 page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
     fetch(url, {
