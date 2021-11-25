@@ -40,24 +40,29 @@ function appendData(data) {
         }
         switch (type) {
             case type.match(/video/)?.input:
-                var filePreview = `/video?id=${id}`
-                console.log("matched video")
+                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
+                    <a class="filename" href=/video?id=${id}> ${filename} </a>
+                    <p class="description" > ${description} </p>
+                         <p class="type" > ${type} </p> </div>
+                        `
 
                 break;
-
+            case type.match(/audio/)?.input:
+                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
+                <p class="filename"> ${filename} </p>
+                <audio controls src=/filereq?id=${id} > Your browser dont support this audio </audio>
+                <p class="description" > ${description} </p>
+                <p class="type" > ${type} </p> </div>
+                `
             default:
-                var filePreview = '#'
-                break;
-        }
-
-
-
-
-        search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
-        <a class="filename" href=${filePreview}> ${filename} </a>
+                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
+        <a class="filename"> ${filename} </a>
         <p class="description" > ${description} </p>
         <p class="type" > ${type} </p> </div>
         `
+                break;
+        }
+
         out.innerHTML = search_list;
 
     }
