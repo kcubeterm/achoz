@@ -96,6 +96,5 @@ input:focus {
 
 .result-img {
     text-align: right;
-    float: right;
     overflow: auto;
 } 
