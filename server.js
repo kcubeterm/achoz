@@ -5,6 +5,9 @@ const appRoot = require('app-root-path');
 const fetch = require('node-fetch')
 const fs = require('fs')
 
+
+
+
 try {
     var config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
 } catch (err) {
@@ -18,9 +21,12 @@ TypesenseHost = config.TypesenseHost
 Typesense_api = config.TypesenseApi
 Port = config.AchozPort
 
+
+
 app.get('/', landing);
 app.get('/search', search);
 app.get('/search-api', searchApi);
+app.get('/video', videoPlayer)
 app.get('/filereq', filereq);
 
 //app.use(express.static(`${appRoot}/public`))
@@ -37,11 +43,16 @@ function search(req, res) {
 
     res.sendFile(appRoot + '/public/search.html')
 }
-function queryFromEngine(input) {
-    var page_no = 1;
+
+function searchApi(req, res) {
+
+    var input = req.query.q
+    var page_no = req.query.page || 1;
+    // typesense url 
     url = `${TypesenseHost}/collections/test/documents/\
 search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
 page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
+
     fetch(url, {
         headers: {
             'X-TYPESENSE-API-KEY': Typesense_api  // demo 
@@ -51,37 +62,32 @@ page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_
             return response.json();
         })
         .then(function (data) {
-            return data;
+            res.send(data);
         })
         .catch(function (err) {
             console.log(err);
         });
-}
-function searchApi(req, res) {
 
-    var input = req.query.q
-   // var page_no = req.query.page || 1;
-//     url = `${TypesenseHost}/collections/test/documents/\
-// search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
-// page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
-//     fetch(url, {
-//         headers: {
-//             'X-TYPESENSE-API-KEY': Typesense_api  // demo 
-//         }
-//     })
-//         .then(function (response) {
-//             return response.json();
-//         })
-//         .then(function (data) {
-//             res.send(data);
-//         })
-//         .catch(function (err) {
-//             console.log(err);
-//         });
-    res.send(queryFromEngine(input))
+
 }
 
 function filereq(req, res) {
-
-    res.sendFile()
+    var id = req.query.id
+    console.log(id)
+    url = `${TypesenseHost}/collections/test/documents/${id}`
+    fetch(url, {
+        headers: {
+            'X-TYPESENSE-API-KEY': Typesense_api  // demo 
+        }
+    }).then(function (response) {
+        return response.json();
+    })
+        .then(function (data) {
+            res.sendFile(data.abspath);
+        }).catch(function (err) {
+            console.log(err);
+        });
+}
+function videoPlayer(req, res) {
+    res.sendFile(appRoot + '/public/video.html')    
 }

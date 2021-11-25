@@ -1,10 +1,10 @@
 function search() {
     var json_data
-    const params = new URLSearchParams(window.location.search)
-    input = params.get('q')
+    const params = new URLSearchParams(window.location.search);
+    input = params.get('q');
     page_no = params.get('page') || 1;
-    document.getElementById("search_input").value = input
-    url = `/search-api?q=${input}&page=${page_no}`
+    document.getElementById("search_input").value = input;
+    url = `/search-api?q=${input}&page=${page_no}`;
     fetch(url)
         .then(function (response) {
             return response.json();
@@ -19,30 +19,53 @@ function search() {
 }
 
 function appendData(data) {
+
     var out = document.getElementById("results");
     out.innerHTML = ""
     var search_list = ""
     for (var i = 0; i < data.hits.length; i++) {
+        var id = data.hits[i].document.id;
+        var type = data.hits[i].document.type;
         var div = document.createElement("div");
-        abspath = data.hits[i].document.abspath
-        filename = data.hits[i].document.name
-        if (data.hits[i].highlights.hasOwnProperty('snippet')) {
+        var abspath = data.hits[i].document.abspath;
+        var filename = data.hits[i].document.name;
+        var description = '';
+        try {
 
-            var description = data.hits[i].highlights[0].snippet
-        } else {
-            description=' '
+            if (data.hits[i].highlights[0].hasOwnProperty('snippet')) {
+                description = data.hits[i].highlights[0].snippet
+            }
+        } catch (error) {
+            console.log(error)
         }
-        search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> 
-        <h3 class="filename"> ${filename} </h3>
-        <p class="description" > ${description} </p></div>`
-        out.innerHTML = search_list
+        switch (type) {
+            case type.match(/video/)?.input:
+                var filePreview = `/video?id=${id}`
+                console.log("matched video")
+
+                break;
+
+            default:
+                var filePreview = '#'
+                break;
+        }
+
+
+
+
+        search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
+        <a class="filename" href=${filePreview}> ${filename} </a>
+        <p class="description" > ${description} </p>
+        <p class="type" > ${type} </p> </div>
+        `
+        out.innerHTML = search_list;
 
     }
     if (input == "") {
-        out.innerHTML = "virgin"
+        out.innerHTML = "virgin";
 
     }
-    nextHandler()
+    nextHandler();
 }
 
 function nextHandler() {
@@ -52,4 +75,4 @@ function nextHandler() {
     document.getElementsByClassName('previous').href = `/search?q=${input}&page=${page_no}`
 
 }
-search()
+search();
