@@ -20,6 +20,7 @@ ul {
     padding:3px;
 }
 .result {
+    position: relative;
     list-style-type:none ;
     background-color:rgb(48,48,48);
     border-radius:5px;
@@ -92,3 +93,9 @@ input:focus {
     margin-right: 10%;
     margin-left: 10%;
 }
+
+.result-img {
+    text-align: right;
+    float: right;
+    overflow: auto;
+} 

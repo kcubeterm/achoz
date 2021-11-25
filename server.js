@@ -73,7 +73,6 @@ page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_
 
 function filereq(req, res) {
     var id = req.query.id
-    console.log(id)
     url = `${TypesenseHost}/collections/test/documents/${id}`
     fetch(url, {
         headers: {

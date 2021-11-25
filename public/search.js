@@ -52,13 +52,24 @@ function appendData(data) {
                 <p class="filename"> ${filename} </p>
                 <audio controls src=/filereq?id=${id} > Your browser dont support this audio </audio>
                 <p class="description" > ${description} </p>
+                <p class="type" > ${type}</p> </div>
+                `
+                break;
+            case type.match(/image/)?.input:
+                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
+                <p class="filename"> ${filename} </p>
+                <div class=result-img>  
+                <img width=300 src=/filereq?id=${id} >
+                </div>
+                <p class="description" > ${description} </p>
                 <p class="type" > ${type} </p> </div>
                 `
+                break;
             default:
                 search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
         <a class="filename"> ${filename} </a>
         <p class="description" > ${description} </p>
-        <p class="type" > ${type} </p> </div>
+        <p class="type" > ${type}  </p> </div>
         `
                 break;
         }
