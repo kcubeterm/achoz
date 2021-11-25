@@ -21,6 +21,7 @@ Port = config.AchozPort
 app.get('/', landing);
 app.get('/search', search);
 app.get('/search-api', searchApi);
+app.get('/filereq', filereq);
 
 //app.use(express.static(`${appRoot}/public`))
 app.use("/public", express.static('public'))
@@ -36,11 +37,8 @@ function search(req, res) {
 
     res.sendFile(appRoot + '/public/search.html')
 }
-
-function searchApi(req, res) {
-
-    var input = req.query.q
-    var page_no = req.query.page || 1;
+function queryFromEngine(input) {
+    var page_no = 1;
     url = `${TypesenseHost}/collections/test/documents/\
 search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
 page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
@@ -53,9 +51,37 @@ page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_
             return response.json();
         })
         .then(function (data) {
-            res.send(data);
+            return data;
         })
         .catch(function (err) {
             console.log(err);
         });
+}
+function searchApi(req, res) {
+
+    var input = req.query.q
+   // var page_no = req.query.page || 1;
+//     url = `${TypesenseHost}/collections/test/documents/\
+// search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
+// page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
+//     fetch(url, {
+//         headers: {
+//             'X-TYPESENSE-API-KEY': Typesense_api  // demo 
+//         }
+//     })
+//         .then(function (response) {
+//             return response.json();
+//         })
+//         .then(function (data) {
+//             res.send(data);
+//         })
+//         .catch(function (err) {
+//             console.log(err);
+//         });
+    res.send(queryFromEngine(input))
+}
+
+function filereq(req, res) {
+
+    res.sendFile()
 }
