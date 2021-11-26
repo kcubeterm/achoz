@@ -4,8 +4,16 @@ const appRoot = require('app-root-path');
 const exec = require('child_process').exec;
 const fetch = require("node-fetch");
 const fs = require('fs')
+const os = require('os')
+
+
+
 try {
-    var config = fs.readFileSync(`${appRoot}/config.json`, 'utf8');
+    var defaultConfig = `${appRoot}/config.json`
+    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
+    configPath = userConfig ? userConfig : defaultConfig
+    achozdir = userConfig ? os.homedir + '/.achoz' : `${appRoot}`
+    var config = fs.readFileSync(`${configPath}`, 'utf8');
 } catch (err) {
     if (err.code == 'ENOENT') {
         return console.log("config.json not found");
@@ -19,7 +27,7 @@ Typesense_api = config.TypesenseApi;
 
 
 
-
+// function 
 
 // checking health of search engine 
 function health() {
@@ -30,7 +38,7 @@ function health() {
         })
         .then((data) => {
             if (data.ok) {
-                console.log("Search engine is running ")
+                console.log("Search engine's health is fine ")
                 server()
             } else {
                 process.exit(1)
@@ -51,25 +59,34 @@ function server() {
         }).stdout.on('data', function (data) {
             console.log(data);
         });
-        
+
     })
-    
+
     crawlerAndindexer.then(() => {
-        console.log('Indexing documents')
-        exec(`bash ${appRoot}/crawler/indexer.sh`, (err, stdout, stderr) => {
+        exec(`bash ${appRoot}/crawler/collections.sh ${achozdir}`, (err, stdout, stderr) => {
             if (err) {
                 console.warn(err)
             }
         }).stdout.on('data', function (data) {
             console.log(data);
         });
-    
+    }).then(() => {
+        
+        console.log('Indexing documents')
+        exec(`bash ${appRoot}/crawler/indexer.sh ${achozdir}`, (err, stdout, stderr) => {
+            if (err) {
+                console.warn(err)
+            }
+        }).stdout.on('data', function (data) {
+            console.log(data);
+        });
     }).then(() => {
         exec(`node ${appRoot}/server.js`).stdout.on('data', function (data) {
             console.log(data);
+
+
         })
     })
+}
 
-}    
-
-health()
+ health()

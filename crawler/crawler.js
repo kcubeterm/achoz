@@ -12,7 +12,11 @@ writeJsonData = fs.createWriteStream("IndexData.jsonln")
 
 function init() {
     try {
-        config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
+        var defaultConfig = `${appRoot}/config.json`
+        var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
+        configPath = userConfig ? userConfig : defaultConfig
+
+        var config = fs.readFileSync(`${configPath}`, 'utf8');
     } catch (err) {
         if (err.code == 'ENOENT') {
             return console.log("config.json not found");
@@ -44,11 +48,11 @@ function init() {
 function watchDirChanges(dir) {
 
 }
-var walkSync = function(dir, filelist) {
+var walkSync = function (dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
     filelist = filelist || [];
-    files.forEach(function(file) {
+    files.forEach(function (file) {
         try {
             if (fs.statSync(dir + file).isDirectory()) {
                 if (!hidefile.isDotPrefixed(file)) {
@@ -114,8 +118,8 @@ function universalFileIndexer(filePath) {
         case '.gz':
             compressedFileHandler(filePath);
             break;
-            // Files without extension or unrecognised extension will be 
-            // processed through mimetypes
+        // Files without extension or unrecognised extension will be 
+        // processed through mimetypes
         default:
             //filePath = filePath.replace(/(\s)/g, '\\$1')
             stdout = exec(`file --mime-type '${filePath}'`).toString()

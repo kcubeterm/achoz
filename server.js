@@ -9,7 +9,11 @@ const fs = require('fs')
 
 
 try {
-    var config = fs.readFileSync(`${appRoot}/config.json`, 'utf8')
+    var defaultConfig = `${appRoot}/config.json`
+    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
+    configPath = userConfig? userConfig : defaultConfig
+    
+    var config = fs.readFileSync(`${configPath}`, 'utf8');
 } catch (err) {
     if (err.code == 'ENOENT') {
         return console.log("config.json not found");
