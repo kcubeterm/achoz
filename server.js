@@ -4,23 +4,17 @@ const path = require('path')
 const appRoot = require('app-root-path');
 const fetch = require('node-fetch')
 const fs = require('fs')
+const os = require('os')
 
 
 
 
-try {
-    var defaultConfig = `${appRoot}/config.json`
-    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-    configPath = userConfig? userConfig : defaultConfig
-    
-    var config = fs.readFileSync(`${configPath}`, 'utf8');
-} catch (err) {
-    if (err.code == 'ENOENT') {
-        return console.log("config.json not found");
-    }
-}
+var defaultConfig = `${appRoot}/config.json`
+var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
+configPath = userConfig ? userConfig : defaultConfig
+console.log(configPath)
+const config = require(configPath)
 
-config = JSON.parse(config);
 TypesenseHost = config.TypesenseHost
 Typesense_api = config.TypesenseApi
 Port = config.AchozPort
@@ -92,5 +86,5 @@ function filereq(req, res) {
         });
 }
 function videoPlayer(req, res) {
-    res.sendFile(appRoot + '/public/video.html')    
+    res.sendFile(appRoot + '/public/video.html')
 }

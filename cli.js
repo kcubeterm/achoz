@@ -8,19 +8,12 @@ const os = require('os')
 
 
 
-try {
-    var defaultConfig = `${appRoot}/config.json`
-    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-    configPath = userConfig ? userConfig : defaultConfig
-    achozdir = userConfig ? os.homedir + '/.achoz' : `${appRoot}`
-    var config = fs.readFileSync(`${configPath}`, 'utf8');
-} catch (err) {
-    if (err.code == 'ENOENT') {
-        return console.log("config.json not found");
-    }
-}
+var defaultConfig = `${appRoot}/config.json`
+var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
+configPath = userConfig ? userConfig : defaultConfig
+console.log(configPath)
+const config = require(configPath)
 
-config = JSON.parse(config);
 TypesenseHost = config.TypesenseHost;
 Typesense_api = config.TypesenseApi;
 
@@ -30,7 +23,7 @@ Typesense_api = config.TypesenseApi;
 function startSearchEngine() {
     exec('typesense-achoz', (err, stdout, stderr) => {
         if (err) {
-            console.log("typesense server ")
+            
             console.warn(err)
         }
     }).stdout.on('data', function (data) {

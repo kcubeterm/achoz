@@ -8,22 +8,15 @@ const {
 const appRoot = require('app-root-path');
 const os = require('os')
 const hidefile = require('hidefile')
-writeJsonData = fs.createWriteStream("IndexData.jsonln")
+writeJsonData = fs.createWriteStream("/tmp/IndexData.jsonln")
 
 function init() {
-    try {
-        var defaultConfig = `${appRoot}/config.json`
-        var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-        configPath = userConfig ? userConfig : defaultConfig
+    var defaultConfig = `${appRoot}/config.json`
+    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
+    configPath = userConfig ? userConfig : defaultConfig
+    console.log(configPath)
+    const config = require(configPath)
 
-        var config = fs.readFileSync(`${configPath}`, 'utf8');
-    } catch (err) {
-        if (err.code == 'ENOENT') {
-            return console.log("config.json not found");
-        }
-    }
-
-    config = JSON.parse(config);
     var absDir = []
     config.DirToIndex.forEach((dir, index) => {
         var dir = dir.replace("~", os.homedir())
@@ -42,7 +35,7 @@ function init() {
     let uniqueFilelist = [...new Set(filelist)]
     //let uniqueFilelist = filelist
     jsonWriter(uniqueFilelist)
-    localFileIndexer("filelist.json")
+    localFileIndexer("/tmp/filelist.json")
 }
 
 function watchDirChanges(dir) {
@@ -149,7 +142,7 @@ function mimeTypeSwitch(mimeType, filePath) {
 
 
 function jsonWriter(json, whereToWrite) {
-    var fileDestination = "filelist.json"
+    var fileDestination = "/tmp/filelist.json"
     if (whereToWrite) {
         fileDestination = whereToWrite
     }
