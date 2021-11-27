@@ -27,7 +27,16 @@ Typesense_api = config.TypesenseApi;
 
 
 
-// function 
+function startSearchEngine() {
+    exec('typesense-achoz', (err, stdout, stderr) => {
+        if (err) {
+            console.log("typesense server ")
+            console.warn(err)
+        }
+    }).stdout.on('data', function (data) {
+        console.log(data);
+    });
+}
 
 // checking health of search engine 
 function health() {
