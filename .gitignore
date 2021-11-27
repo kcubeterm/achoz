@@ -1,7 +1,6 @@
 crawler/test/
 crawler/sample/
 node_modules/
-config.json
 package-lock.json
 filelist.json
 IndexData.jsonln

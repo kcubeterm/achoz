@@ -16,7 +16,10 @@
     "url": "git+https://github.com/kcubeterm/achoz.git"
   },
   "keywords": [
-    "search-engines","file-searcher","search-pdf", "search documents"
+    "search-engines",
+    "file-searcher",
+    "search-pdf",
+    "search documents"
   ],
   "author": "Kcubeterm",
   "license": "MIT",
@@ -33,6 +36,7 @@
     "node-fetch": "^2.6.6",
     "officeparser": "2.2.2",
     "pdf2json": "1.2.3",
+    "targz": "^1.0.1",
     "xml2js": "0.4.23"
   },
   "os": [
