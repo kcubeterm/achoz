@@ -17,10 +17,17 @@ const config = require(configPath)
 TypesenseHost = config.TypesenseHost;
 Typesense_api = config.TypesenseApi;
 
+var achozdir = os.homedir + '/.achoz'
 
+if (!fs.existsSync(achozdir)) {
+    fs.mkdirSync(achozdir)
+    fs.mkdirSync(achozdir + '/searchdb')
+    fs.copyFileSync(appRoot + '/config,json', achozdir)
+}
 
 
 function startSearchEngine() {
+    searchEngine =  `typesense-achoz -d ${achozdir}/searchdb -c ${achozdir}/config.json`
     exec('typesense-achoz', (err, stdout, stderr) => {
         if (err) {
             
@@ -29,6 +36,7 @@ function startSearchEngine() {
     }).stdout.on('data', function (data) {
         console.log(data);
     });
+    health()
 }
 
 // checking health of search engine 
@@ -91,4 +99,4 @@ function server() {
     })
 }
 
- health()
+startSearchEngine()
