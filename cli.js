@@ -22,15 +22,15 @@ var achozdir = os.homedir + '/.achoz'
 if (!fs.existsSync(achozdir)) {
     fs.mkdirSync(achozdir)
     fs.mkdirSync(achozdir + '/searchdb')
-    fs.copyFileSync(appRoot + '/config,json', achozdir)
+    fs.copyFileSync(appRoot + '/config.json', achozdir)
 }
 
 
 function startSearchEngine() {
-    searchEngine =  `typesense-achoz -d ${achozdir}/searchdb -c ${achozdir}/config.json`
+    searchEngine = `typesense-achoz -d ${achozdir}/searchdb -c ${achozdir}/config.json`
     exec('typesense-achoz', (err, stdout, stderr) => {
         if (err) {
-            
+
             console.warn(err)
         }
     }).stdout.on('data', function (data) {
@@ -81,7 +81,7 @@ function server() {
             console.log(data);
         });
     }).then(() => {
-        
+
         console.log('Indexing documents')
         exec(`bash ${appRoot}/crawler/indexer.sh ${achozdir}`, (err, stdout, stderr) => {
             if (err) {
