@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 // const https = require('https')
+const appRoot = require('app-root-path')
 const fs = require('fs');
 const os = require('os')
 const config = require("./config.json")
