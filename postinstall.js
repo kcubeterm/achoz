@@ -49,7 +49,7 @@ function createApiKey(length) {
 }
 
 config.TypesenseApi = createApiKey(40)
-filename = "./config.json"
+filename = appRoot + "/config.json"
 
 fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 

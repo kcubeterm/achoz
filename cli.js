@@ -1,30 +1,45 @@
 #!/usr/bin/env node
 
-const appRoot = require('app-root-path');
 const exec = require('child_process').exec;
 const fetch = require("node-fetch");
 const fs = require('fs')
 const os = require('os')
 
 
-
+const appRoot = __dirname
 var defaultConfig = `${appRoot}/config.json`
 var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
 configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
 const config = require(configPath)
 
+
 TypesenseHost = config.TypesenseHost;
 TypesenseApi = config.TypesenseApi;
 
 var achozdir = os.homedir + '/.achoz'
-
+function createApiKey(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() *
+        charactersLength));
+    }
+    return result;
+}
 if (!fs.existsSync(achozdir)) {
     fs.mkdirSync(achozdir)
     fs.mkdirSync(achozdir + '/searchdb')
     fs.copyFileSync(appRoot + '/config.json', achozdir + '/config.json')
+    
+    config.TypesenseApi = createApiKey(40)
+    filename = os.homedir + '/.achoz/config.json'
+    
+    fs.writeFileSync(filename, JSON.stringify(config, null, 2));
+    
+    
     process.exit(0)
 }
-
 
 function startSearchEngine() {
     searchEngine = `typesense-server -d ${achozdir}/searchdb -c ${achozdir}/config.json -a ${TypesenseApi} --api-port 8909`

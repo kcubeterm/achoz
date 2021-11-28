@@ -3,7 +3,7 @@
     "~/project/achoz/crawler/sample"
   ],
   "TypesenseHost": "http://localhost:8909",
-  "TypesenseApi": "FxR3L4pCjzgCBbpRQ6A5gAlhezzgwBhPANrE1Xv8",
+  "TypesenseApi": "6Y4AVUSiwkNcReCpWFBouK2qbPSWniWXHq8CRaOb",
   "AchozPort": 8080,
   "LocalDataDir": "/root/.achoz"
 }
