@@ -1,7 +1,9 @@
 {
-	"DirToIndex":["~/project/achoz/crawler/sample"],
-	"TypesenseHost":"http://localhost:8108",
-	"TypesenseApi":"c4YV6NxI0fHR9DP3JsZL2T4BqpcknP2rxbZVj0EsKIrNIlrM",
-	"AchozPort":8080
-
+  "DirToIndex": [
+    "~/project/achoz/crawler/sample"
+  ],
+  "TypesenseHost": "http://localhost:8108",
+  "TypesenseApi": "zipI8vgdubar5VMT2C4zvouJU5r6GWCMpgSMirW1",
+  "AchozPort": 8080,
+  "LocalDataDir": "/root/.achoz"
 }

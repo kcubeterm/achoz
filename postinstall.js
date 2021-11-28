@@ -1,36 +1,40 @@
 #!/usr/bin/env node
 
-const http = require('http')
+// const https = require('https')
 const fs = require('fs');
 const os = require('os')
 const config = require("./config.json")
-const targz = require('targz')
+// const exec = require('child_process').execSync
 
-var url = 'https://dl.typesense.org/releases/0.21.0/typesense-server-0.21.0-linux-amd64.tar.gz'
-const file = fs.createWriteStream('/tmp/server.tar.gz');
+// let user installs typesense.
 
-const request = http.get(url, function (response) {
-  response.pipe(file);
+// var url = 'https://dl.typesense.org/releases/0.21.0/typesense-server-0.21.0-linux-amd64.tar.gz'
+// const path = '/tmp/server.tar.gz'
 
-  config.TypesenseApi = createApiKey(40)
-  filename = "./config.json"
-  config.LocalDataDir = os.homedir + '/.achoz'
-  fs.writeFileSync(filename, JSON.stringify(config, null, 2));
-  const targz = require('targz')
-  targz.decompress({
-    src: '/tmp/server.tar.gz',
-    dest: '/tmp'
-  }, function (err) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log("Done!");
-      fs.copyFileSync('/tmp/typesense-server', './bin/typesense-achoz')
-      fs.chmodSync("./bin/typesense-achoz", 0755) // data integrity wip
-    }
-  });
+// https.get(url, (res) => {
 
-});
+//   const writeStream = fs.createWriteStream(path);
+//   res.pipe(writeStream);
+
+//   writeStream.on("finish", () => {
+//     writeStream.close();
+//     console.log("Download Completed");
+//     config.TypesenseApi = createApiKey(40)
+//     filename = "./config.json"
+//     config.LocalDataDir = os.homedir + '/.achoz'
+//     fs.writeFileSync(filename, JSON.stringify(config, null, 2));
+
+//     exec('tar -xvf /tmp/server.tar.gz --directory=/tmp --overwrite')
+//     fs.copyFileSync('/tmp/typesense-server', './bin/typesense-achoz')
+//     fs.chmodSync("./bin/typesense-achoz", 0755) // TODO data integrity wip
+//   });
+// });
+
+
+
+
+
+
 
 function createApiKey(length) {
   var result = '';
@@ -43,3 +47,7 @@ function createApiKey(length) {
   return result;
 }
 
+config.TypesenseApi = createApiKey(40)
+filename = "./config.json"
+config.LocalDataDir = os.homedir + '/.achoz'
+fs.writeFileSync(filename, JSON.stringify(config, null, 2));

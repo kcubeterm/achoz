@@ -27,8 +27,8 @@ if (!fs.existsSync(achozdir)) {
 
 
 function startSearchEngine() {
-    searchEngine = `typesense-achoz -d ${achozdir}/searchdb -c ${achozdir}/config.json`
-    exec('typesense-achoz', (err, stdout, stderr) => {
+    searchEngine = `typesense-server -d ${achozdir}/searchdb -c ${achozdir}/config.json`
+    exec(searchEngine, (err, stdout, stderr) => {
         if (err) {
 
             console.warn(err)
@@ -51,6 +51,7 @@ function health() {
                 console.log("Search engine's health is fine ")
                 server()
             } else {
+                console.log("typesense engine is not running")
                 process.exit(1)
             }
         })

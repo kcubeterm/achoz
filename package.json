@@ -8,8 +8,7 @@
     "postinstall": "./postinstall.js"
   },
   "bin": {
-    "achoz": "./cli.js",
-    "typesense-achoz": "bin/typesense-achoz"
+    "achoz": "./cli.js"
   },
   "repository": {
     "type": "git",
