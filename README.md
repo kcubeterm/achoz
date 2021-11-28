@@ -11,16 +11,15 @@ As of now achoz supports linux 64 bit architecure only.
 you need to install typesense server as well https://typesense.org/downloads/
 
 ```
-git clone --depth=1 https://github.com/kcubeterm/achoz 
-cd achoz
-npm install -g .
+npm install -g achoz
 ```
-
+use sudo if you are not root.
 ## Configure directory
 
 Now need to configure directory where you keep documents and files so that crawler could index it into search engine.
 
-Add directory in config.json, config.json will be at `~/.achoz/config.json`
+Add directory in config.json, config.json will be at `~/.achoz/config.json` 
+run  `achoz` it will create config file if not exist already
 
 
 config.json looks like 
@@ -43,4 +42,5 @@ you need to change this part only
     ]
  ```
 
+Once you done with all. Fire `achoz` it will start crawling and once it crawled and index all documents you could search your document via browser at http://localhost:8080
 
