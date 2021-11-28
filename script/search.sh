@@ -7,5 +7,5 @@ api=`cat ~/project/achoz/config.json | jq -r .TypesenseApi`
 
 
 #  curl "${host}/collections/test/documents/search?q=is&query_by=content&page=1&highlight_fields=content&exclude_fields=content&snippet_threshold=10&highlight_affix_num_tokens=10" -H "X-TYPESENSE-API-KEY: ${api}"
- curl "${host}/collections/test/documents/4" -H "X-TYPESENSE-API-KEY: ${api}"
+ curl "${host}/collections/test/documents/1" -H "X-TYPESENSE-API-KEY: ${api}"
  

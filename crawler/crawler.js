@@ -13,7 +13,7 @@ writeJsonData = fs.createWriteStream("/tmp/IndexData.jsonln")
 function init() {
     var defaultConfig = `${appRoot}/config.json`
     var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-    configPath = userConfig ? userConfig : defaultConfig
+    configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
     console.log(configPath)
     const config = require(configPath)
 

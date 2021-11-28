@@ -10,33 +10,32 @@ const os = require('os')
 
 var defaultConfig = `${appRoot}/config.json`
 var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-configPath = userConfig ? userConfig : defaultConfig
-console.log(configPath)
+configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
 const config = require(configPath)
 
 TypesenseHost = config.TypesenseHost;
-Typesense_api = config.TypesenseApi;
+TypesenseApi = config.TypesenseApi;
 
 var achozdir = os.homedir + '/.achoz'
 
 if (!fs.existsSync(achozdir)) {
     fs.mkdirSync(achozdir)
     fs.mkdirSync(achozdir + '/searchdb')
-    fs.copyFileSync(appRoot + '/config.json', achozdir)
+    fs.copyFileSync(appRoot + '/config.json', achozdir + '/config.json')
 }
 
 
 function startSearchEngine() {
-    searchEngine = `typesense-server -d ${achozdir}/searchdb -c ${achozdir}/config.json`
+    searchEngine = `typesense-server -d ${achozdir}/searchdb -c ${achozdir}/config.json -a ${TypesenseApi} --api-port 8909`
     exec(searchEngine, (err, stdout, stderr) => {
         if (err) {
-
+            console.log('typesense server could not run')
             console.warn(err)
         }
     }).stdout.on('data', function (data) {
         console.log(data);
     });
-    health()
+    setTimeout(health, 5000)
 }
 
 // checking health of search engine 
@@ -84,9 +83,9 @@ function server() {
     }).then(() => {
 
         console.log('Indexing documents')
-        exec(`bash ${appRoot}/crawler/indexer.sh ${achozdir}`, (err, stdout, stderr) => {
+        exec(`bash ${appRoot}/crawler/indexer.sh ${os.homedir}/.achoz`, (err, stdout, stderr) => {
             if (err) {
-                console.warn(err)
+                console.warn(err) //TODO ^ above should be var
             }
         }).stdout.on('data', function (data) {
             console.log(data);
