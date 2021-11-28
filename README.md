@@ -8,9 +8,12 @@ more details at http://ahoxus.org/achoz
 
 As of now achoz supports linux 64 bit architecure only.
 
-install achoz from npm globally. 
+you need to install typesense server as well https://typesense.org/downloads/
+
 ```
-sudo npm install -g achoz
+git clone --depth=1 https://github.com/kcubeterm/achoz 
+cd achoz
+npm install -g .
 ```
 
 ## Configure directory
