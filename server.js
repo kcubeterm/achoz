@@ -1,11 +1,10 @@
 const express = require('express')
 const app = express()
 const path = require('path')
-const appRoot = require('app-root-path');
 const fetch = require('node-fetch')
 const fs = require('fs')
 const os = require('os')
-
+const appRoot = __dirname
 
 
 
@@ -28,7 +27,7 @@ app.get('/video', videoPlayer)
 app.get('/filereq', filereq);
 
 //app.use(express.static(`${appRoot}/public`))
-app.use("/public", express.static('public'))
+app.use("/public", express.static(appRoot + '/public'))
 app.listen(Port, () => {
     console.log(`Server is running on ${Port}`)
 })
