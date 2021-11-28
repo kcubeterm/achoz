@@ -50,13 +50,6 @@ function createApiKey(length) {
 
 config.TypesenseApi = createApiKey(40)
 filename = "./config.json"
-config.LocalDataDir = os.homedir + '/.achoz'
+
 fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 
-var achozdir = os.homedir + '/.achoz'
-
-if (!fs.existsSync(achozdir)) {
-    fs.mkdirSync(achozdir)
-    fs.mkdirSync(achozdir + '/searchdb')
-    fs.copyFileSync(appRoot + '/config.json', achozdir + '/config.json')
-}

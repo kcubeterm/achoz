@@ -22,6 +22,7 @@ if (!fs.existsSync(achozdir)) {
     fs.mkdirSync(achozdir)
     fs.mkdirSync(achozdir + '/searchdb')
     fs.copyFileSync(appRoot + '/config.json', achozdir + '/config.json')
+    process.exit(0)
 }
 
 
