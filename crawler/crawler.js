@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').execSync
-const spawn = require('child_process').spawn
+const spawn = require('child_process').spawnSync
 const officeParser = require('officeparser');
 const {
     convert
@@ -44,7 +44,7 @@ function watchDirChanges(dir) {
 }
 function escapeRegExp(text) {
     return text.replace(/[-[\]{}()*+?&'",\\^$|#\s]/g, '\\$&');
-  }
+}
 var walkSync = function (dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
@@ -118,9 +118,8 @@ function universalFileIndexer(filePath) {
         // Files without extension or unrecognised extension will be 
         // processed through mimetypes
         default:
-            let rephrasefilePath = escapeRegExp(filePath) // only for exec command with arguments
-            stdout = exec(`file --mime-type ${rephrasefilePath}`).toString()
-            var mimeType = stdout.split(':')[1].trim();
+            stdout1 = spawn("file", ["--mime-type", filePath]).stdout.toString()
+            var mimeType = stdout1.split(':')[1].trim();
             mimeTypeSwitch(mimeType, filePath)
 
     }
@@ -212,8 +211,8 @@ function docHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    rephrasefilePath = escapeRegExp(filePath) // only for exec command with arguments
-    var content = exec(`antiword ${rephrasefilePath}`, 'utf8').toString()
+    
+    content = spawn("antiword", [filePath]).stdout.toString()
     fileinfo.content = content.replace(/\s+/g, " ")
     fileinfo.type = 'officedoc';
     writeMetadata(fileinfo);
@@ -244,8 +243,8 @@ function pdfHandler(filePath) {
     }
     //filePath = filePath.replace(/(\s)/g, '\\$1')
     try {
-        rephrasefilePath = escapeRegExp(filePath) // only for exec command with arguments
-        var content = exec(`pdftotext '${rephrasefilePath}' -`, 'utf8').toString()
+        
+        content = spawn("antiword", [filePath]).stdout.toString()
         fileinfo.content = content.replace(/\s+/g, " ")
     } catch (err) {
         console.log(err)
