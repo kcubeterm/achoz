@@ -79,7 +79,8 @@ function filereq(req, res) {
         return response.json();
     })
         .then(function (data) {
-            res.sendFile(data.abspath);
+            console.log(data.abspath)
+            res.sendFile(`${data.abspath}`);
         }).catch(function (err) {
             console.log(err);
         });

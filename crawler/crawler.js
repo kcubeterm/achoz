@@ -41,6 +41,9 @@ function init() {
 function watchDirChanges(dir) {
 
 }
+function escapeRegExp(text) {
+    return text.replace(/[-[\]{}()*+?&'",\\^$|#\s]/g, '\\$&');
+  }
 var walkSync = function (dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
@@ -114,8 +117,8 @@ function universalFileIndexer(filePath) {
         // Files without extension or unrecognised extension will be 
         // processed through mimetypes
         default:
-            //filePath = filePath.replace(/(\s)/g, '\\$1')
-            stdout = exec(`file --mime-type '${filePath}'`).toString()
+            let rephrasefilePath = escapeRegExp(filePath) // only for exec command with arguments
+            stdout = exec(`file --mime-type ${rephrasefilePath}`).toString()
             var mimeType = stdout.split(':')[1].trim();
             mimeTypeSwitch(mimeType, filePath)
 
@@ -208,7 +211,8 @@ function docHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    var content = exec(`antiword ${filePath}`, 'utf8').toString()
+    rephrasefilePath = escapeRegExp(filePath) // only for exec command with arguments
+    var content = exec(`antiword ${rephrasefilePath}`, 'utf8').toString()
     fileinfo.content = content.replace(/\s+/g, " ")
     fileinfo.type = 'officedoc';
     writeMetadata(fileinfo);
@@ -239,7 +243,8 @@ function pdfHandler(filePath) {
     }
     //filePath = filePath.replace(/(\s)/g, '\\$1')
     try {
-        var content = exec(`pdftotext '${filePath}' -`, 'utf8').toString()
+        rephrasefilePath = escapeRegExp(filePath) // only for exec command with arguments
+        var content = exec(`pdftotext '${rephrasefilePath}' -`, 'utf8').toString()
         fileinfo.content = content.replace(/\s+/g, " ")
     } catch (err) {
         console.log(err)

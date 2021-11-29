@@ -8,7 +8,9 @@ more details at http://ahoxus.org/achoz
 
 As of now achoz supports linux 64 bit architecure only.
 
-you need to install typesense server as well https://typesense.org/downloads/
+you need to install typesense server https://typesense.org/downloads/
+
+poppler-utils and antiword.
 
 ```
 npm install -g achoz
@@ -19,7 +21,8 @@ use sudo if you are not root.
 Now need to configure directory where you keep documents and files so that crawler could index it into search engine.
 
 Add directory in config.json, config.json will be at `~/.achoz/config.json` 
-run  `achoz` it will create config file if not exist already
+
+run  `achoz` it will create config file if not already exist.
 
 
 config.json looks like 

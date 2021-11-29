@@ -40,6 +40,9 @@ if (!fs.existsSync(achozdir)) {
     
     process.exit(0)
 }
+if (!fs.existsSync(achozdir + '/searchdb')) {
+    fs.mkdirSync(achozdir + '/searchdb')
+}
 
 function startSearchEngine() {
     searchEngine = `typesense-server -d ${achozdir}/searchdb -c ${achozdir}/config.json -a ${TypesenseApi} --api-port 8909`
