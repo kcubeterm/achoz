@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const exec = require('child_process').execSync
+const spawn = require('child_process').spawn
 const officeParser = require('officeparser');
 const {
     convert

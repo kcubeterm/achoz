@@ -4,7 +4,7 @@ const exec = require('child_process').exec;
 const fetch = require("node-fetch");
 const fs = require('fs')
 const os = require('os')
-
+const spawn = require('child_process').spawn
 
 const appRoot = __dirname
 var defaultConfig = `${appRoot}/config.json`
@@ -80,15 +80,20 @@ function health() {
 function server() {
 
     let crawlerAndindexer = new Promise((resolve, reject) => {
-        exec(`node ${appRoot}/crawler/crawler.js`, (err, stdout, stderr) => {
-            if (err) {
-                console.warn(err)
-            }
-            resolve();
-        }).stdout.on('data', function (data) {
-            console.log(data);
-        });
+        // exec(`node ${appRoot}/crawler/crawler.js`, (err, stdout, stderr) => {
+        //     if (err) {
+        //         console.warn(err)
+        //     }
+        //     resolve();
+        // }).stdout.on('data', function (data) {
+        //     console.log(data);
+        // });
+        crawlProcess = spawn('node',[`${appRoot}/crawler/crawler.js`])
+        crawlProcess.stdout.pipe(process.stdout)
+        crawlProcess.on(('close'), function(code) {
 
+            resolve()
+        })
     })
 
     crawlerAndindexer.then(() => {
