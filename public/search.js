@@ -81,14 +81,17 @@ function appendData(data) {
         out.innerHTML = "virgin";
 
     }
+    console.log('starting nexthandler')
     nextHandler();
 }
 
 function nextHandler() {
-    page_no++;
-    document.getElementsByClassName('next').href = `/search?q=${input}&page=${page_no}`
-    page_no = page_no - 2;
-    document.getElementsByClassName('previous').href = `/search?q=${input}&page=${page_no}`
 
+    page_no++;
+    console.log(page_no)
+    document.getElementById('next').href = `/search?q=${input}&page=${page_no}`
+    page_no = page_no - 2;
+    document.getElementsById('previous').href = `/search?q=${input}&page=${page_no}`
+    console.log('done')
 }
 search();
