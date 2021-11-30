@@ -1,6 +1,6 @@
 {
   "name": "achoz",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "description": "Search through your all data efficiently",
   "main": "cli.js",
   "scripts": {
@@ -27,6 +27,7 @@
   "homepage": "https://github.com/kcubeterm/achoz#readme",
   "dependencies": {
     "app-root-path": "3.0.0",
+    "commander": "^8.3.0",
     "download": "^8.0.0",
     "express": "^4.17.1",
     "hidefile": "3.0.0",
