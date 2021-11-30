@@ -11,7 +11,6 @@ const appRoot = __dirname
 var defaultConfig = `${appRoot}/config.json`
 var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
 configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
-console.log(configPath)
 const config = require(configPath)
 
 TypesenseHost = config.TypesenseHost

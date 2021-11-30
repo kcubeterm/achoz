@@ -46,18 +46,21 @@ if (!fs.existsSync(achozdir + '/searchdb')) {
 // command line interface
 
 switch (process.argv[2]) {
+    case 'engine':
+        startSearchEngine()
+        break;
     case 'crawl':
         console.log("Start crawling your document. please wait.....");
         crawler()
         break;
     case 'index':
         console.log("please wait....")
-        startSearchEngine(indexer)
+        engineHealth(indexer)
         break;
 
     case 'start':
         console.log("starting achoz server.......")
-        startSearchEngine(server)
+        engineHealth(server)
         break;
     default:
         break;
@@ -65,21 +68,21 @@ switch (process.argv[2]) {
 
 
 
-function startSearchEngine(callback) {
-    searchEngine = spawn("typesense-server", ['--data-dir', `${achozdir}/searchdb`,'--api-key', `${TypesenseApi}`, "--api-port", "8909"])
-    // searchEngine = spawn("ls")
+function startSearchEngine() {
+    spawn('pkill', ["typesense-server"])
+    searchEngine = spawn("typesense-server", ['--data-dir', `${achozdir}/searchdb`, '--api-key', `${TypesenseApi}`, "--api-port", "8909"])
     searchEngine.stderr.pipe(process.stdout)
     searchEngine.stdout.pipe(process.stdout)
     searchEngine.on('exit', (exit) => {
-        console.log('stopping server')
-       // process.exit(1)
+        console.warn("report error")
+        process.exit(1)
     })
-    setTimeout(callback, 5000)
+
 }
 
 function indexer() {
     // wont override existing collection if already exist
-    let createCollection = spawn('bash', [`${appRoot}/crawler/collections.sh`,`${os.homedir}/.achoz`])
+    let createCollection = spawn('bash', [`${appRoot}/crawler/collections.sh`, `${os.homedir}/.achoz`])
     createCollection.stdout.pipe(process.stdout)
     createCollection.on('close', (code) => {
         let coreIndexer = spawn('bash', [`${appRoot}/crawler/indexer.sh`, `${os.homedir}/.achoz`])
@@ -103,26 +106,32 @@ function crawler() {
 }
 
 function server() {
+    console.log('...')
+    crawlProcess = spawn('node', [`${appRoot}/server.js`])
+    crawlProcess.stdout.pipe(process.stdout)
+    crawlProcess.stderr.pipe(process.stdout)
+}
+
+
+function engineHealth(callback) {
+    console.log(",,")
     var url = `${TypesenseHost}/health`
+
     fetch(url)
         .then((response) => {
             return response.json()
+
         })
         .then((data) => {
             if (data.ok) {
-                console.log("Search engine's health is fine ")
-                crawlProcess = spawn('node', [`${appRoot}/server.js`])
-                crawlProcess.stdout.pipe(process.stdout)
-                crawlProcess.stderr.pipe(process.stdout)
-            } else {
-                console.log("typesense engine is not running")
-                process.exit(1)
+                console.log('Engine health is fine()')
+                callback()
             }
         })
         .catch((err) => {
             console.log(err)
+            console.log('achoz engine is not running, run it by command "achoz engine"')
+
         })
-
 }
-
 
