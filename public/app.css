@@ -7,11 +7,12 @@
 /*background-image:url("https://i.ibb.co/QHFLWq2/photo-1503756234508-e32369269deb.jpg");*/ 
 
 body {
-    background-color:rgb(48,48,48);
+    background-color:rgb(172, 126, 172);
+    background-size: cover;
 }
 #achoz {
     display:flex;
-    color:#f76927ef;
+    color:#2c1003ef;
     align-items: center;
     justify-content: center;
     font-family: "Times New Roman", Times,serif;
@@ -22,7 +23,7 @@ ul {
 .result {
     position: relative;
     list-style-type:none ;
-    background-color:rgb(48,48,48);
+    background-color:rgb(92, 84, 84);
     border-radius:5px;
     border: 1px solid;
     border-color: #999797;
@@ -30,20 +31,22 @@ ul {
     width:100%;
     margin-bottom:10px;
     margin-right: 10%;
-    color: honeydew;
+    color: rgb(242, 250, 250);
     line-height:normal;
 
     
 }
 
 .filename {
-    color: rgba(151, 212, 9, 0.966);
+    color: rgba(11, 186, 230, 0.966);
+    overflow-wrap: anywhere;
 }
 .description {
     font-size: 15px;
-    color: rgb(233, 250, 81);
+    color: rgb(247, 248, 234);
 }
 .abspath {
+    overflow-wrap: anywhere;
     font-size: small;
     margin-bottom: 1px;
 }
