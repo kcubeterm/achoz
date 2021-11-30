@@ -44,6 +44,7 @@ ul {
 .description {
     font-size: 15px;
     color: rgb(247, 248, 234);
+    overflow-wrap: anywhere;
 }
 .abspath {
     overflow-wrap: anywhere;

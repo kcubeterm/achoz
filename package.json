@@ -1,6 +1,6 @@
 {
   "name": "achoz",
-  "version": "0.1.17",
+  "version": "0.1.19",
   "description": "Search through your all data efficiently",
   "main": "cli.js",
   "scripts": {

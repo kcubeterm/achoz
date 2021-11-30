@@ -45,5 +45,10 @@ you need to change this part only
     ]
  ```
 
-Once you done with all. Fire `achoz` it will start crawling and once it crawled and index all documents you could search your document via browser at http://localhost:8080
+Once you done with all. Fire `achoz crawl` it will start crawling and once it crawled.
+then fire `achoz index ` and it will  index all documents that have been crawled. 
+
+Now you are ready to go once fire `achoz start` 
+
+browse and search docs at http://localhost:8080 
 
