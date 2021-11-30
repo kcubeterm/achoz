@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const exec = require('child_process').execSync
 const spawn = require('child_process').spawnSync
 const officeParser = require('officeparser');
 const {
@@ -23,28 +22,19 @@ function init() {
         var dir = dir.replace("~", os.homedir())
         absDir.push(path.resolve(dir));
     });
-    // Prevent repeation of dir
     let uniqueDir = [...new Set(absDir)]
     var filelist = [];
     uniqueDir.forEach((dir, index) => {
-        //console.log(dir)
         file = walkSync(dir + '/')
         filelist = filelist.concat(file);
 
 
     });
     let uniqueFilelist = [...new Set(filelist)]
-    //let uniqueFilelist = filelist
     jsonWriter(uniqueFilelist)
     localFileIndexer("/tmp/filelist.json")
 }
 
-function watchDirChanges(dir) {
-
-}
-function escapeRegExp(text) {
-    return text.replace(/[-[\]{}()*+?&'",\\^$|#\s]/g, '\\$&');
-}
 var walkSync = function (dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
@@ -75,7 +65,6 @@ function localFileIndexer(arrayFilePath) {
         universalFileIndexer(dir)
 
     });
-    //fs.unlinkSync(arrayFilePath)
 }
 
 function writeMetadata(data) {
@@ -241,7 +230,6 @@ function pdfHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    //filePath = filePath.replace(/(\s)/g, '\\$1')
     try {
         
         content = spawn("antiword", [filePath]).stdout.toString()
@@ -258,12 +246,12 @@ function pdfHandler(filePath) {
 function compressedFileHandler(filePath) {
     return defaultFileHandler(filePath, 'compressed')
 
-    // WIP
+    // TODO
 }
 
 function xmlHandler(filePath) {
     return defaultFileHandler(filePath, 'xml')
-    // WIP
+    // TODO
 
 }
 

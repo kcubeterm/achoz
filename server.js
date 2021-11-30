@@ -25,7 +25,6 @@ app.get('/search-api', searchApi);
 app.get('/video', videoPlayer)
 app.get('/filereq', filereq);
 
-//app.use(express.static(`${appRoot}/public`))
 app.use("/public", express.static(appRoot + '/public'))
 app.listen(Port, () => {
     console.log(`Server is running on ${Port}`)
@@ -44,14 +43,13 @@ function searchApi(req, res) {
 
     var input = req.query.q
     var page_no = req.query.page || 1;
-    // typesense url 
     url = `${TypesenseHost}/collections/test/documents/\
 search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
 page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
 
     fetch(url, {
         headers: {
-            'X-TYPESENSE-API-KEY': Typesense_api  // demo 
+            'X-TYPESENSE-API-KEY': Typesense_api 
         }
     })
         .then(function (response) {
@@ -72,7 +70,7 @@ function filereq(req, res) {
     url = `${TypesenseHost}/collections/test/documents/${id}`
     fetch(url, {
         headers: {
-            'X-TYPESENSE-API-KEY': Typesense_api  // demo 
+            'X-TYPESENSE-API-KEY': Typesense_api 
         }
     }).then(function (response) {
         return response.json();
