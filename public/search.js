@@ -65,6 +65,9 @@ function appendData(data) {
                 <p class="type" > ${type} </p> </div>
                 `
                 break;
+
+                case type.match(/image/)?.input:
+                    
             default:
                 search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
         <a class="filename"> ${filename} </a>
