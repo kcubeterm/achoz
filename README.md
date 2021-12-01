@@ -1,6 +1,6 @@
 # achoz
 
-like a web search, but for your personal files. 
+like a web search, but for your personal files. demo [here](achoz.ahoxus.org)
 ### Story 
 > cregox have a lot of data. files, emails, messages, web links, web content, etc. they also are of different kinds; text, video, audio, apps, etc.
 when trying to find something they do remember to be there, sometimes it gets impossible!
