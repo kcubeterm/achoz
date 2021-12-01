@@ -2,17 +2,21 @@
 
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="public/app.css">
 </head>
 
 <body>
     <div id=logo>
-        <h1 id=achoz> Achoz</h1>
+        <h1 id="achoz"> Achoz</h1>
     </div>
-    <div id="input1">
+    <div id="wrap">
+
         <form action="/search">
-            <input type="text" placeholder="Type here.." name="q">
-            <button id="sbutton">Go</button>
+        <div id="searchbar">
+                <input id="input" type="text" placeholder="Type here.." name="q">
+                <button id="sbutton"> <i class="fa fa-search"></i></button>
+            </div>
         </form>
     </div>
     <ul id=results></ul>

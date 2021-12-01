@@ -200,11 +200,16 @@ function docHandler(filePath) {
     if (typeof fileinfo == 'undefined') {
         return;
     }
-    
-    content = spawn("antiword", [filePath]).stdout.toString()
-    fileinfo.content = content.replace(/\s+/g, " ")
-    fileinfo.type = 'officedoc';
-    writeMetadata(fileinfo);
+    try {
+        content = spawn("antiword", [filePath]).stdout.toString()
+        fileinfo.content = content.replace(/\s+/g, " ")
+        fileinfo.type = 'officedoc';
+        writeMetadata(fileinfo);
+        
+    } catch (error) {
+        console.log(error)
+        
+    }
 
 }
 
@@ -236,7 +241,7 @@ function pdfHandler(filePath) {
         fileinfo.content = content.replace(/\s+/g, " ")
     } catch (err) {
         console.log(err)
-        return;
+        return
     }
     fileinfo.type = 'pdf';
     writeMetadata(fileinfo);

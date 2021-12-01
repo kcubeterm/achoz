@@ -5,14 +5,15 @@
     -o-background-size: cover;
     background-size: cover;
 /*background-image:url("https://i.ibb.co/QHFLWq2/photo-1503756234508-e32369269deb.jpg");*/ 
+@import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body {
-    background-color:rgb(172, 126, 172);
+    background-color: whitesmoke;
     background-size: cover;
 }
 #achoz {
     display:flex;
-    color:#2c1003ef;
+    color:#b069bfef;
     align-items: center;
     justify-content: center;
     font-family: "Times New Roman", Times,serif;
@@ -23,7 +24,7 @@ ul {
 .result {
     position: relative;
     list-style-type:none ;
-    background-color:rgb(92, 84, 84);
+    background-color:rgb(65 42 94);
     border-radius:5px;
     border: 1px solid;
     border-color: #999797;
@@ -52,40 +53,51 @@ ul {
     margin-bottom: 1px;
 }
 input {
-    width: 60%;
-    height: 40px;
-    border-radius: 15px;
-    border: 2px solid #807474;
-    padding: 5px 10px;
-    font-size: 15px;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-    box-sizing: border-box;
-    background-color:rgb(235, 169, 116)
-}
+    width: 100%;
+    border: 3px solid #4235d1;
+    border-right: none;
+    padding: 5px;
+    height: 20px;
+    border-radius: 5px 0 0 5px;
+    outline: none;
+    color: #7f1da5;
+    font: 1em sans-serif;
+  }
+
 #sbutton {
-    background-color: rgb(231, 178, 31);
-    color: white;
-    border-radius: 15px;
-    box-shadow: rgba(233, 46, 21, 0.2) 0px 8px 24px;
-    height: 40%;
+  width: 40px;
+  height: 36px;
+  border: purple;
+  background: #7502c2;
+  text-align: center;
+  color: #fff;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-size: 20px;
 }
 input:focus {
     outline:none;
 }
-
-#input1 {
-    padding:10px;
-    top: 50%;
-    left: 50%;
-    text-align:center ;
-    box-sizing: border-box;
-    border-radius: 15px;
+#wrap{
+    margin-top: 5%;
+    margin-bottom: 10px;
+    width: 30%;
+    left: 33%;
+    position: relative;
+    box-shadow: purple;
+    
+  }
+#searchbar {
+    width: 100%;
+ position: relative;
+ display: flex;
+ box-shadow: purple;
 
 }
 #next-pre {
     text-align: center;
 }
-.next, .previous {
+#next, #previous {
     padding:5px;
     border: gray solid;
     border-style: outset;
@@ -94,6 +106,7 @@ input:focus {
     margin: 20px;
 }
 #results {
+    position: inherit;
     margin-right: 10%;
     margin-left: 10%;
 }
@@ -102,3 +115,9 @@ input:focus {
     text-align: right;
     overflow: auto;
 } 
+.type {
+    color: gold;
+}
+.description {
+    color: hotpink;
+}

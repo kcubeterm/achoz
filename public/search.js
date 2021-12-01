@@ -3,7 +3,7 @@ function search() {
     const params = new URLSearchParams(window.location.search);
     input = params.get('q');
     page_no = params.get('page') || 1;
-    document.getElementById("search_input").value = input;
+    document.getElementById("input").value = input;
     url = `/search-api?q=${input}&page=${page_no}`;
     fetch(url)
         .then(function (response) {
