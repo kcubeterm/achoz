@@ -1,6 +1,10 @@
 # achoz
 
-like a web search, but for your personal files.
+like a web search, but for your personal files. 
+### Story 
+> cregox have a lot of data. files, emails, messages, web links, web content, etc. they also are of different kinds; text, video, audio, apps, etc.
+when trying to find something they do remember to be there, sometimes it gets impossible!
+the goal of achoz is making cregox self-data-searching-life not only easier, but enable a new world of possibilities, in which they don’t have to worry anymore how to store data for themselves (as long as it’s stored with open and free standards).
 
 more details at http://ahoxus.org/achoz
 
