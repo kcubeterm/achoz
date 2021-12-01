@@ -45,7 +45,7 @@ you need to change this part only
     ]
  ```
 
-Once you done with all. Fire `achoz crawl` it will start crawling and once it crawled.
+Once you done with all.Start achoz heart by `achoz engine` then open another tab and fire `achoz crawl` it will start crawling and once it crawled.
 then fire `achoz index ` and it will  index all documents that have been crawled. 
 
 Now you are ready to go once fire `achoz start` 
