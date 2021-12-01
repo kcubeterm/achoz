@@ -10,7 +10,7 @@ As of now achoz supports linux 64 bit architecure only.
 
 you need to install typesense server https://typesense.org/downloads/
 
-poppler-utils and antiword.
+poppler-utils,jq and antiword.
 
 ```
 npm install -g achoz
