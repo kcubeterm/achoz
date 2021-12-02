@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const spawn = require('child_process').spawnSync
+const uniqueName = require('../lib/unique-name').uniqueName
 const officeParser = require('officeparser');
 const {
     convert
@@ -59,13 +60,31 @@ var walkSync = function (dir, filelist) {
 };
 
 function localFileIndexer(arrayFilePath) {
-    array_output = JSON.parse(fs.readFileSync(arrayFilePath));
-    array_output.forEach((dir, index) => {
-        console.log(dir, index)
-        universalFileIndexer(dir)
 
-    });
-}
+    array_output = JSON.parse(fs.readFileSync(arrayFilePath));
+    var isIndexDB = fs.existsSync(os.homedir + "indexedDb.json")
+    if (isIndexDB) {
+        const indexedDb = require(os.homedir + "indexedDb.json")
+    }
+    for (let i = 0; i < array_output.length; i++) {
+        let filePath = array_output[i]
+
+        if (isIndexDB) {
+            uniqueName(filePath).then((hash) => {
+                if (indexedDb.hasOwnProperty(hash)) {
+                    console.log(filePath + "  already indexed")
+                } else {
+                    console.log(filePath, i)
+                    universalFileIndexer(filePath)
+                }
+
+            })
+        } else {
+            console.log(filePath, i)
+            universalFileIndexer(filePath)
+        }
+    }
+};
 
 function writeMetadata(data) {
     data = JSON.stringify(data)
@@ -159,93 +178,104 @@ function getGeneralInfo(filePath) {
             return;
         }
     }
-    fileinfo.atime = stats.atime
-    fileinfo.ctime = stats.ctime
-    fileinfo.mtimeMs = stats.mtimeMs
-    return fileinfo
+    return new Promise((resolve) => {
 
+        uniqueName(filePath).then((d) => {
+            fileinfo.uniqid = d
+            fileinfo.atime = stats.atime
+            fileinfo.ctime = stats.ctime
+            fileinfo.mtimeMs = stats.mtimeMs
+            resolve(fileinfo)
+        })
+    })
 }
 
 function textHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
-    if (typeof fileinfo == 'undefined') {
-        return;
+    getGeneralInfo(filePath).then((fileinfo) => {
 
-    }
-    try {
-        fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
-    } catch (err) {
-        console.err(err);
-        return;
-    }
-    fileinfo.type = 'text'
-    writeMetadata(fileinfo)
+        if (typeof fileinfo == 'undefined') {
+            return;
+
+        }
+        try {
+            fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
+        } catch (err) {
+            console.err(err);
+            return;
+        }
+        fileinfo.type = 'text'
+        writeMetadata(fileinfo)
+    })
 }
 
 function htmlHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
-    if (typeof fileinfo == 'undefined') {
-        return;
-    }
-    const htmls = fs.readFileSync(filePath, 'utf8');
-    const texts = convert(htmls)
+    getGeneralInfo(filePath).then((fileinfo) => {
+        if (typeof fileinfo == 'undefined') {
+            return;
+        }
+        const htmls = fs.readFileSync(filePath, 'utf8');
+        const texts = convert(htmls)
 
-    fileinfo.content = texts.replace(/\s+/g, " ");
-    fileinfo.type = 'html'
-    writeMetadata(fileinfo);
+        fileinfo.content = texts.replace(/\s+/g, " ");
+        fileinfo.type = 'html'
+        writeMetadata(fileinfo);
+    })
 }
 
 function docHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
-    if (typeof fileinfo == 'undefined') {
-        return;
-    }
-    try {
-        content = spawn("antiword", [filePath]).stdout.toString()
-        fileinfo.content = content.replace(/\s+/g, " ")
-        fileinfo.type = 'officedoc';
-        writeMetadata(fileinfo);
-        
-    } catch (error) {
-        console.log(error)
-        
-    }
+    getGeneralInfo(filePath).then((fileinfo) => {
+        if (typeof fileinfo == 'undefined') {
+            return;
+        }
+        try {
+            content = spawn("antiword", [filePath]).stdout.toString()
+            fileinfo.content = content.replace(/\s+/g, " ")
+            fileinfo.type = 'officedoc';
+            writeMetadata(fileinfo);
 
+        } catch (error) {
+            console.log(error)
+
+        }
+
+    })
 }
 
 function officeFileHandler(filePath, callback) {
-    var fileinfo = getGeneralInfo(filePath);
-    if (typeof fileinfo == 'undefined') {
-        console.log('fileinfo getting undefined')
-        return;
-    }
-
-    officeParser.parseOffice(filePath, (data, err) => {
-        if (err) {
-            return console.log(err);
+    getGeneralInfo(filePath).then((fileinfo) => {
+        if (typeof fileinfo == 'undefined') {
+            console.log('fileinfo getting undefined')
+            return;
         }
-        fileinfo.content = data.replace(/\s+/g, " ").toString()
-        fileinfo.type = 'officedoc'
-        writeMetadata(fileinfo);
-    });
+
+        officeParser.parseOffice(filePath, (data, err) => {
+            if (err) {
+                return console.log(err);
+            }
+            fileinfo.content = data.replace(/\s+/g, " ").toString()
+            fileinfo.type = 'officedoc'
+            writeMetadata(fileinfo);
+        });
+    })
 }
 
 function pdfHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
-    if (typeof fileinfo == 'undefined') {
-        return;
-    }
-    try {
-        
-        content = spawn("antiword", [filePath]).stdout.toString()
-        fileinfo.content = content.replace(/\s+/g, " ")
-    } catch (err) {
-        console.log(err)
-        return
-    }
-    fileinfo.type = 'pdf';
-    writeMetadata(fileinfo);
+    getGeneralInfo(filePath).then((fileinfo) => {
+        if (typeof fileinfo == 'undefined') {
+            return;
+        }
+        try {
 
+            content = spawn("antiword", [filePath]).stdout.toString()
+            fileinfo.content = content.replace(/\s+/g, " ")
+        } catch (err) {
+            console.log(err)
+            return
+        }
+        fileinfo.type = 'pdf';
+        writeMetadata(fileinfo);
+
+    })
 }
 
 function compressedFileHandler(filePath) {
@@ -261,14 +291,15 @@ function xmlHandler(filePath) {
 }
 
 function defaultFileHandler(filePath, filetype) {
-    var fileinfo = getGeneralInfo(filePath);
-    if (typeof fileinfo == 'undefined') {
-        return;
-    }
-    if (filetype) {
-        fileinfo.type = filetype;
-    }
-    writeMetadata(fileinfo);
+    getGeneralInfo(filePath).then((fileinfo) => {
+        if (typeof fileinfo == 'undefined') {
+            return;
+        }
+        if (filetype) {
+            fileinfo.type = filetype;
+        }
+        writeMetadata(fileinfo);
+    })
 }
 
 init()

@@ -1,6 +1,8 @@
 #!/bin/bash
 achoz_data_dir=$1
 
+
+
 host=`cat ${achoz_data_dir}/config.json | jq -r .TypesenseHost`
 api=`cat ${achoz_data_dir}/config.json | jq -r .TypesenseApi`
 echo $achoz_data_dir
