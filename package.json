@@ -1,6 +1,6 @@
 {
   "name": "achoz",
-  "version": "0.1.20",
+  "version": "0.1.21",
   "description": "Search through your all data efficiently",
   "main": "cli.js",
   "scripts": {
@@ -37,11 +37,5 @@
     "pdf2json": "1.2.3",
     "targz": "^1.0.1",
     "xml2js": "0.4.23"
-  },
-  "os": [
-    "linux"
-  ],
-  "cpu": [
-    "x64"
-  ]
+  }
 }
