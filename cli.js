@@ -6,6 +6,7 @@ const os = require('os')
 const spawn = require('child_process').spawn
 
 const appRoot = __dirname
+const createIndexObj = require(appRoot + '/lib/typesense').indexDb
 var defaultConfig = `${appRoot}/config.json`
 var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
 configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
@@ -91,8 +92,9 @@ function indexer() {
             console.error(err)
         })
         coreIndexer.on('close', (code) => {
+            createIndexObj()
             console.log(`indexing done or any error ${code}`)
-            process.exit(0)
+           
         })
     })
 }

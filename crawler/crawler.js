@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const spawn = require('child_process').spawnSync
-const uniqueName = require('../lib/unique-name').uniqueName
+const spawnSync = require('child_process').spawnSync
+const uniqueName = require(__dirname + '/../lib/unique-name').uniqueName
 const officeParser = require('officeparser');
 const {
     convert
@@ -10,13 +10,11 @@ const appRoot = require('app-root-path');
 const os = require('os')
 const hidefile = require('hidefile')
 writeJsonData = fs.createWriteStream("/tmp/IndexData.jsonln")
+const conf = require(__dirname + "/../setconfig").conf
 
+conf()
 function init() {
-    var defaultConfig = `${appRoot}/config.json`
-    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-    configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
-    console.log(configPath)
-    const config = require(configPath)
+   
 
     var absDir = []
     config.DirToIndex.forEach((dir, index) => {
@@ -34,6 +32,7 @@ function init() {
     let uniqueFilelist = [...new Set(filelist)]
     jsonWriter(uniqueFilelist)
     localFileIndexer("/tmp/filelist.json")
+
 }
 
 var walkSync = function (dir, filelist) {
@@ -62,29 +61,32 @@ var walkSync = function (dir, filelist) {
 function localFileIndexer(arrayFilePath) {
 
     array_output = JSON.parse(fs.readFileSync(arrayFilePath));
-    var isIndexDB = fs.existsSync(os.homedir + "indexedDb.json")
+    var isIndexDB = fs.existsSync(achozDataDir + "/indexedDB.json")
+    
     if (isIndexDB) {
-        const indexedDb = require(os.homedir + "indexedDb.json")
+        var indexedDb = JSON.parse(fs.readFileSync(achozDataDir + "/indexedDB.json"))
+        
     }
-    for (let i = 0; i < array_output.length; i++) {
-        let filePath = array_output[i]
-
+    console.log(isIndexDB)
+    
+    array_output.forEach((filePath, i) => {
         if (isIndexDB) {
-            uniqueName(filePath).then((hash) => {
-                if (indexedDb.hasOwnProperty(hash)) {
-                    console.log(filePath + "  already indexed")
-                } else {
-                    console.log(filePath, i)
-                    universalFileIndexer(filePath)
-                }
 
-            })
+            if (indexedDb.hasOwnProperty(uniqueName(filePath))) {
+                console.log(filePath + "  already indexed")
+            } else {
+                console.log(filePath, i)
+                universalFileIndexer(filePath)
+            }
+
+
         } else {
             console.log(filePath, i)
             universalFileIndexer(filePath)
+            
         }
-    }
-};
+    })
+}
 
 function writeMetadata(data) {
     data = JSON.stringify(data)
@@ -126,7 +128,7 @@ function universalFileIndexer(filePath) {
         // Files without extension or unrecognised extension will be 
         // processed through mimetypes
         default:
-            stdout1 = spawn("file", ["--mime-type", filePath]).stdout.toString()
+            stdout1 = spawnSync("file", ["--mime-type", filePath]).stdout.toString()
             var mimeType = stdout1.split(':')[1].trim();
             mimeTypeSwitch(mimeType, filePath)
 
@@ -178,104 +180,106 @@ function getGeneralInfo(filePath) {
             return;
         }
     }
-    return new Promise((resolve) => {
 
-        uniqueName(filePath).then((d) => {
-            fileinfo.uniqid = d
-            fileinfo.atime = stats.atime
-            fileinfo.ctime = stats.ctime
-            fileinfo.mtimeMs = stats.mtimeMs
-            resolve(fileinfo)
-        })
-    })
+
+    fileinfo.uniqid = uniqueName(filePath)
+    fileinfo.atime = stats.atime
+    fileinfo.ctime = stats.ctime
+    fileinfo.mtimeMs = stats.mtimeMs
+    return fileinfo
+
 }
 
 function textHandler(filePath) {
-    getGeneralInfo(filePath).then((fileinfo) => {
+    let fileinfo = getGeneralInfo(filePath)
+    // console.log(fileinfo)
+    if (typeof fileinfo == 'undefined') {
+        return;
 
-        if (typeof fileinfo == 'undefined') {
-            return;
+    }
+    try {
+        fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
+    } catch (err) {
+        console.err(err);
+        return;
+    }
+    fileinfo.type = 'text'
+    writeMetadata(fileinfo)
 
-        }
-        try {
-            fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
-        } catch (err) {
-            console.err(err);
-            return;
-        }
-        fileinfo.type = 'text'
-        writeMetadata(fileinfo)
-    })
 }
 
 function htmlHandler(filePath) {
-    getGeneralInfo(filePath).then((fileinfo) => {
-        if (typeof fileinfo == 'undefined') {
-            return;
-        }
-        const htmls = fs.readFileSync(filePath, 'utf8');
-        const texts = convert(htmls)
+    let fileinfo = getGeneralInfo(filePath)
+    if (typeof fileinfo == 'undefined') {
+        return;
+    }
+    const htmls = fs.readFileSync(filePath, 'utf8');
+    const texts = convert(htmls)
 
-        fileinfo.content = texts.replace(/\s+/g, " ");
-        fileinfo.type = 'html'
-        writeMetadata(fileinfo);
-    })
+    fileinfo.content = texts.replace(/\s+/g, " ");
+    fileinfo.type = 'html'
+    writeMetadata(fileinfo);
+
 }
 
 function docHandler(filePath) {
-    getGeneralInfo(filePath).then((fileinfo) => {
-        if (typeof fileinfo == 'undefined') {
-            return;
-        }
-        try {
-            content = spawn("antiword", [filePath]).stdout.toString()
-            fileinfo.content = content.replace(/\s+/g, " ")
-            fileinfo.type = 'officedoc';
-            writeMetadata(fileinfo);
+    let fileinfo = getGeneralInfo(filePath)
+    if (typeof fileinfo == 'undefined') {
+        return;
+    }
+    try {
+        command = spawnSync("antiword", [filePath, '-']).stdout.toString()
+        fileinfo.content = command.replace(/\s+/g, " ")
+        fileinfo.type = 'officedoc';
+        writeMetadata(fileinfo);
 
-        } catch (error) {
-            console.log(error)
+    } catch (error) {
+        console.log(filepath)
+        console.log(error)
 
-        }
+    }
 
-    })
+
 }
 
 function officeFileHandler(filePath, callback) {
-    getGeneralInfo(filePath).then((fileinfo) => {
-        if (typeof fileinfo == 'undefined') {
-            console.log('fileinfo getting undefined')
-            return;
-        }
+    let fileinfo = getGeneralInfo(filePath)
+    if (typeof fileinfo == 'undefined') {
+        console.log('fileinfo getting undefined')
+        return;
+    }
 
-        officeParser.parseOffice(filePath, (data, err) => {
-            if (err) {
-                return console.log(err);
-            }
-            fileinfo.content = data.replace(/\s+/g, " ").toString()
-            fileinfo.type = 'officedoc'
-            writeMetadata(fileinfo);
-        });
-    })
+    officeParser.parseOffice(filePath, (data, err) => {
+        if (err) {
+            return console.log(err);
+        }
+        fileinfo.content = data.replace(/\s+/g, " ").toString()
+        fileinfo.type = 'officedoc'
+        writeMetadata(fileinfo);
+    });
+
 }
 
 function pdfHandler(filePath) {
-    getGeneralInfo(filePath).then((fileinfo) => {
-        if (typeof fileinfo == 'undefined') {
-            return;
-        }
-        try {
 
-            content = spawn("antiword", [filePath]).stdout.toString()
-            fileinfo.content = content.replace(/\s+/g, " ")
-        } catch (err) {
-            console.log(err)
-            return
-        }
+    let fileinfo = getGeneralInfo(filePath)
+    if (typeof fileinfo == 'undefined') {
+        return;
+    }
+    try {
+
+        command = spawnSync("pdftotext", [filePath, '-']).stdout.toString()
+        fileinfo.content = command.replace(/\s+/g, " ")
         fileinfo.type = 'pdf';
         writeMetadata(fileinfo);
 
-    })
+
+    } catch (err) {
+        console.log(err)
+        return
+    }
+
+
 }
 
 function compressedFileHandler(filePath) {
@@ -291,15 +295,15 @@ function xmlHandler(filePath) {
 }
 
 function defaultFileHandler(filePath, filetype) {
-    getGeneralInfo(filePath).then((fileinfo) => {
-        if (typeof fileinfo == 'undefined') {
-            return;
-        }
-        if (filetype) {
-            fileinfo.type = filetype;
-        }
-        writeMetadata(fileinfo);
-    })
+    let fileinfo = getGeneralInfo(filePath)
+    if (typeof fileinfo == 'undefined') {
+        return;
+    }
+    if (filetype) {
+        fileinfo.type = filetype;
+    }
+    writeMetadata(fileinfo);
+
 }
 
 init()
