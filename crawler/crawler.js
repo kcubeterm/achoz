@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-const spawn = require('child_process').spawnSync
+const spawnSync = require('child_process').spawnSync
+const uniqueName = require(__dirname + '/../lib/unique-name').uniqueName
 const officeParser = require('officeparser');
 const {
     convert
@@ -9,13 +10,11 @@ const appRoot = require('app-root-path');
 const os = require('os')
 const hidefile = require('hidefile')
 writeJsonData = fs.createWriteStream("/tmp/IndexData.jsonln")
+const conf = require(__dirname + "/../setconfig").conf
 
+conf()
 function init() {
-    var defaultConfig = `${appRoot}/config.json`
-    var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-    configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
-    console.log(configPath)
-    const config = require(configPath)
+   
 
     var absDir = []
     config.DirToIndex.forEach((dir, index) => {
@@ -33,6 +32,7 @@ function init() {
     let uniqueFilelist = [...new Set(filelist)]
     jsonWriter(uniqueFilelist)
     localFileIndexer("/tmp/filelist.json")
+
 }
 
 var walkSync = function (dir, filelist) {
@@ -59,12 +59,33 @@ var walkSync = function (dir, filelist) {
 };
 
 function localFileIndexer(arrayFilePath) {
-    array_output = JSON.parse(fs.readFileSync(arrayFilePath));
-    array_output.forEach((dir, index) => {
-        console.log(dir, index)
-        universalFileIndexer(dir)
 
-    });
+    array_output = JSON.parse(fs.readFileSync(arrayFilePath));
+    var isIndexDB = fs.existsSync(achozDataDir + "/indexedDB.json")
+    
+    if (isIndexDB) {
+        var indexedDb = JSON.parse(fs.readFileSync(achozDataDir + "/indexedDB.json"))
+        
+    }
+    console.log(isIndexDB)
+    
+    array_output.forEach((filePath, i) => {
+        if (isIndexDB) {
+
+            if (indexedDb.hasOwnProperty(uniqueName(filePath))) {
+                console.log(filePath + "  already indexed")
+            } else {
+                console.log(filePath, i)
+                universalFileIndexer(filePath)
+            }
+
+
+        } else {
+            console.log(filePath, i)
+            universalFileIndexer(filePath)
+            
+        }
+    })
 }
 
 function writeMetadata(data) {
@@ -107,7 +128,7 @@ function universalFileIndexer(filePath) {
         // Files without extension or unrecognised extension will be 
         // processed through mimetypes
         default:
-            stdout1 = spawn("file", ["--mime-type", filePath]).stdout.toString()
+            stdout1 = spawnSync("file", ["--mime-type", filePath]).stdout.toString()
             var mimeType = stdout1.split(':')[1].trim();
             mimeTypeSwitch(mimeType, filePath)
 
@@ -159,6 +180,9 @@ function getGeneralInfo(filePath) {
             return;
         }
     }
+
+
+    fileinfo.uniqid = uniqueName(filePath)
     fileinfo.atime = stats.atime
     fileinfo.ctime = stats.ctime
     fileinfo.mtimeMs = stats.mtimeMs
@@ -167,7 +191,8 @@ function getGeneralInfo(filePath) {
 }
 
 function textHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
+    let fileinfo = getGeneralInfo(filePath)
+    // console.log(fileinfo)
     if (typeof fileinfo == 'undefined') {
         return;
 
@@ -180,10 +205,11 @@ function textHandler(filePath) {
     }
     fileinfo.type = 'text'
     writeMetadata(fileinfo)
+
 }
 
 function htmlHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
+    let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
         return;
     }
@@ -193,28 +219,31 @@ function htmlHandler(filePath) {
     fileinfo.content = texts.replace(/\s+/g, " ");
     fileinfo.type = 'html'
     writeMetadata(fileinfo);
+
 }
 
 function docHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
+    let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
         return;
     }
     try {
-        content = spawn("antiword", [filePath]).stdout.toString()
-        fileinfo.content = content.replace(/\s+/g, " ")
+        command = spawnSync("antiword", [filePath, '-']).stdout.toString()
+        fileinfo.content = command.replace(/\s+/g, " ")
         fileinfo.type = 'officedoc';
         writeMetadata(fileinfo);
-        
+
     } catch (error) {
+        console.log(filepath)
         console.log(error)
-        
+
     }
+
 
 }
 
 function officeFileHandler(filePath, callback) {
-    var fileinfo = getGeneralInfo(filePath);
+    let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
         console.log('fileinfo getting undefined')
         return;
@@ -228,23 +257,28 @@ function officeFileHandler(filePath, callback) {
         fileinfo.type = 'officedoc'
         writeMetadata(fileinfo);
     });
+
 }
 
 function pdfHandler(filePath) {
-    var fileinfo = getGeneralInfo(filePath);
+
+    let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
         return;
     }
     try {
-        
-        content = spawn("antiword", [filePath]).stdout.toString()
-        fileinfo.content = content.replace(/\s+/g, " ")
+
+        command = spawnSync("pdftotext", [filePath, '-']).stdout.toString()
+        fileinfo.content = command.replace(/\s+/g, " ")
+        fileinfo.type = 'pdf';
+        writeMetadata(fileinfo);
+
+
     } catch (err) {
         console.log(err)
         return
     }
-    fileinfo.type = 'pdf';
-    writeMetadata(fileinfo);
+
 
 }
 
@@ -261,7 +295,7 @@ function xmlHandler(filePath) {
 }
 
 function defaultFileHandler(filePath, filetype) {
-    var fileinfo = getGeneralInfo(filePath);
+    let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
         return;
     }
@@ -269,6 +303,7 @@ function defaultFileHandler(filePath, filetype) {
         fileinfo.type = filetype;
     }
     writeMetadata(fileinfo);
+
 }
 
 init()

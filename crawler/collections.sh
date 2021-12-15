@@ -13,6 +13,7 @@ curl "${host}/collections" \
          "fields": [
            {"name": "name", "type": "string" },
            {"name": "abspath", "type": "string" },
+           {"name": "uniqid", "type": "string" },
            {"name": "atime", "type": "string"},
            {"name": "ctime", "type": "string"},
            {"name": "mtimeMs", "type": "float"},
