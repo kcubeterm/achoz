@@ -3,20 +3,11 @@
 const fetch = require("node-fetch");
 const fs = require('fs')
 const os = require('os')
-const spawn = require('child_process').spawn
+const spawn = require('child_process').spawn;
+const conf = require(__dirname + "/setconfig").conf
 
-const appRoot = __dirname
-const createIndexObj = require(appRoot + '/lib/typesense').indexDb
-var defaultConfig = `${appRoot}/config.json`
-var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
-const config = require(configPath)
+conf()
 
-
-TypesenseHost = config.TypesenseHost;
-TypesenseApi = config.TypesenseApi;
-
-var achozdir = os.homedir + '/.achoz'
 function createApiKey(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -27,10 +18,10 @@ function createApiKey(length) {
     }
     return result;
 }
-if (!fs.existsSync(achozdir)) {
-    fs.mkdirSync(achozdir)
-    fs.mkdirSync(achozdir + '/searchdb')
-    fs.copyFileSync(appRoot + '/config.json', achozdir + '/config.json')
+if (!fs.existsSync(achozDataDir)) {
+    fs.mkdirSync(achozDataDir)
+    fs.mkdirSync(achozDataDir + '/searchdb')
+    fs.copyFileSync(appRoot + '/config.json', achozDataDir + '/config.json')
 
     config.TypesenseApi = createApiKey(40)
     filename = os.homedir + '/.achoz/config.json'
@@ -40,8 +31,8 @@ if (!fs.existsSync(achozdir)) {
 
     process.exit(0)
 }
-if (!fs.existsSync(achozdir + '/searchdb')) {
-    fs.mkdirSync(achozdir + '/searchdb')
+if (!fs.existsSync(achozDataDir + '/searchdb')) {
+    fs.mkdirSync(achozDataDir + '/searchdb')
 }
 
 // command line interface
@@ -49,6 +40,7 @@ if (!fs.existsSync(achozdir + '/searchdb')) {
 switch (process.argv[2]) {
     case 'engine':
         startSearchEngine()
+        server()
         break;
     case 'crawl':
         console.log("Start crawling your document. please wait.....");
@@ -63,20 +55,32 @@ switch (process.argv[2]) {
         console.log("starting achoz server.......")
         engineHealth(server)
         break;
+
+    case 'help':
+        help()
+        break;
+
+    case 'version':
+        version()
+        break;
+
     default:
+        help()
         break;
 }
 
 
 
 function startSearchEngine() {
-    spawn('pkill', ["typesense-server"])
-    searchEngine = spawn("typesense-server", ['--data-dir', `${achozdir}/searchdb`, '--api-key', `${TypesenseApi}`, "--api-port", "8909"])
-    searchEngine.stderr.pipe(process.stdout)
-    searchEngine.stdout.pipe(process.stdout)
-    searchEngine.on('exit', (exit) => {
-        console.warn("report error")
-        process.exit(1)
+    spawn('pkill', ["typesense-server"]).on(('close'),() => {
+
+        searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${TypesenseApi}`, "--api-port", "8909"])
+        searchEngine.stderr.pipe(process.stdout)
+        searchEngine.stdout.pipe(process.stdout)
+        searchEngine.on('exit', (exit) => {
+            console.warn("report error")
+            process.exit(1)
+        })
     })
 
 }
@@ -137,3 +141,47 @@ function engineHealth(callback) {
         })
 }
 
+function help() {
+
+    let helpMessage = ` 
+    Usage: achoz [command]
+
+     help      Print help message
+     crawl     Crawl all directory which is mentioned in configuration 
+     index     Index all data and content which has crawled in achoz search engine
+     engine    Start web interface at port ${Port} (change port in config)
+     version   Show version of achoz 
+
+     Note: Default configuration is in ~/.achoz/config.json
+
+    Examples:
+     Step 1: Crawl your data. 
+
+        You must have to crawl all or some of your data to so that achoz will show some result when you will look something 
+        for that run achoz with crawl eg; achoz crawl 
+        It will crawl all directory which is assigned in configuration file.
+
+     Step 2: Index crawled documents
+
+        In order to index you just need to run achoz with index command eg; achoz index
+        Note: You dont need to run step 1 and 2 each time to start web interface unless you update directory info in config file
+
+     Step 3: Start server 
+
+            Now run achoz server/engine with command engine eg: achoz engine 
+    
+
+    Achoz online help:  https://github.com/kcubeterm/achoz
+    Report issues/bug:  https://github,com/kcubeterm/issues
+    Full documentation: https://github.com/kcubeterm/achoz/wiki
+
+    
+   ` 
+   console.log(helpMessage)
+   
+}
+
+function version() {
+    let pkgjson = require(appRoot + '/package.json')
+    console.log("achoz " + pkgjson.version)
+}
