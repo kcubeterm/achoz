@@ -4,18 +4,9 @@ const path = require('path')
 const fetch = require('node-fetch')
 const fs = require('fs')
 const os = require('os')
-const appRoot = __dirname
+const conf = require(__dirname + "/setconfig").conf
 
-
-
-var defaultConfig = `${appRoot}/config.json`
-var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
-const config = require(configPath)
-
-TypesenseHost = config.TypesenseHost
-Typesense_api = config.TypesenseApi
-Port = config.AchozPort
+conf()
 
 
 
