@@ -258,6 +258,7 @@ function officeFileHandler(filePath, callback) {
         writeMetadata(fileinfo);
     });
 
+
 }
 
 function pdfHandler(filePath) {

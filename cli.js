@@ -6,6 +6,7 @@ const os = require('os')
 const spawn = require('child_process').spawn;
 const conf = require(__dirname + "/setconfig").conf
 const path = require('path')
+const createIndexObj = require(__dirname + "/lib/typesense.js").indexDb
 
 conf()
 
@@ -30,7 +31,10 @@ if (!fs.existsSync(achozDataDir)) {
     fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 
 
-    
+    console.log('Config file not found, now created at ~/.achoz/config.json')
+
+    console.log("please run your command again.")
+    process.exit(0)
 }
 if (!fs.existsSync(achozDataDir + '/searchdb')) {
     fs.mkdirSync(achozDataDir + '/searchdb')
@@ -79,7 +83,7 @@ switch (process.argv[2]) {
 function startSearchEngine() {
     spawn('pkill', ["typesense-server"]).on(('close'), () => {
 
-        searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${TypesenseApi}`, "--api-port", "8909"])
+        searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${Typesense_api}`, "--api-port", "8909"])
         searchEngine.stderr.pipe(process.stdout)
         searchEngine.stdout.pipe(process.stdout)
         searchEngine.on('exit', (exit) => {
@@ -204,6 +208,5 @@ function addDirForCrawl(dir) {
     let absPath = path.resolve(dir)
     config.DirToIndex.push(absPath)
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
-
-
 }
+
