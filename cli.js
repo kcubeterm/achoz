@@ -5,6 +5,7 @@ const fs = require('fs')
 const os = require('os')
 const spawn = require('child_process').spawn;
 const conf = require(__dirname + "/setconfig").conf
+const path = require('path')
 
 conf()
 
@@ -38,6 +39,9 @@ if (!fs.existsSync(achozDataDir + '/searchdb')) {
 // command line interface
 
 switch (process.argv[2]) {
+    case 'add':
+        addDirForCrawl(process.argv[3])
+        break;
     case 'engine':
         startSearchEngine()
         server()
@@ -45,6 +49,7 @@ switch (process.argv[2]) {
     case 'crawl':
         console.log("Start crawling your document. please wait.....");
         crawler()
+
         break;
     case 'index':
         console.log("please wait....")
@@ -72,7 +77,7 @@ switch (process.argv[2]) {
 
 
 function startSearchEngine() {
-    spawn('pkill', ["typesense-server"]).on(('close'),() => {
+    spawn('pkill', ["typesense-server"]).on(('close'), () => {
 
         searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${TypesenseApi}`, "--api-port", "8909"])
         searchEngine.stderr.pipe(process.stdout)
@@ -98,7 +103,7 @@ function indexer() {
         coreIndexer.on('close', (code) => {
             createIndexObj()
             console.log(`indexing done or any error ${code}`)
-           
+
         })
     })
 }
@@ -176,12 +181,20 @@ function help() {
     Full documentation: https://github.com/kcubeterm/achoz/wiki
 
     
-   ` 
-   console.log(helpMessage)
-   
+   `
+    console.log(helpMessage)
+
 }
 
 function version() {
     let pkgjson = require(appRoot + '/package.json')
     console.log("achoz " + pkgjson.version)
+}
+
+function addDirForCrawl(dir) {
+    let absPath = path.resolve(dir)
+    config.DirToIndex.push(absPath)
+    fs.writeFileSync(configPath, config)
+
+
 }

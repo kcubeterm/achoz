@@ -6,7 +6,7 @@ exports.conf = function () {
     var defaultdatadir = appRoot
     var defaultConfig = `${defaultdatadir}/config.json`
     var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
-    var configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
+    configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
     achozDataDir = userConfig ? os.homedir + '/.achoz' : defaultdatadir
     config = require(configPath)
     
