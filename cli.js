@@ -199,8 +199,6 @@ function help() {
     Achoz online help:  https://github.com/kcubeterm/achoz
     Report issues/bug:  https://github,com/kcubeterm/issues
     Full documentation: https://github.com/kcubeterm/achoz/wiki
-
-    
    `
     console.log(helpMessage)
 
