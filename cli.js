@@ -5,7 +5,7 @@ const fs = require('fs')
 const os = require('os')
 const spawn = require('child_process').spawn;
 const conf = require(__dirname + "/setconfig").conf
-const path = require('path')
+const path = require('path');
 const createIndexObj = require(__dirname + "/lib/typesense.js").indexDb
 
 conf()
@@ -72,7 +72,12 @@ switch (process.argv[2]) {
     case 'version':
         version()
         break;
-
+    case "list":
+        listDir()
+        break
+    case 'remove':
+        removeDirConfig(process.argv[3])
+        break
     default:
         help()
         break;
@@ -159,6 +164,8 @@ function help() {
      crawl     Crawl all directory which is mentioned in configuration 
      index     Index all data and content which has crawled in achoz search engine
      engine    Start web interface at port ${Port} (change port in config)
+     list      List directory which is specified in confir for normalization. the number will help to remove dir.
+     remove    Remove  directory from config. eg achoz remove 3 
      version   Show version of achoz 
 
      Note: Default configuration is in ~/.achoz/config.json
@@ -208,5 +215,19 @@ function addDirForCrawl(dir) {
     let absPath = path.resolve(dir)
     config.DirToIndex.push(absPath)
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
+    listDir()
+}
+    
+
+function listDir() {
+    for (let i = 0; i < config.DirToIndex.length; i++ ) {
+        console.log(i, config.DirToIndex[i])
+    }
 }
 
+function removeDirConfig(index) {
+    config.DirToIndex.splice(index)
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
+    listDir()
+
+}
