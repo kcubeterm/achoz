@@ -27,17 +27,21 @@ Lets suppose you want to make your all file and directories in your home directo
 
 
 Step 1: Add dir in list. 
+
   `achoz add ~/`
 
 Step 2: Lets invoke crawler to crawl it.
+
   `achoz crawl `
 
 Step 3: Now start achoz engine. 
+
   `achoz engine `
 
   if it runs successfully, open another terminal for next step. let it run. 
 
 Step 4: Now index all crawled file. 
+
   `achoz index`
 
 Boom. you have normalize your home directory. It means you can search any documents, pdf, music, videos, and everthing that was there. Now browse and search string at http://localhost:9097
