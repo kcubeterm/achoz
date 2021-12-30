@@ -30,7 +30,7 @@ if (!fs.existsSync(achozDataDir)) {
     fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 
 
-    process.exit(0)
+    
 }
 if (!fs.existsSync(achozDataDir + '/searchdb')) {
     fs.mkdirSync(achozDataDir + '/searchdb')
@@ -203,7 +203,7 @@ function version() {
 function addDirForCrawl(dir) {
     let absPath = path.resolve(dir)
     config.DirToIndex.push(absPath)
-    fs.writeFileSync(configPath, config)
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
 
 
 }

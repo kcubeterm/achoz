@@ -7,7 +7,7 @@ exports.conf = function () {
     var defaultConfig = `${defaultdatadir}/config.json`
     var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
     configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
-    achozDataDir = userConfig ? os.homedir + '/.achoz' : defaultdatadir
+    achozDataDir = os.homedir + '/.achoz'
     config = require(configPath)
     
     TypesenseHost = config.TypesenseHost
