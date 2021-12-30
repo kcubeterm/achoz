@@ -150,7 +150,7 @@ function help() {
 
     let helpMessage = ` 
     Usage: achoz [command]
-
+     add       Specify a directory or file to add that in config file.  so that when you run crawler next time it will also crawl.
      help      Print help message
      crawl     Crawl all directory which is mentioned in configuration 
      index     Index all data and content which has crawled in achoz search engine
@@ -160,8 +160,17 @@ function help() {
      Note: Default configuration is in ~/.achoz/config.json
 
     Examples:
-     Step 1: Crawl your data. 
+    
+    Add directory in config file. 
+        you need to specify dirctories in config file so that crawler will crawl it. 
+        to add directoy. use command 'add' 
+        eg; suppose I want to add my ~/documents dir. then
+        
+        achoz add ~/documents 
 
+
+     Step 1: Crawl your data. 
+        
         You must have to crawl all or some of your data to so that achoz will show some result when you will look something 
         for that run achoz with crawl eg; achoz crawl 
         It will crawl all directory which is assigned in configuration file.
