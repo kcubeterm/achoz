@@ -12,14 +12,27 @@ more details at http://ahoxus.org/achoz
 
 As of now achoz supports linux 64 bit architecure only.
 
-you need to install typesense server https://typesense.org/downloads/
+### Requirement.
+ * npm
+ * nodejs 
+ * poppler-utils
+ * jq
+ * antiword
 
-poppler-utils,jq and antiword.
+you need to install typesense server as well. 
+
+Install all requirements for debian based distro like ubuntu, linux-mint etc with the following command.
+```
+wget https://dl.typesense.org/releases/0.22.1/typesense-server-0.22.1-amd64.deb
+sudo apt install nodejs jq poppler-utils antiword ./typesense-server-0.22.1-amd64.deb
+```
+
+Once done with with system requirement. install achoz with npm. 
 
 ```
 npm install -g achoz
 ```
-use sudo if you are not root.
+use sudo if you are not root. 
 
 ## Usage 
 
