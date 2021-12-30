@@ -4,6 +4,5 @@
   ],
   "TypesenseHost": "http://localhost:8909",
   "TypesenseApi": "6Y4AVUSiwkNcReCpWFBouK2qbPSWniWXHq8CRaOb",
-  "AchozPort": 8080,
-  "LocalDataDir": "/root/.achoz"
+  "AchozPort": 9097
 }

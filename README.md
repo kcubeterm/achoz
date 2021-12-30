@@ -20,39 +20,29 @@ poppler-utils,jq and antiword.
 npm install -g achoz
 ```
 use sudo if you are not root.
-## Configure directory
 
-Now need to configure directory where you keep documents and files so that crawler could index it into search engine.
+## Usage 
 
-Add directory in config.json, config.json will be at `~/.achoz/config.json` 
-
-run  `achoz` it will create config file if not already exist.
+Lets suppose you want to make your all file and directories in your home directory searchable. we call it normalize. Just follow four steps and boom. 
 
 
-config.json looks like 
-```
-{
-  "DirToIndex": [
-    "~/project/achoz/crawler/sample", "~/videos", "~/documents"
-  ],
-  "TypesenseHost": "http://localhost:8909",
-  "TypesenseApi": "DKRhOb8Eoh2LUgGJkjZfJUu9La7BVJYrVtJa5J07",
-  "AchozPort": 8080,
-  "LocalDataDir": "/root/.achoz"
-}
-```
+Step 1: Add dir in list. 
+  `achoz add ~/`
 
-you need to change this part only
-```
-"DirToIndex": [
-    "~/project/achoz/crawler/sample", "~/videos", "~/documents"
-    ]
- ```
+Step 2: Lets invoke crawler to crawl it.
+  `achoz crawl `
 
-Once you done with all.Start achoz heart by `achoz engine` then open another tab and fire `achoz crawl` it will start crawling and once it crawled.
-then fire `achoz index ` and it will  index all documents that have been crawled. 
+Step 3: Now start achoz engine. 
+  `achoz engine `
 
-Now you are ready to go once fire `achoz start` 
+  if it runs successfully, open another terminal for next step. let it run. 
 
-browse and search docs at http://localhost:8080 
+Step 4: Now index all crawled file. 
+  `achoz index`
+
+Boom. you have normalize your home directory. It means you can search any documents, pdf, music, videos, and everthing that was there. Now browse and search string at http://localhost:9097
+
+If you face issues in any of above steps, feel free to report it [here](https://github.com/kcubeterm/achoz/issues)
+
+
 
