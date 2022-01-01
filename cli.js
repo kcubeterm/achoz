@@ -224,7 +224,7 @@ function listDir() {
 }
 
 function removeDirConfig(index) {
-    config.DirToIndex.splice(index)
+    config.DirToIndex.splice(index, 1)
     fs.writeFileSync(configPath, JSON.stringify(config, null, 2))
     listDir()
 
