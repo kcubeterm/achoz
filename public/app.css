@@ -54,7 +54,7 @@ ul {
 }
 input {
     width: 100%;
-    border: 3px solid #4235d1;
+    border: 3px solid #7502c2;
     border-right: none;
     padding: 5px;
     height: 20px;
@@ -67,7 +67,7 @@ input {
 #sbutton {
   width: 40px;
   height: 36px;
-  border: purple;
+  border: #7502c2;
   background: #7502c2;
   text-align: center;
   color: #fff;
@@ -121,3 +121,15 @@ input:focus {
 .description {
     color: hotpink;
 }
+
+@media only screen and (max-width: 600px) {
+    #wrap{
+        margin-top: 5%;
+        margin-bottom: 10px;
+        width: 70%;
+        left: 10%;
+        position: relative;
+        box-shadow: purple;
+        
+      }
+  }
