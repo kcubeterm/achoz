@@ -27,7 +27,7 @@
   "homepage": "https://github.com/kcubeterm/achoz#readme",
   "dependencies": {
     "app-root-path": "3.0.0",
-    "express": "^4.17.1",
+    "express": "^4.17.2",
     "hidefile": "3.0.0",
     "html-to-text": "8.0.0",
     "node-fetch": "^2.6.6",
