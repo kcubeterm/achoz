@@ -85,7 +85,7 @@ switch (process.argv[2]) {
 function startSearchEngine() {
     spawn('pkill', ["typesense-server"]).on(('close'), () => {
 
-        searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${Typesense_api}`, "--api-port", "8909"])
+        searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${typesenseApi}`, "--api-port", "8909"])
         searchEngine.stderr.pipe(process.stdout)
         searchEngine.stdout.pipe(process.stdout)
         searchEngine.on('exit', (exit) => {
@@ -120,7 +120,7 @@ function server() {
 
 function engineHealth(callback) {
     console.log(",,")
-    var url = `${TypesenseHost}/health`
+    var url = `${typesenseHost}/health`
 
     fetch(url)
         .then((response) => {

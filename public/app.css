@@ -8,12 +8,12 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body {
-    background-color: whitesmoke;
+    background-color: rgba(4, 5, 5, 0.7);
     background-size: cover;
 }
 #achoz {
     display:flex;
-    color:#b069bfef;
+    color:#6c0a80ef;
     align-items: center;
     justify-content: center;
     font-family: "Times New Roman", Times,serif;
@@ -24,10 +24,10 @@ ul {
 .result {
     position: relative;
     list-style-type:none ;
-    background-color:rgb(65 42 94);
+    background-color:rgba(34, 32, 11, 0.616);
     border-radius:5px;
     border: 1px solid;
-    border-color: #999797;
+    border-color: #181616;
     padding:10px 10px;
     width:100%;
     margin-bottom:10px;
@@ -40,35 +40,40 @@ ul {
 
 .filename {
     color: rgba(11, 186, 230, 0.966);
+    font-weight: bolder;
     overflow-wrap: anywhere;
 }
 .description {
     font-size: 15px;
     color: rgb(247, 248, 234);
+    font-weight: lighter;
     overflow-wrap: anywhere;
 }
 .abspath {
     overflow-wrap: anywhere;
+    color: orange;
     font-size: small;
+    font-weight: lighter;
     margin-bottom: 1px;
+    font-style: italic;
 }
 input {
     width: 100%;
-    border: 3px solid #7502c2;
+    border: 3px solid #212022;
     border-right: none;
     padding: 5px;
     height: 20px;
     border-radius: 5px 0 0 5px;
     outline: none;
-    color: #7f1da5;
+    color: #19101d;
     font: 1em sans-serif;
   }
 
 #sbutton {
   width: 40px;
   height: 36px;
-  border: #7502c2;
-  background: #7502c2;
+  border: #171618;
+  background: #1b1a1b;
   text-align: center;
   color: #fff;
   border-radius: 0 5px 5px 0;
@@ -84,14 +89,15 @@ input:focus {
     width: 30%;
     left: 33%;
     position: relative;
-    box-shadow: purple;
+    box-shadow: rgb(245, 238, 245);
+    
     
   }
 #searchbar {
     width: 100%;
  position: relative;
  display: flex;
- box-shadow: purple;
+ box-shadow: rgb(26, 25, 26);
 
 }
 #next-pre {
@@ -119,7 +125,7 @@ input:focus {
     color: gold;
 }
 .description {
-    color: hotpink;
+    color: white;
 }
 
 @media only screen and (max-width: 600px) {
