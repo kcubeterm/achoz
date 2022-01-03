@@ -18,7 +18,6 @@ function init() {
 
     var absDir = []
     config.DirToIndex.forEach((dir, index) => {
-        var dir = dir.replace("~", os.homedir())
         absDir.push(path.resolve(dir));
     });
     let uniqueDir = [...new Set(absDir)]
