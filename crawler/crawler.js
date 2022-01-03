@@ -31,7 +31,7 @@ function init() {
     });
     let uniqueFilelist = [...new Set(filelist)]
     jsonWriter(uniqueFilelist)
-    localFileIndexer("/tmp/filelist.json")
+    localFileCrawler("/tmp/filelist.json")
 
 }
 
@@ -58,7 +58,7 @@ var walkSync = function (dir, filelist) {
     return filelist;
 };
 
-function localFileIndexer(arrayFilePath) {
+function localFileCrawler(arrayFilePath) {
 
     array_output = JSON.parse(fs.readFileSync(arrayFilePath));
     var isIndexDB = fs.existsSync(achozDataDir + "/indexedDB.json")
@@ -75,13 +75,13 @@ function localFileIndexer(arrayFilePath) {
                 console.log(filePath + "  already indexed")
             } else {
                 console.log(filePath, i)
-                universalFileIndexer(filePath)
+                universalFileSwitcher(filePath)
             }
 
 
         } else {
             console.log(filePath, i)
-            universalFileIndexer(filePath)
+            universalFileSwitcher(filePath)
             
         }
     })
@@ -92,7 +92,7 @@ function writeMetadata(data) {
     writeJsonData.write(data + "\n")
 }
 
-function universalFileIndexer(filePath) {
+function universalFileSwitcher(filePath) {
     var extension = path.extname(filePath).toLowerCase()
     switch (extension) {
         case '.htm':

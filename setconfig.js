@@ -3,17 +3,17 @@ const os = require('os')
 
 appRoot = __dirname
 exports.conf = function () {
-    collection_name = "achozdoc"
-    var defaultdatadir = appRoot
-    var defaultConfig = `${defaultdatadir}/config.json`
+    collectionName = "achozdoc"
+    var defaultDataDir = appRoot
+    var defaultConfig = `${defaultDataDir}/config.json`
     var userConfig = fs.existsSync(os.homedir + '/.achoz/config.json')
     configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
     achozDataDir = os.homedir + '/.achoz'
     config = require(configPath)
    
-    TypesenseHost = config.TypesenseHost
-    Typesense_api = config.TypesenseApi
-    Port = config.AchozPort
+    typesenseHost = config.TypesenseHost
+    typesenseApi = config.TypesenseApi
+    port = config.AchozPort
 }
 
 
