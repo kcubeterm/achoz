@@ -18,7 +18,9 @@ function init() {
 
     var absDir = []
     config.DirToIndex.forEach((dir, index) => {
-        absDir.push(path.resolve(dir));
+        if (fs.existsSync(dir)) {
+            absDir.push(path.resolve(dir));
+        }
     });
     let uniqueDir = [...new Set(absDir)]
     var filelist = [];
