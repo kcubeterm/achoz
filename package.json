@@ -1,6 +1,6 @@
 {
   "name": "achoz",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Search through your all data efficiently like websearch",
   "main": "cli.js",
   "scripts": {
@@ -20,7 +20,7 @@
     "search documents"
   ],
   "author": "Kcubeterm",
-  "license": "MIT",
+  "license": "AGPL-3.0",
   "bugs": {
     "url": "https://github.com/kcubeterm/achoz/issues"
   },
