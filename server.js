@@ -34,7 +34,7 @@ function searchApi(req, res) {
 
     var input = req.query.q
     var page_no = req.query.page || 1;
-    url = `${TypesenseHost}/collections/test/documents/\
+    url = `${TypesenseHost}/collections/${collection_name}/documents/\
 search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
 page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
 
@@ -58,7 +58,7 @@ page=${page_no}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_
 
 function filereq(req, res) {
     var id = req.query.id
-    url = `${TypesenseHost}/collections/test/documents/${id}`
+    url = `${TypesenseHost}/collections/${collection_name}/documents/${id}`
     fetch(url, {
         headers: {
             'X-TYPESENSE-API-KEY': Typesense_api 
