@@ -31,9 +31,8 @@ if (!fs.existsSync(achozDataDir)) {
     fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 
 
-    console.log('Config file not found, now created at ~/.achoz/config.json')
-
-    console.log("please run your command again.")
+    console.log('Config file not found, created at ~/.achoz/config.json')
+    console.log("Now good to go. ")
     process.exit(0)
 }
 
@@ -49,12 +48,10 @@ switch (process.argv[2]) {
         server()
         break;
     case 'crawl':
-        console.log("Start crawling your document. please wait.....");
         crawler()
 
         break;
     case 'index':
-        console.log("please wait....")
         engineHealth(indexer)
         break;
 
