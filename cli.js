@@ -6,7 +6,7 @@ const os = require('os')
 const spawn = require('child_process').spawn;
 const conf = require(__dirname + "/setconfig").conf
 const path = require('path');
-const createIndexObj = require(__dirname + "/lib/typesense.js").indexDb
+const ts = require(__dirname + "/lib/typesense.js")
 
 conf()
 
@@ -20,25 +20,22 @@ function createApiKey(length) {
     }
     return result;
 }
+// check few essential files and variable. if not there create it. 
 if (!fs.existsSync(achozDataDir)) {
     fs.mkdirSync(achozDataDir)
     fs.mkdirSync(achozDataDir + '/searchdb')
     fs.copyFileSync(appRoot + '/config.json', achozDataDir + '/config.json')
-
+   
     config.TypesenseApi = createApiKey(40)
     filename = os.homedir + '/.achoz/config.json'
-
     fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 
 
-    console.log('Config file not found, now created at ~/.achoz/config.json')
-
-    console.log("please run your command again.")
+    console.log('Config file not found, created at ~/.achoz/config.json')
+    console.log("Now good to go. ")
     process.exit(0)
 }
-if (!fs.existsSync(achozDataDir + '/searchdb')) {
-    fs.mkdirSync(achozDataDir + '/searchdb')
-}
+
 
 // command line interface
 
@@ -51,12 +48,10 @@ switch (process.argv[2]) {
         server()
         break;
     case 'crawl':
-        console.log("Start crawling your document. please wait.....");
         crawler()
 
         break;
     case 'index':
-        console.log("please wait....")
         engineHealth(indexer)
         break;
 
@@ -68,7 +63,9 @@ switch (process.argv[2]) {
     case 'help':
         help()
         break;
-
+    case 'update':
+        ts.indexDb()
+        break
     case 'version':
         version()
         break;
@@ -100,27 +97,15 @@ function startSearchEngine() {
 }
 
 function indexer() {
-    // wont override existing collection if already exist
-    let createCollection = spawn('bash', [`${appRoot}/crawler/collections.sh`, `${os.homedir}/.achoz`])
-    createCollection.stdout.pipe(process.stdout)
-    createCollection.on('close', (code) => {
-        let coreIndexer = spawn('bash', [`${appRoot}/crawler/indexer.sh`, `${os.homedir}/.achoz`])
-        coreIndexer.stdout.pipe(process.stdout)
-        coreIndexer.on('error', (err) => {
-            console.error(err)
-        })
-        coreIndexer.on('close', (code) => {
-            createIndexObj()
-            console.log(`indexing done or any error ${code}`)
 
-        })
-    })
+    ts.createCollection() 
 }
 
 
 
+
 function crawler() {
-    crawlProcess = spawn('node', [`${appRoot}/crawler/crawler.js`])
+    crawlProcess = spawn('node', ['--no-warnings',`${appRoot}/crawler/crawler.js`])
     crawlProcess.stdout.pipe(process.stdout)
     crawlProcess.stderr.pipe(process.stdout)
 }

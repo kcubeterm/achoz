@@ -67,12 +67,11 @@ function localFileIndexer(arrayFilePath) {
         var indexedDb = JSON.parse(fs.readFileSync(achozDataDir + "/indexedDB.json"))
         
     }
-    console.log(isIndexDB)
     
     array_output.forEach((filePath, i) => {
         if (isIndexDB) {
 
-            if (indexedDb.hasOwnProperty(uniqueName(filePath))) {
+            if (indexedDb.arrayList.includes(uniqueName(filePath))) {
                 console.log(filePath + "  already indexed")
             } else {
                 console.log(filePath, i)
@@ -248,7 +247,7 @@ function officeFileHandler(filePath, callback) {
         console.log('fileinfo getting undefined')
         return;
     }
-
+    officeParser.setDecompressionLocation("/tmp");
     officeParser.parseOffice(filePath, (data, err) => {
         if (err) {
             return console.log(err);
