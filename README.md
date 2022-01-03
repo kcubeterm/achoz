@@ -19,7 +19,6 @@ As of now achoz supports linux 64 bit architecure only.
  * npm
  * nodejs 
  * poppler-utils
- * jq
  * antiword
 
 you need to install typesense server as well. 
@@ -27,7 +26,7 @@ you need to install typesense server as well.
 Install all requirements for debian based distro like ubuntu, linux-mint etc with the following command.
 ```
 wget https://dl.typesense.org/releases/0.22.1/typesense-server-0.22.1-amd64.deb
-sudo apt install nodejs jq poppler-utils antiword ./typesense-server-0.22.1-amd64.deb
+sudo apt install nodejs poppler-utils antiword ./typesense-server-0.22.1-amd64.deb
 ```
 
 Once done with with system requirement. install achoz with npm. 
@@ -54,7 +53,8 @@ Step 3: Now start achoz engine.
 
   `achoz engine `
 
-  if it runs successfully, open another terminal for next step. let it run. 
+  if it runs successfully, open another terminal for next step. let it run. Incase it reporting error like "Failed to start peering service" Try to disable typesense service via your init system, most probably systemctl. `systemctl stop typesense-server.service` and `systemctl disable typesense-server.service` 
+  also see [this issue](https://github.com/kcubeterm/achoz/issues/28)
 
 Step 4: Now index all crawled file. 
 
