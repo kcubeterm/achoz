@@ -8,7 +8,7 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans);
 
 body {
-    background-color: rgba(4, 5, 5, 0.7);
+    background-image: url(/public/wall-2396055_1920.jpg);
     background-size: cover;
 }
 #achoz {
