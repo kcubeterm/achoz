@@ -148,7 +148,7 @@ function help() {
      help      Print help message
      crawl     Crawl all directory which is mentioned in configuration 
      index     Index all data and content which has crawled in achoz search engine
-     engine    Start web interface at port ${Port} (change port in config)
+     engine    Start web interface at port ${port} (change port in config)
      list      List directory which is specified in confir for normalization. the number will help to remove dir.
      remove    Remove  directory from config. eg achoz remove 3 
      version   Show version of achoz 
