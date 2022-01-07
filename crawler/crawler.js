@@ -25,18 +25,18 @@ function init() {
     let uniqueDir = [...new Set(absDir)]
     var filelist = [];
     uniqueDir.forEach((dir, index) => {
-        file = walkSync(dir + '/')
+        file = listAllFilesInDir(dir + '/')
         filelist = filelist.concat(file);
 
 
     });
     let uniqueFilelist = [...new Set(filelist)]
     jsonWriter(uniqueFilelist)
-    localFileCrawler("/tmp/filelist.json")
+    parseFilesList("/tmp/filelist.json")
 
 }
 
-var walkSync = function (dir, filelist) {
+var listAllFilesInDir = function (dir, filelist) {
     var fs = fs || require('fs'),
         files = fs.readdirSync(dir);
     filelist = filelist || [];
@@ -44,7 +44,7 @@ var walkSync = function (dir, filelist) {
         try {
             if (fs.statSync(dir + file).isDirectory()) {
                 if (!hidefile.isDotPrefixed(file)) {
-                    filelist = walkSync(dir + file + '/', filelist);
+                    filelist = listAllFilesInDir(dir + file + '/', filelist);
                 }
             } else {
                 if (!hidefile.isDotPrefixed(file)) {
@@ -59,38 +59,53 @@ var walkSync = function (dir, filelist) {
     return filelist;
 };
 
-function localFileCrawler(arrayFilePath) {
+var filesPathArray
+var index = 0
+function parseFilesList(arrayFilePath) {
 
-    array_output = JSON.parse(fs.readFileSync(arrayFilePath));
+    filesPathArray = JSON.parse(fs.readFileSync(arrayFilePath));
     var isIndexDB = fs.existsSync(achozDataDir + "/indexedDB.json")
-    
     if (isIndexDB) {
-        var indexedDb = JSON.parse(fs.readFileSync(achozDataDir + "/indexedDB.json"))
+        indexedDb = JSON.parse(fs.readFileSync(achozDataDir + "/indexedDB.json"))
         
+    } else {
+        indexedDb = false
     }
     
-    array_output.forEach((filePath, i) => {
-        if (isIndexDB) {
+    coreCrawler(filesPathArray,index,indexedDb)
+    
+    
+}
+function coreCrawler(filesPathArray, index,indexedDb) {
+    let filePath = filesPathArray[index]
+    if (index < filesPathArray.length) {
+        if (indexedDb) {
 
             if (indexedDb.arrayList.includes(uniqueName(filePath))) {
                 console.log(filePath + "  already indexed")
             } else {
-                console.log(filePath, i)
+                console.log(filePath, index)
                 universalFileSwitcher(filePath)
             }
 
 
         } else {
-            console.log(filePath, i)
+            console.log(filePath, index)
             universalFileSwitcher(filePath)
             
         }
-    })
+    }
 }
 
 function writeMetadata(data) {
-    data = JSON.stringify(data)
-    writeJsonData.write(data + "\n")
+    writeJsonData.write(JSON.stringify(data) + "\n")
+    // timeout is essential here as corecrawler is synchronus and block thread
+    //  as a result write stream stores buffer in ram. 
+    setTimeout(() => {
+        index++
+        coreCrawler(filesPathArray,index,indexedDb)
+    }, 0.1);
+
 }
 
 function universalFileSwitcher(filePath) {
@@ -128,8 +143,8 @@ function universalFileSwitcher(filePath) {
         // Files without extension or unrecognised extension will be 
         // processed through mimetypes
         default:
-            stdout1 = spawnSync("file", ["--mime-type", filePath]).stdout.toString()
-            var mimeType = stdout1.split(':')[1].trim();
+            let stdout1 = spawnSync("file", ["--mime-type", filePath]).stdout.toString()
+            let mimeType = stdout1.split(':')[1].trim();
             mimeTypeSwitch(mimeType, filePath)
 
     }
@@ -169,11 +184,13 @@ function jsonWriter(json, whereToWrite) {
 
 
 function getGeneralInfo(filePath) {
-    var fileinfo = {}
+    let fileinfo = {}
+    fileinfo.id = uniqueName(filePath)
     fileinfo.name = path.basename(filePath);
     fileinfo.abspath = path.resolve(filePath);
+    let stats
     try {
-        var stats = fs.statSync(filePath);
+      stats = fs.statSync(filePath);
     } catch (err) {
         if (err.code == 'ENOENT') {
             console.log(`${filePath} not found`);
@@ -181,8 +198,6 @@ function getGeneralInfo(filePath) {
         }
     }
 
-
-    fileinfo.uniqid = uniqueName(filePath)
     fileinfo.atime = stats.atime
     fileinfo.ctime = stats.ctime
     fileinfo.mtimeMs = stats.mtimeMs
@@ -269,7 +284,7 @@ function pdfHandler(filePath) {
     }
     try {
 
-        command = spawnSync("pdftotext", [filePath, '-']).stdout.toString()
+        let command = spawnSync("pdftotext", [filePath, '-']).stdout.toString()
         fileinfo.content = command.replace(/\s+/g, " ")
         fileinfo.type = 'pdf';
         writeMetadata(fileinfo);
