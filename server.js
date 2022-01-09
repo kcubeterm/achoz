@@ -22,12 +22,12 @@ app.listen(port, () => {
 })
 
 function landing(req, res) {
-    res.sendFile(appRoot + '/public/index.html')
+    res.sendFile(appRoot + '/public/html/index.html')
 }
 
 function search(req, res) {
 
-    res.sendFile(appRoot + '/public/search.html')
+    res.sendFile(appRoot + '/public/html/search.html')
 }
 
 function searchApi(req, res) {
@@ -74,5 +74,5 @@ function filereq(req, res) {
         });
 }
 function videoPlayer(req, res) {
-    res.sendFile(appRoot + '/public/video.html')
+    res.sendFile(appRoot + '/public/html/video.html')
 }

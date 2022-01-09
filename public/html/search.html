@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/public/css/fontawesome/css/all.css">
+    <link rel="stylesheet" href="/public/css/app.css">
+    <title>Achoz</title>
+</head>
+
+<body>
+    <div id="home"><a href="/"><i class="fa fa-home" aria-hidden="true"></i></a></div>
+    <div id="wrap">
+        <form action="/search">
+        <div id="searchbar">
+                <input id="input" type="text" placeholder="Type here.." name="q">
+                <button id="sbutton"> <i class="fa fa-search"></i></button>
+            </div>
+        </form>
+    </div>
+    <div id="results" ></div>
+    <div id="next-pre">
+        <a href="#" id="previous"> <i class="fa fa-angle-double-left"></i></a>
+        <a href="#" id="next"><i class="fa fa-angle-double-right"></i></a>
+    </div>
+    <script src="/public/js/search.js"></script>
+</body>
+
+</html>
