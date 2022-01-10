@@ -38,42 +38,55 @@ function appendData(data) {
         } catch (error) {
             console.log(error)
         }
+        let abspathHtml = `<span class="abspath"> <i class="fas fa-plane-departure" style='color:green' aria-hidden="true"></i>  ${abspath} </span> </br>`
+        let fileNameHtml = `<a class="filename"> ${filename} </a>`
+        let descriptionHtml = `<p class="description" > ${description} </p>`
+
         switch (type) {
             case type.match(/video/)?.input:
-                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
-                    <a class="filename" href=/video?id=${id}> ${filename} </a>
-                    <p class="description" > ${description} </p>
-                         <p class="type" > ${type} </p> </div>
-                        `
+                search_list += `<div class="result"> ${abspathHtml}
+                ${fileNameHtml}
+                ${descriptionHtml}
+                <p class="type" ><i class="fa fa-file-video" aria-hidden="true"></i> ${type} </p> </div>`
 
                 break;
             case type.match(/audio/)?.input:
-                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
-                <p class="filename"> ${filename} </p>
+                search_list += `<div class="result"> ${abspathHtml}
+                ${fileNameHtml}
                 <audio controls src=/filereq?id=${id} > Your browser dont support this audio </audio>
-                <p class="description" > ${description} </p>
-                <p class="type" > ${type}</p> </div>
-                `
-                break;
-            case type.match(/image/)?.input:
-                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
-                <p class="filename"> ${filename} </p>
-                <div class=result-img>  
-                <img width=300 src=/filereq?id=${id} >
-                </div>
-                <p class="description" > ${description} </p>
-                <p class="type" > ${type} </p> </div>
+                ${descriptionHtml}
+                <p class="type" > <i class="fa fa-file-audio" aria-hidden="true"></i>${type}</p> </div>
                 `
                 break;
 
-                case type.match(/image/)?.input:
-                    
+            case type.match(/image/)?.input:
+                search_list += `<div class="result"> ${abspathHtml}
+                ${fileNameHtml}
+                <div class=result-img><img width=300 src=/filereq?id=${id}></div>
+                ${descriptionHtml}
+                <p class="type" > <i class="fa fa-file-image" aria-hidden="true"></i>${type} </p> </div>
+                `
+                break;
+
+            case type.match(/pdf/)?.input:
+                search_list += `<div class="result"> ${abspathHtml}
+                ${fileNameHtml}
+                ${descriptionHtml}
+                <p class="type" style="color:red"><i class="fa fa-file-pdf" aria-hidden="true"></i> ${type}</p></div>`
+                break;
+
+            case type.match(/text/)?.input:
+                search_list += `<div class="result"> ${abspathHtml}
+                ${fileNameHtml}
+                ${descriptionHtml}
+                <p class="type" style="color:white"><i class="fa fa-file-text" aria-hidden="true"></i> ${type}</p></div>`
+                break;
+
             default:
-                search_list += `<div class="result"> <span class="abspath"> ${abspath} </span> </br>
-        <a class="filename"> ${filename} </a>
-        <p class="description" > ${description} </p>
-        <p class="type" > ${type}  </p> </div>
-        `
+                search_list += `<div class="result"> ${abspathHtml}
+                ${filePathHtml}
+                ${descriptionHtml}
+                <p class="type" style="color:red"><i class="fa fa-file-pdf" aria-hidden="true"></i> ${type}  </p></div>`
                 break;
         }
 
@@ -98,4 +111,5 @@ function nextHandler() {
     document.getElementById('previous').href = `/search?q=${input}&page=${page_no}`
     console.log('done')
 }
+
 search();

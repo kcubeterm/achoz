@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/public/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.css">
+    <link rel="stylesheet" href="/public/css/app.css">
     <title>Achoz</title>
 </head>
 
 <body>
+    <div id="home"><a href="/"><i class="fa fa-home" aria-hidden="true"></i></a></div>
     <div id="wrap">
-
         <form action="/search">
         <div id="searchbar">
                 <input id="input" type="text" placeholder="Type here.." name="q">
@@ -21,12 +21,11 @@
         </form>
     </div>
     <div id="results" ></div>
-
     <div id="next-pre">
         <a href="#" id="previous"> <i class="fa fa-angle-double-left"></i></a>
         <a href="#" id="next"><i class="fa fa-angle-double-right"></i></a>
     </div>
-    <script src="/public/search.js"></script>
+    <script src="/public/js/search.js"></script>
 </body>
 
 </html>

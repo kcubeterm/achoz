@@ -5,11 +5,26 @@
     -o-background-size: cover;
     background-size: cover;
 /*background-image:url("https://i.ibb.co/QHFLWq2/photo-1503756234508-e32369269deb.jpg");*/ 
-@import url(https://fonts.googleapis.com/css?family=Open+Sans);
+/* @import url(https://fonts.googleapis.com/css?family=Open+Sans); */
 
+html {
+    scroll-behavior: smooth;
+  }
 body {
-    background-image: url(/public/wall-2396055_1920.jpg);
+    background-image: url('/public/img/bg.svg');
     background-size: cover;
+    background-attachment: fixed;
+    
+}
+.fa-home {
+    color: #430268;
+    font-size: xx-large;
+}
+#home {
+    margin-top:10px ;
+    position: sticky;
+    top: 0%;
+    margin-left: 5%;
 }
 #achoz {
     display:flex;
@@ -22,9 +37,9 @@ ul {
     padding:3px;
 }
 .result {
-    position: relative;
+    
     list-style-type:none ;
-    background-color:rgba(34, 32, 11, 0.616);
+    background-color:rgba(6, 0, 8, 0.616);
     border-radius:5px;
     border: 1px solid;
     border-color: #181616;
@@ -34,6 +49,7 @@ ul {
     margin-right: 10%;
     color: rgb(242, 250, 250);
     line-height:normal;
+    box-shadow: 4px 3px 8px 1px black;
 
     
 }
@@ -42,12 +58,14 @@ ul {
     color: rgba(11, 186, 230, 0.966);
     font-weight: bolder;
     overflow-wrap: anywhere;
+    font-family: 'Times New Roman', Times, serif;
 }
 .description {
     font-size: 15px;
     color: rgb(247, 248, 234);
     font-weight: lighter;
     overflow-wrap: anywhere;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 .abspath {
     overflow-wrap: anywhere;
@@ -56,29 +74,32 @@ ul {
     font-weight: lighter;
     margin-bottom: 1px;
     font-style: italic;
+    font-family: Arial, Helvetica, sans-serif;
 }
 input {
     width: 100%;
-    border: 3px solid #212022;
+    border: 3px solid #f9f5fc;
     border-right: none;
     padding: 5px;
     height: 20px;
     border-radius: 5px 0 0 5px;
     outline: none;
-    color: #19101d;
+    color: rgb(138, 26, 230);
     font: 1em sans-serif;
+    font-weight: bolder;
   }
 
 #sbutton {
   width: 40px;
   height: 36px;
   border: #171618;
-  background: #1b1a1b;
+  background: #430268;
   text-align: center;
   color: #fff;
   border-radius: 0 5px 5px 0;
   cursor: pointer;
   font-size: 20px;
+
 }
 input:focus {
     outline:none;
@@ -88,16 +109,18 @@ input:focus {
     margin-bottom: 10px;
     width: 30%;
     left: 33%;
-    position: relative;
     box-shadow: rgb(245, 238, 245);
-    
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
     
   }
 #searchbar {
     width: 100%;
  position: relative;
  display: flex;
- box-shadow: rgb(26, 25, 26);
+ box-shadow: 4px 3px 8px 1px #969696;
+  	-webkit-box-shadow: 4px 3px 8px 1px #969696;
 
 }
 #next-pre {
@@ -122,20 +145,28 @@ input:focus {
     overflow: auto;
 } 
 .type {
+    font-family: Helvetica, sans-serif;
     color: gold;
+
 }
-.description {
-    color: white;
-}
+
 
 @media only screen and (max-width: 600px) {
     #wrap{
         margin-top: 5%;
         margin-bottom: 10px;
         width: 70%;
-        left: 10%;
-        position: relative;
-        box-shadow: purple;
+        left: 12%;
+        box-shadow: rgb(245, 238, 245);
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0;
         
       }
+      #home {
+        margin-top:10px ;
+        position: sticky;
+        top: 0%;
+        left: 1%;
+    }
   }
