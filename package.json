@@ -30,7 +30,8 @@
     "express": "^4.17.2",
     "hidefile": "3.0.0",
     "html-to-text": "8.0.0",
+    "meilisearch": "^0.24.0",
     "node-fetch": "^2.6.6",
-    "officeparser": "2.2.2"
+    "officeparser": "^2.3.0"
   }
 }

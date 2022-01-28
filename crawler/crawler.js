@@ -8,12 +8,18 @@ const {
 } = require('html-to-text')
 const os = require('os')
 const hidefile = require('hidefile')
-writeJsonData = fs.createWriteStream("/tmp/IndexData.jsonln")
 const conf = require(__dirname + "/../setconfig").conf
 
 conf()
+
+writeStreamCount = 0
+function writeSreamCreator() {
+    let listExistedAjsonlnFile = fs.readdirSync('/tmp').filter(fn => fn.endsWith('.ajsonln'));
+    writeStreamCount = listExistedAjsonlnFile.length
+    writeJsonData = fs.createWriteStream("/tmp/IndexData" + "." + writeStreamCount + ".ajsonln")
+}
 function init() {
-   
+
 
     var absDir = []
     config.DirToIndex.forEach((dir, index) => {
@@ -34,6 +40,7 @@ function init() {
     parseFilesList("/tmp/filelist.json")
 
 }
+
 
 var listAllFilesInDir = function (dir, filelist) {
     var fs = fs || require('fs'),
@@ -66,22 +73,24 @@ function parseFilesList(arrayFilePath) {
     var isIndexDB = fs.existsSync(achozDataDir + "/indexedDB.json")
     if (isIndexDB) {
         indexedDb = JSON.parse(fs.readFileSync(achozDataDir + "/indexedDB.json"))
-        
+
     } else {
         indexedDb = false
     }
-    
-    coreCrawler(filesPathArray,index,indexedDb)
-    
-    
+
+    coreCrawler(filesPathArray, index, indexedDb)
+
+
 }
-function coreCrawler(filesPathArray, index,indexedDb) {
+function coreCrawler(filesPathArray, index, indexedDb) {
     let filePath = filesPathArray[index]
     if (index < filesPathArray.length) {
         if (indexedDb) {
 
             if (indexedDb.arrayList.includes(uniqueName(filePath))) {
                 console.log(filePath + "  already indexed")
+                index++
+                coreCrawler(filesPathArray, index, indexedDb)
             } else {
                 console.log(filePath, index)
                 universalFileSwitcher(filePath)
@@ -91,18 +100,25 @@ function coreCrawler(filesPathArray, index,indexedDb) {
         } else {
             console.log(filePath, index)
             universalFileSwitcher(filePath)
-            
+
         }
     }
 }
 
 function writeMetadata(data) {
+    // change writestream if curent stream is above than 80MB or 83886080 bytes
+
+    if (writeJsonData.bytesWritten >= 83886080) {
+
+        writeStreamCount++
+        writeJsonData = fs.createWriteStream("/tmp/IndexData" + "." + writeStreamCount + ".ajsonln")
+    }
     writeJsonData.write(JSON.stringify(data) + "\n")
     // timeout is essential here as corecrawler is synchronus and block thread
     //  as a result write stream stores buffer in ram. 
     setTimeout(() => {
         index++
-        coreCrawler(filesPathArray,index,indexedDb)
+        coreCrawler(filesPathArray, index, indexedDb)
     }, 0.1);
 
 }
@@ -128,9 +144,9 @@ function universalFileSwitcher(filePath) {
             type = 'officedoc'
             break;
         case '.docx':
-        case '.odt':
-        case '.odp':
-        case '.ods':
+        // case '.odt':
+        // case '.odp':
+        // case '.ods':
         case '.pptx':
         case '.xlsx':
             officeFileHandler(filePath);
@@ -190,7 +206,7 @@ function getGeneralInfo(filePath) {
     fileinfo.abspath = path.resolve(filePath);
     let stats
     try {
-      stats = fs.statSync(filePath);
+        stats = fs.statSync(filePath);
     } catch (err) {
         if (err.code == 'ENOENT') {
             console.log(`${filePath} not found`);
@@ -264,14 +280,23 @@ function officeFileHandler(filePath, callback) {
         return;
     }
     officeParser.setDecompressionLocation("/tmp");
-    officeParser.parseOffice(filePath, (data, err) => {
-        if (err) {
-            return console.log(err);
-        }
-        fileinfo.content = data.replace(/\s+/g, " ").toString()
-        fileinfo.type = 'officedoc'
-        writeMetadata(fileinfo);
-    });
+    try {
+
+        officeParser.parseOffice(filePath, (data, err) => {
+            if (err) {
+                console.log(err);
+                console.log("error is coming.s")
+            }
+            fileinfo.content = data.replace(/\s+/g, " ").toString()
+            fileinfo.type = 'officedoc'
+
+
+        });
+    } catch (err) {
+        console.log(err)
+        return
+    }
+    writeMetadata(fileinfo);
 
 
 }
@@ -337,4 +362,5 @@ function defaultFileHandler(filePath, filetype) {
 
 }
 
+writeSreamCreator()
 init()

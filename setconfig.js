@@ -1,5 +1,6 @@
 const fs = require('fs')
 const os = require('os')
+const { MeiliSearch } = require('meilisearch')
 
 appRoot = __dirname
 exports.conf = function () {
@@ -14,6 +15,13 @@ exports.conf = function () {
     typesenseHost = config.TypesenseHost
     typesenseApi = config.TypesenseApi
     port = config.AchozPort
+    if (config.SearchEngine == 'meilisearch') {
+
+        meiliclient = new MeiliSearch({
+            host: typesenseHost,
+            apikey: typesenseApi
+        })
+    }
 }
 
 
