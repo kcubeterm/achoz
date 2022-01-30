@@ -7,9 +7,10 @@ const spawn = require('child_process').spawn;
 const conf = require(__dirname + "/setconfig").conf
 const path = require('path');
 const ts = require(__dirname + "/lib/typesense.js")
+const searchEngine = require(__dirname + "/lib/search-engine-wrapper").searchEngine
 
 conf()
-
+var SE = new searchEngine()
 function createApiKey(length) {
     var result = '';
     var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -27,6 +28,7 @@ if (!fs.existsSync(achozDataDir)) {
     fs.copyFileSync(appRoot + '/config.json', achozDataDir + '/config.json')
    
     config.TypesenseApi = createApiKey(40)
+    config.meiliApi = createApiKey(40)
     filename = os.homedir + '/.achoz/config.json'
     fs.writeFileSync(filename, JSON.stringify(config, null, 2));
 
@@ -83,9 +85,9 @@ switch (process.argv[2]) {
 
 
 function startSearchEngine() {
-    spawn('pkill', ["typesense-server"]).on(('close'), () => {
+    spawn('pkill', ["meilisearch"]).on(('close'), () => {
 
-        searchEngine = spawn("typesense-server", ['--data-dir', `${achozDataDir}/searchdb`, '--api-key', `${typesenseApi}`, "--api-port", "8909"])
+        searchEngine = spawn("meilisearch", ['--db-path', `${achozDataDir}/data.ms`, '--master-key', `${meiliApi}`, "--http-addr", `${meiliAddr}`, "--env", "production" , "--no-analytics"])
         searchEngine.stderr.pipe(process.stdout)
         searchEngine.stdout.pipe(process.stdout)
         searchEngine.on('exit', (exit) => {
@@ -98,7 +100,7 @@ function startSearchEngine() {
 
 function indexer() {
 
-    ts.createCollection() 
+    SE.indexer()
 }
 
 
@@ -120,15 +122,9 @@ function server() {
 
 function engineHealth(callback) {
     console.log(",,")
-    var url = `${typesenseHost}/health`
-
-    fetch(url)
-        .then((response) => {
-            return response.json()
-
-        })
+    meiliclient.health()
         .then((data) => {
-            if (data.ok) {
+            if (data.status == 'available') {
                 console.log('Engine health is fine()')
                 callback()
             }

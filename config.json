@@ -5,5 +5,7 @@
   "SearchEngine": "meilisearch",
   "TypesenseHost": "http://localhost:8909",
   "TypesenseApi": "6Y4AVUSiwkNcReCpWFBouK2qbPSWniWXHq8CRaOb",
+  "meiliAddr": "localhost:8909",
+  "meiliApi": "",
   "AchozPort": 9097
 }

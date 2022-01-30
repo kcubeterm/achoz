@@ -18,8 +18,8 @@ exports.conf = function () {
     if (config.SearchEngine == 'meilisearch') {
 
         meiliclient = new MeiliSearch({
-            host: typesenseHost,
-            apikey: typesenseApi
+            host: meiliAddr,
+            apikey: meiliApi
         })
     }
 }
