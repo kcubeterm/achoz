@@ -19,14 +19,16 @@ function writeSreamCreator() {
     writeJsonData = fs.createWriteStream("/tmp/IndexData" + "." + writeStreamCount + ".ajsonln")
 }
 function init() {
-
-
     var absDir = []
+    console.log(config.DirToIndex)
     config.DirToIndex.forEach((dir, index) => {
+        console.log(fs.existsSync(path.resolve(dir)))
         if (fs.existsSync(dir)) {
             absDir.push(path.resolve(dir));
+            console.log(absDir)
         }
     });
+
     let uniqueDir = [...new Set(absDir)]
     var filelist = [];
     uniqueDir.forEach((dir, index) => {
@@ -91,9 +93,11 @@ function coreCrawler(filesPathArray, index, indexedDb) {
                 console.log(filePath + "  already indexed")
                 index++
                 coreCrawler(filesPathArray, index, indexedDb)
+                
             } else {
                 console.log(filePath, index)
                 universalFileSwitcher(filePath)
+
             }
 
 
@@ -159,10 +163,7 @@ function universalFileSwitcher(filePath) {
         // Files without extension or unrecognised extension will be 
         // processed through mimetypes
         default:
-            let stdout1 = spawnSync("file", ["--mime-type", filePath]).stdout.toString()
-            let mimeType = stdout1.split(':')[1].trim();
-            mimeTypeSwitch(mimeType, filePath)
-
+            defaultFileHandler(filePath)
     }
 
     return;
@@ -209,8 +210,8 @@ function getGeneralInfo(filePath) {
         stats = fs.statSync(filePath);
     } catch (err) {
         if (err.code == 'ENOENT') {
-            console.log(`${filePath} not found`);
-            return;
+            console.log(`${filePath} not found`)
+            fileinfo = {}
         }
     }
 
@@ -225,14 +226,18 @@ function textHandler(filePath) {
     let fileinfo = getGeneralInfo(filePath)
     // console.log(fileinfo)
     if (typeof fileinfo == 'undefined') {
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
 
     }
     try {
         fileinfo.content = fs.readFileSync(filePath, 'utf8').replace(/\s+/g, " ");
     } catch (err) {
         console.err(err);
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     fileinfo.type = 'text'
     writeMetadata(fileinfo)
@@ -242,7 +247,9 @@ function textHandler(filePath) {
 function htmlHandler(filePath) {
     let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     const htmls = fs.readFileSync(filePath, 'utf8');
     const texts = convert(htmls)
@@ -256,7 +263,9 @@ function htmlHandler(filePath) {
 function docHandler(filePath) {
     let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     try {
         command = spawnSync("antiword", [filePath, '-']).stdout.toString()
@@ -267,6 +276,9 @@ function docHandler(filePath) {
     } catch (error) {
         console.log(filepath)
         console.log(error)
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
 
     }
 
@@ -277,7 +289,9 @@ function officeFileHandler(filePath, callback) {
     let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
         console.log('fileinfo getting undefined')
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     officeParser.setDecompressionLocation("/tmp");
     try {
@@ -294,7 +308,9 @@ function officeFileHandler(filePath, callback) {
         });
     } catch (err) {
         console.log(err)
-        return
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     writeMetadata(fileinfo);
 
@@ -305,7 +321,9 @@ function pdfHandler(filePath) {
 
     let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     try {
 
@@ -317,7 +335,9 @@ function pdfHandler(filePath) {
 
     } catch (err) {
         console.log(err)
-        return
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+    
     }
 
 
@@ -353,11 +373,16 @@ async function docHandler(filePath) {
 function defaultFileHandler(filePath, filetype) {
     let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
-        return;
+        index++
+        return coreCrawler(filesPathArray, index, indexedDb)
+        
     }
     if (filetype) {
         fileinfo.type = filetype;
+    } else {
+        fileinfo.type = 'unrecognised'
     }
+    fileinfo.content = ""
     writeMetadata(fileinfo);
 
 }
