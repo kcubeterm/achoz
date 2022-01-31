@@ -6,7 +6,6 @@ const officeParser = require('officeparser');
 const {
     convert
 } = require('html-to-text')
-const appRoot = require('app-root-path');
 const os = require('os')
 const hidefile = require('hidefile')
 writeJsonData = fs.createWriteStream("/tmp/IndexData.jsonln")
