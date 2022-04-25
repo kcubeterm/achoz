@@ -24,11 +24,11 @@ function appendData(data) {
     out.innerHTML = ""
     var search_list = ""
     for (var i = 0; i < data.hits.length; i++) {
-        var id = data.hits[i].document.id;
-        var type = data.hits[i].document.type;
+        var id = data.hits[i].id;
+        var type = data.hits[i].type;
         var div = document.createElement("div");
-        var abspath = data.hits[i].document.abspath;
-        var filename = data.hits[i].document.name;
+        var abspath = data.hits[i].abspath;
+        var filename = data.hits[i].name;
         var description = '';
         try {
 
