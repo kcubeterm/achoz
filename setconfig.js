@@ -11,17 +11,16 @@ exports.conf = function () {
     configPath = userConfig ? os.homedir + '/.achoz/config.json' : defaultConfig
     achozDataDir = os.homedir + '/.achoz'
     config = require(configPath)
-   
+
     typesenseHost = config.TypesenseHost
     typesenseApi = config.TypesenseApi
     port = config.AchozPort
-    if (config.SearchEngine == 'meilisearch') {
 
-        meiliclient = new MeiliSearch({
-            host: meiliAddr,
-            apikey: meiliApi
-        })
-    }
+    meiliclient = new MeiliSearch({
+        host: meiliAddr,
+        apikey: meiliApi
+    })
+
 }
 
 

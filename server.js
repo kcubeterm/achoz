@@ -5,6 +5,7 @@ const fetch = require('node-fetch')
 const fs = require('fs')
 const os = require('os')
 const conf = require(__dirname + "/setconfig").conf
+const searchEngine = require(__dirname + '/lib/search-engine-wrapper.js').meilisearch
 
 conf()
 
@@ -34,18 +35,8 @@ function searchApi(req, res) {
 
     var input = req.query.q
     var pageNo = req.query.page || 1;
-    url = `${typesenseHost}/collections/${collectionName}/documents/\
-search?q=${input}&query_by=name,content&exclude_fields=content&highlight_fields=content&\
-page=${pageNo}&highlight_affix_num_tokens=10&highlight_start_tag=<b>&highlight_end_tag=</b>`
-
-    fetch(url, {
-        headers: {
-            'X-TYPESENSE-API-KEY': typesenseApi 
-        }
-    })
-        .then(function (response) {
-            return response.json();
-        })
+    const search = new searchEngine() 
+    search.normaliseSearch(input, pageNo)
         .then(function (data) {
             res.send(data);
         })
