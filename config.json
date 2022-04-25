@@ -1,6 +1,6 @@
 {
   "DirToIndex": [
-    "~/project/achoz/crawler/sample"
+      "/home/kcubeterm/project/achoz/sample"
   ],
   "TypesenseHost": "http://localhost:8909",
   "TypesenseApi": "6Y4AVUSiwkNcReCpWFBouK2qbPSWniWXHq8CRaOb",

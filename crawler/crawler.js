@@ -124,7 +124,8 @@ function universalFileSwitcher(filePath) {
             textHandler(filePath);
             break;
         case '.doc':
-            docHandler(filePath);
+            contnet = await docHandler(filePath);
+            type = 'officedoc'
             break;
         case '.docx':
         case '.odt':
@@ -308,7 +309,22 @@ function xmlHandler(filePath) {
     // TODO
 
 }
+async function docHandler(filePath) {
+    let fileinfo = getGeneralInfo(filePath)
+    try {
+        command = spawnSync("antiword", [filePath, '-']).stdout.toString()
+        content = command.replace(/\s+/g, " ")
+    
+    } catch (error) {
+        console.log(filepath)
+        console.log(error)
+        return;
 
+    }
+    return content;
+
+
+}
 function defaultFileHandler(filePath, filetype) {
     let fileinfo = getGeneralInfo(filePath)
     if (typeof fileinfo == 'undefined') {
