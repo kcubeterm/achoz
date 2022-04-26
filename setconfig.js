@@ -17,8 +17,8 @@ exports.conf = function () {
     port = config.AchozPort
 
     meiliclient = new MeiliSearch({
-        host: meiliAddr,
-        apikey: meiliApi
+        host: config.meiliAddr,
+        apikey: config.meiliApi
     })
 
 }

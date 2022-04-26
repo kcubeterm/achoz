@@ -7,7 +7,7 @@ const spawn = require('child_process').spawn;
 const conf = require(__dirname + "/setconfig").conf
 const path = require('path');
 const ts = require(__dirname + "/lib/typesense.js")
-const searchEngine = require(__dirname + "/lib/search-engine-wrapper").searchEngine
+const searchEngine = require(__dirname + "/lib/search-engine-wrapper").meilisearch
 
 conf()
 var SE = new searchEngine()
@@ -107,7 +107,7 @@ function indexer() {
 
 
 function crawler() {
-    crawlProcess = spawn('node', ['--no-warnings',`${appRoot}/crawler/crawler.js`])
+    crawlProcess = spawn('node', ['--no-warnings',`${appRoot}/lib/crawler.js`])
     crawlProcess.stdout.pipe(process.stdout)
     crawlProcess.stderr.pipe(process.stdout)
 }
