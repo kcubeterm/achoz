@@ -1,3 +1,12 @@
+import logging
+import sys
+import os
+logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s',handlers=[
+        logging.FileHandler(os.path.expanduser('~/.achoz.log'),mode='w'),
+        logging.StreamHandler(sys.stdout)
+    ])
+    
+logger = logging.getLogger('achoz')
 # exporting variable that gonna use throughout the process
 meili_search_engine_pid = None
 watcher_file_changes_list = []
@@ -15,7 +24,7 @@ dir_to_ignore = []
 meili_api_port = None
 
 meili_client = None
-logger = None
 
 is_web_server_started = True
+ignore_hidden = True
 

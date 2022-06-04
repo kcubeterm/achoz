@@ -55,10 +55,12 @@ ul {
 }
 
 .filename {
-    color: rgba(11, 186, 230, 0.966);
+    color: rgba(33, 11, 230, 0.966);
     font-weight: bolder;
     overflow-wrap: anywhere;
     font-family: 'Times New Roman', Times, serif;
+    background-color: gray;
+    margin-left: 2;
 }
 .description {
     font-size: 15px;
@@ -87,7 +89,13 @@ input {
     color: rgb(138, 26, 230);
     font: 1em sans-serif;
     font-weight: bolder;
-  }
+}
+em {
+    font-style: normal;
+    font-weight: bold;
+    color: whitesmoke;
+    background-color: darkviolet;
+}
 
 #sbutton {
   width: 40px;

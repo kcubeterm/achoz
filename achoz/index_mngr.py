@@ -41,19 +41,21 @@ def init():
     
     uid_file = open(indexed_uid_file,'a')
 
-    for file in os.listdir(crawled_data_dir):
-        global_var.logger.debug(f'indexed_uid_collector {global_var.index_uid_collector}')
-        jsonln_pathname = crawled_data_dir + "/" + file
-        if jsonln_pathname in [*global_var.index_uid_collector.values()]:
-            continue
-       
-        uid = indexer(jsonln_pathname)
-        if uid:
-            global_var.index_uid_collector[uid] = jsonln_pathname
-            uid_file.write(f'{uid} {jsonln_pathname}')
-            uid_file.write('\n')
-        else:
-            global_var.logger.warning(f"{jsonln_pathname} does't pushed to meilisearch for some reason")
+    for base,_,files in os.walk(crawled_data_dir):
+        if files:
+            for file in files:
+                global_var.logger.debug(f'indexed_uid_collector {global_var.index_uid_collector}')
+                jsonln_pathname = os.path.join(crawled_data_dir,file[:2],file)
+                if jsonln_pathname in [*global_var.index_uid_collector.values()]:
+                    continue
+        
+                uid = indexer(jsonln_pathname)
+                if uid:
+                    global_var.index_uid_collector[uid] = jsonln_pathname
+                    uid_file.write(f'{uid} {jsonln_pathname}')
+                    uid_file.write('\n')
+                else:
+                    global_var.logger.warning(f"{jsonln_pathname} does't pushed to meilisearch for some reason")
 
     uid_file.close()
     global_var.indexing_locked = False

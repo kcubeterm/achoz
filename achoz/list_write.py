@@ -1,7 +1,7 @@
 def list2text(anylist:list, path: str,mode='w'):
     if len(anylist) == 0:
         return
-    textfile = open(path,mode)
+    textfile = open(path,mode,encoding='utf8',errors='ignore')
     for item in anylist:
         textfile.write(item)
         textfile.write("\n")

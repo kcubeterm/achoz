@@ -33,7 +33,7 @@ def search_api(request):
         "offset": offsetValue,
         "limit": limitValue,
         "attributesToHighlight": ['content', 'name'],
-        "attributesToRetrieve": ['id', 'title', 'abspath', 'type'],
+        "attributesToRetrieve": ['id', 'title', 'abspath', 'mime'],
         "attributesToCrop": ['content'],
         "cropLength": 200
             }

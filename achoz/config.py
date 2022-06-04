@@ -1,22 +1,17 @@
 
 import json
-import logging
-import os.path
-import sys
-
+import os
 import meilisearch
-
 import global_var
 
 
 def path_expander(list_of_path):
     output=[]
     for dir in list_of_path:
-        output.append(os.path.abspath(os.path.expanduser("~")))
+        output.append(os.path.abspath(os.path.expanduser(dir)))
     return output
 
 def configure(user_dir_to_index = None,user_defined_config_file=None, user_defined_data_dir=None, user_defined_web_port=None, user_defined_meili_port=None):
-
     if os.environ.get('ACHOZ_ENV') == 'developement':
         project_root_dir = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         
@@ -44,7 +39,10 @@ def configure(user_dir_to_index = None,user_defined_config_file=None, user_defin
         global_var.dir_to_index = config.get('dir_to_index')
         if user_dir_to_index:
             global_var.dir_to_index = global_var.dir_to_index + user_dir_to_index
+            global_var.dir_to_index = path_expander(global_var.dir_to_index)
 
+        # avoid duplicate directory name
+        global_var.dir_to_index = list(set(global_var.dir_to_index))
         global_var.dir_to_ignore = config.get('dirToBeIgnored')
 
         if user_defined_data_dir:
@@ -61,17 +59,9 @@ def configure(user_dir_to_index = None,user_defined_config_file=None, user_defin
 
     
     global_var.meili_client = meilisearch.Client('http://127.0.0.1:' + str(global_var.meili_api_port))
-    logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s',handlers=[
-        logging.FileHandler(global_var.data_dir + "/achoz.log",mode='w'),
-        logging.StreamHandler(sys.stdout)
-    ])
-
-
-    global_var.logger = logging.getLogger()
-    type(global_var.logger)
-    global_var.logger.setLevel(logging.DEBUG)
+    
     # adding variable in logging. 
-    global_var.logger.info(f'data_dir = {global_var.data_dir}')
+    global_var.logger.info(f'data_dir:{global_var.data_dir}')
     global_var.logger.info(f'web_port={global_var.web_port}')
     global_var.logger.info(f'meili_api_port={global_var.meili_api_port}')
     global_var.logger.info(f'dir_to_index={global_var.dir_to_index}')
@@ -89,5 +79,3 @@ def configure(user_dir_to_index = None,user_defined_config_file=None, user_defin
     return 
 
 
-def meili_search_optimise():
-    pass
