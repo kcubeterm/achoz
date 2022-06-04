@@ -24,16 +24,16 @@ function appendData(data) {
     out.innerHTML = ""
     var search_list = ""
     for (var i = 0; i < data.hits.length; i++) {
-        var id = data.hits[i].document.id;
-        var type = data.hits[i].document.type;
+        var id = data.hits[i].id;
+        var type = data.hits[i].type;
         var div = document.createElement("div");
-        var abspath = data.hits[i].document.abspath;
-        var filename = data.hits[i].document.name;
+        var abspath = data.hits[i].abspath;
+        var filename = data.hits[i].title;
         var description = '';
         try {
 
-            if (data.hits[i].highlights[0].hasOwnProperty('snippet')) {
-                description = data.hits[i].highlights[0].snippet
+            if (data.hits[i]._formatted.hasOwnProperty('content')) {
+                description = data.hits[i]._formatted.content
             }
         } catch (error) {
             console.log(error)
@@ -53,7 +53,7 @@ function appendData(data) {
             case type.match(/audio/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
-                <audio controls src=/filereq?id=${id} > Your browser dont support this audio </audio>
+                <audio controls src=/file?id=${id} > Your browser dont support this audio </audio>
                 ${descriptionHtml}
                 <p class="type" > <i class="fa fa-file-audio" aria-hidden="true"></i>${type}</p> </div>
                 `
@@ -62,7 +62,7 @@ function appendData(data) {
             case type.match(/image/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
-                <div class=result-img><img width=300 src=/filereq?id=${id}></div>
+                <div class=result-img><img width=300 src=/file?id=${id}></div>
                 ${descriptionHtml}
                 <p class="type" > <i class="fa fa-file-image" aria-hidden="true"></i>${type} </p> </div>
                 `
