@@ -1,6 +1,7 @@
 import logging
 import sys
 import os
+
 logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s',handlers=[
         logging.FileHandler(os.path.expanduser('~/.achoz.log'),mode='w'),
         logging.StreamHandler(sys.stdout)
@@ -27,4 +28,10 @@ meili_client = None
 
 is_web_server_started = True
 ignore_hidden = True
+db_locked = False
 
+# stats
+meili_settings_configured = None
+no_of_total_files = 0
+no_of_crawled_files = 0
+no_of_indexed_files = 0 

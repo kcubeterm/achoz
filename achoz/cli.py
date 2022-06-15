@@ -8,6 +8,7 @@ import central_controller
 import config
 import global_var
 import meili_installer
+import signal
 
 
 def config_creator(args,config_path):
@@ -91,9 +92,18 @@ def main():
     central_controller.init()
 
 
+def cli():
+    try:
+        main()
+    except:
+        global_var.logger.exception("<==============:APPLICATION CRASH:================>")
+        os.kill(global_var.meili_search_engine_pid,signal.SIGTERM)
+        global_var.logger.error("<==============:APPLICATION CRASH:================>")
+
 if __name__ == "__main__":
     try:
         main()
     except:
         global_var.logger.exception("<==============:APPLICATION CRASH:================>")
+        os.kill(global_var.meili_search_engine_pid,signal.SIGTERM)
         global_var.logger.error("<==============:APPLICATION CRASH:================>")

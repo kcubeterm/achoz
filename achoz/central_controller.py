@@ -1,18 +1,21 @@
-import signal 
-import os 
+import file_lister
+import os
+import signal
+import sqlite3
 import subprocess
 import sys
 import time
-from requests import get
-import global_var
-import crawler
-import schedule
-import time
-import index_mngr
-import pyinotify
 from threading import Thread
-import server
 
+import pyinotify
+import schedule
+from requests import get
+
+import crawler
+import global_var
+import index_mngr
+import server
+from unique_id_generator import uniqueid
 
 
 def sigterm_handler(_signo,_noimp):
@@ -28,17 +31,29 @@ for sig in [signal.SIGHUP,signal.SIGINT,signal.SIGTERM,signal.SIGQUIT]:
 def setting_up_meili():
     """"This is one time process to adding some rule to indexed, this must be 
     run before any documents gonna indexed in meilisearch"""
-    
-    lock_file = os.path.join(global_var.data_dir,'rule.lock')
-    if not os.path.exists(lock_file):
-        global_var.meili_clientclient.index(global_var.index_name).update_sortable_attributes([
-          'atime',
-          'mtime'])
+    db_con = sqlite3.connect(os.path.join(global_var.data_dir,'metadata.db'))
+    db = db_con.cursor()
+    # create tables in db if not already exist
+    create_stats_table = "create table if not exists  stats(key int unique,value int default 0);"
+    db.execute(create_stats_table)
+    db.execute("insert or ignore into stats values('meili_settings_configured',0);")
+    db_con.commit()
+    setting_status = db.execute("select value from stats where key='meili_settings_configured';").fetchall()[0][0]
+    if setting_status == 1:
+        return
+
+    try:
+        global_var.meili_client.index(global_var.index_name).update_sortable_attributes(['atime','mtime','ctime'])
         global_var.meili_client.index(global_var.index_name).update_searchable_attributes([
         'title',
         'content',
         'abspath'])
-    
+    except:
+        global_var.logger.error('Setting Up meili not succeeded, please report the issue')
+        exit(1)
+    db.execute("update stats set value = 1 where key='meili_settings_configured'")
+    db_con.commit()
+    db.close()
     return  
 
 
@@ -63,8 +78,7 @@ def watcher():
         def add_pathname_in_list(self,event):
             if event.dir:
                 return
-            
-            global_var.watcher_file_changes_list.append(event.pathname)
+            file_lister.main(file=event.pathname)
 
         def process_IN_CLOSE_WRITE(self, event):
             self.add_pathname_in_list(event)
@@ -89,13 +103,6 @@ def Invoke_watcher():
 
 def Invoke_crawler():
     crawler.crawling()
-
-def secondary_crawling():
-    """
-    its crawls only those files that has listed by watcher in global_var.watcher_file_changes_list.
-    """
-    if len(global_var.watcher_file_changes_list) > 1:
-        crawler.individual_file_crawl(global_var.watcher_file_changes_list)
 
 def Invoke_search_engine():
     command = ['meilisearch','--db-path',  global_var.data_dir + '/db.ms' ,'--http-addr' ,'127.0.0.1:'+str(global_var.meili_api_port) ]
@@ -131,23 +138,33 @@ def Invoke_web_server_script():
 
     return started
 
-def crawled_data_remover():
-    """it will regularly removes crawled file once it indexed."""
-    index_uid_dict = {**global_var.index_uid_collector}
-    for i in index_uid_dict:
-        try:
-            status = global_var.meili_client.get_task(i).get('status')
-        except:
-            global_var.logger.exception("UID stats fetcher(central_controller")
+def remove_processed_data():
+    global_var.logger.debug('REMOVE PROCESSED DATA FUNC INVOKED')
+    """it will regularly removes crawled file once it has indexed."""
+    if global_var.crawling_locked or global_var.indexing_locked or global_var.db_locked:
+        return
+    
+    global_var.db_locked = True
+    db_con = sqlite3.connect(os.path.join(global_var.data_dir,'metadata.db'))
+    db = db_con.cursor()
+    def delete_row(ids:list):
+        db.executemany("delete from crawled_data where id = ?",ids)
+        return
 
+    meili_uid = db.execute("select distinct meili_indexed_uid from metadata;").fetchall()
+    for uid in meili_uid:
+        uid = uid[0]
+        status = global_var.meili_client.get_task(uid).get('status')
         if status == 'succeeded':
-            global_var.logger.info(f'SUCCESSFULLY INDEXED: {global_var.index_uid_collector.get(i)} ')
-            try:
-                os.remove(global_var.index_uid_collector.get(i))
-            except:
-                global_var.logger.exception('CRAWLED_DATA_REMOVER')
-                
-            del global_var.index_uid_collector[i]
+            id_of_indexed_doc = db.execute(f"select id from metadata where meili_indexed_uid = {uid};").fetchall()
+            delete_row(id_of_indexed_doc)
+
+    db_con.commit()
+    db.close()
+    global_var.db_locked = False
+    global_var.logger.debug('REMOVE PROCESSED DATA FUNC EXITED')
+    return
+
 
 def Invoke_indexer():
     if not global_var.is_ready_for_indexing:
@@ -156,10 +173,9 @@ def Invoke_indexer():
     index_mngr.init()
 
 def invoke_schedular():
-    schedule.every(1).minutes.do(Invoke_crawler)
-    schedule.every(1).minutes.do(Invoke_indexer)
-    schedule.every(2).minutes.do(secondary_crawling)
-    schedule.every(2).minutes.do(crawled_data_remover)
+    schedule.every(20).minutes.do(Invoke_crawler)
+    schedule.every(3).minutes.do(Invoke_indexer)
+    schedule.every(5).minutes.do(remove_processed_data)
     while True:
         schedule.run_pending()
         time.sleep(2)
@@ -173,10 +189,16 @@ def init():
         if isSearchEngineStarted and isWebServerStarted:
         
             global_var.logger.info('Now you are ready to chill')
+            setting_up_meili()
+            ## list all file in database.
+
+            file_lister.main(global_var.dir_to_index, global_var.dir_to_ignore)
+            Invoke_crawler()
+            Invoke_indexer()
+            remove_processed_data()
             Invoke_watcher()
             invoke_schedular()
             
-                
 
         else:
             if not isSearchEngineStarted:

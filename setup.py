@@ -4,7 +4,7 @@ with open("README.md", "r") as f:
 
 setup(
    name='achoz',
-   version='0.3.45',
+   version='0.3.47',
    python_requires=">=3.8",
    description='Search through all your documents like web',
    long_description=long_description,
@@ -21,9 +21,9 @@ setup(
    '' : ['*.js']
    },
    entry_points = {
-        'console_scripts': ['achoz=achoz.cli:main'],
+        'console_scripts': ['achoz=achoz.cli:cli'],
     },
-   install_requires=["meilisearch>=0.18.3","pyramid>=2.0","pyinotify>=0.9.6","requests>=2.22.0","schedule>=1.1.0","textract>=1.6.5"], 
+   install_requires=["cleantext>=1.1.4","meilisearch>=0.18.3","pyramid>=2.0","pyinotify>=0.9.6","requests>=2.22.0","schedule>=1.1.0","textract>=1.6.5"], 
     classifiers=[
         "Environment :: Console",
         "Environment :: Web Environment",

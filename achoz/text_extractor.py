@@ -2,6 +2,7 @@ import os
 import textract
 import global_var
 from mimetypes import guess_extension
+import cleantext
 class extractor:
     def __init__(self):
         self.self = None
@@ -169,7 +170,8 @@ def init(filepath,extension=None):
             raw_text_from_file = raw_text_from_file.decode()
             
         ascii_only_string = raw_text_from_file.encode('ascii','ignore').decode()
-        output['content'] = " ".join(ascii_only_string.split())
+        clean_text = cleantext.clean(ascii_only_string,extra_spaces=True, lowercase=True, numbers=False, punct=True)
+        output['content'] = clean_text
     else:
         return None
     output['extension'] = extension

@@ -3,7 +3,8 @@ from unique_id_generator import uniqueid
 from fnmatch import fnmatch
 import list_write as lw  
 import global_var
-
+import sqlite3
+import time
 l = global_var.logger
 
 class ignore_filter:
@@ -40,9 +41,9 @@ class ignore_filter:
         return dirs
 
 
-def main(list_of_dir, path_to_be_written, list_of_patterns_to_be_ignore=None):
+def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None):
     l.debug(f'Filelister invocation with option, list_of_dir={list_of_dir},\
-    path_to_be_written={path_to_be_written}, list_of_patterns_to_ignore={list_of_patterns_to_be_ignore}')
+     list_of_patterns_to_ignore={list_of_patterns_to_be_ignore}')
     """
     It will create a top-down file list with in files. filename will be hash of root directory.
 
@@ -55,49 +56,65 @@ def main(list_of_dir, path_to_be_written, list_of_patterns_to_be_ignore=None):
         
     """
 
-    for dir in list_of_dir:
-        for root,dirs,files in os.walk(dir,topdown=True):
-            ## prevent listing those dirs which must be ignore
-            root = os.path.normpath(root)
-            root_id = uniqueid(root)
-            ign = ignore_filter()
-            dirs[:] = ign.directory(dirs,root,list_of_patterns_to_be_ignore)
-            files = ign.files(root,files,list_of_patterns_to_be_ignore)
-            if len(files) == 0:
-                continue
+    ## sqlite 
+    while global_var.db_locked:
+        time.sleep(1)
+    global_var.db_locked = True
+    db_connect = sqlite3.connect(os.path.join(global_var.data_dir,'metadata.db'))
+    db = db_connect.cursor()
+    table = '''
+    create table if not exists metadata(
+        id text primary key not null,
+        filepath text not null,
+        crawled int default 0 not null,
+        error int default 0 not null,
+        indexed int default 0 not null,
+        meili_indexed_uid int default null
+    );
+    '''
+    db.execute(table)
+    db_connect.commit()
+    if file:
+        path = file
+        uid = uniqueid(file)
+        insert_cmd = f"INSERT OR IGNORE INTO METADATA VALUES ('{uid}','{path}',0,0,0,null);"
+        db.execute(insert_cmd)
+    else:
+        for dir in list_of_dir:
+            for root,dirs,files in os.walk(dir,topdown=True):
+                ## prevent listing those dirs which must be ignore
+                root = os.path.normpath(root)
+                ign = ignore_filter()
+                dirs[:] = ign.directory(dirs,root,list_of_patterns_to_be_ignore)
+                files = ign.files(root,files,list_of_patterns_to_be_ignore)
+                if len(files) == 0:
+                    continue
 
-            if path_to_be_written:
-                PathToBewritten =  path_to_be_written
-            else:
-                PathToBewritten = os.path.join(global_var.data_dir,'filelist')
+                for file in files:
+                    path = os.path.join(root,file)
+                    uid = uniqueid(repr(path))
+
+                    insert_cmd = f"INSERT OR IGNORE INTO METADATA VALUES ('{uid}','{path}',0,0,0,null);"
+                    try:
+                        db.execute(insert_cmd)
+                    except Exception as e:
+                        print(e)
+                        print('error')
+                        continue
+
+
             
-            try:
-                os.mkdir(PathToBewritten)
-            except:
-                pass
-
-            try:
-                os.mkdir(os.path.join(PathToBewritten,root_id[:2]))
-            except:
-                pass
-            # filepath in which list of paths written
-            filepath = os.path.join(PathToBewritten,root_id[:2],root_id)
-        
-            
-            filespath_list = []
-            for file in files:
-                
-                filespath_list.append(root + "/" + str(file))
-
-            lw.list2text(filespath_list,filepath)
-
+    db_connect.commit()
+    db.close()
+    global_var.db_locked = False
     return
 
 if __name__ == "__main__":
     index = ['/home/kcubeterm/sample']
-    ignore = ['/home/kcubeterm/sample/pdf']
+    ignore = ['*.config','*.git']
     target = '/tmp/sample'   
-    print('invoke')                           
+    print('invoke')
+    global_var.data_dir = '/tmp'                         
     main(index,target,ignore)
 
 

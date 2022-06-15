@@ -1,11 +1,9 @@
 
 import text_extractor
-import file_lister
 import os
 from unique_id_generator import uniqueid
 import global_var
-import json
-import list_write as lw
+import sqlite3
 
 
 def crawling_and_adding_more_var(path):
@@ -20,15 +18,17 @@ def crawling_and_adding_more_var(path):
     fileinfo['id'] = uniqueid(path)
     fileinfo['title'] = os.path.basename(path)
     fileinfo['abspath'] = path
-    fileinfo['content'] = text.get('content')
+    if text.get('content') is not None:
+        fileinfo['content'] = text.get('content')
+    else:
+        fileinfo['content'] = "Nothing......"
     fileinfo['ext'] = text.get('extension')
     fileinfo['mime'] = text.get('mime')
     fileinfo['extrainfo'] = text.get('extrainfo')
     fileinfo['ctime'] = os.path.getctime(path)
     fileinfo['atime'] = os.path.getatime(path)
-
+    fileinfo['mtime'] = os.path.getmtime(path)
     return fileinfo
-
 
 def crawling():
     global_var.logger.debug('Crawling function Invocation')
@@ -36,56 +36,39 @@ def crawling():
         return
 
     global_var.crawler_locked = True
-    list_of_patterns_to_be_ignore = None
 
-    file_lister.main(global_var.dir_to_index, global_var.dir_to_ignore)
+    global_var.db_locked = True
+    metadata_db_connect = sqlite3.connect(os.path.join(global_var.data_dir,'metadata.db'))
+    metadata_db = metadata_db_connect.cursor()
+    # sqlite table creation, 
+    crawled_data_table = """CREATE TABLE IF NOT EXISTS crawled_data(
+        id CHARACTER(12) PRIMARY KEY not null,
+        ctime real ,
+        mtime real ,
+        atime real ,
+        extrainfo text,
+        mime text,
+        ext text,
+        content blob);"""
+    metadata_db.execute(crawled_data_table)
+    data = metadata_db.execute('select id,filepath from metadata where crawled != 1 and error == 0;')
+    rows = data.fetchall()
+    for row in rows:
+        id = row[0]
+        filepath = row[1]
+        global_var.logger.debug(f'CRAWLING: {filepath}')
+        crawled_content = crawling_and_adding_more_var(filepath)
+        if not crawled_content:
+            metadata_db.execute(f"update metadata set error = 1 where id = '{id}';")
+            metadata_db_connect.commit()
+            continue
+        values = ( id,crawled_content.get('ctime'),crawled_content.get('mtime'),crawled_content.get('atime'),crawled_content.get('extrainfo'),crawled_content.get('mime'),crawled_content.get('ext'),crawled_content.get('content'),)
+        metadata_db.execute("insert or ignore into crawled_data values (?,?,?,?,?,?,?,?)",values)
+        metadata_db.execute(f"update metadata set crawled == 1 where id =='{id}';")
+        metadata_db_connect.commit()
 
-    for base,_,files in os.walk(global_var.data_dir + "/filelist",topdown=True):
-       if files:
-            for file in files:
-                contains_abspath = os.path.join(base,file)
-                filelist = lw.text2list(contains_abspath)
-
-                files_already_crawled_path = os.path.join(global_var.data_dir,'crawled',file[:2],file)
-                if os.path.exists(files_already_crawled_path) and os.stat(files_already_crawled_path).st_size != 0:
-                    already_crawled_files = lw.text2list(files_already_crawled_path)
-                    filelist = [ file for file in filelist if not file in already_crawled_files ]
-
-                try:
-                    os.mkdir(global_var.data_dir + '/crawled')
-                    os.mkdir(global_var.data_dir + "/crawled_data")
-                except:
-                    pass
-
-                crawled_data_file = os.path.join(global_var.data_dir,"crawled_data",file[:2],file)
-                try:
-                    os.mkdir(os.path.join(global_var.data_dir,"crawled_data",file[:2]))
-                except:
-                    pass
-
-                crawled_data_file_io = open(crawled_data_file,'a')
-                crawled_list_filepath = os.path.join(global_var.data_dir,'crawled',file[:2],file)
-                try:
-                    os.mkdir(os.path.join(global_var.data_dir,'crawled',file[:2]))
-                except:
-                    pass
-                crawled_list = []
-                
-                for filepath in filelist:
-                   
-                    fileinfo = crawling_and_adding_more_var(filepath)
-                    if fileinfo:
-
-                        crawled_list.append(filepath)
-                        json.dump(fileinfo, crawled_data_file_io)
-                        crawled_data_file_io.write('\n')
-
-            lw.list2text(crawled_list, crawled_list_filepath, 'a')
-            crawled_data_file_io.close()
-            # delete the file if it contatins nothing. 
-            if os.stat(crawled_data_file).st_size == 0:
-                os.remove(crawled_data_file)
-
+    metadata_db_connect.close()
+    global_var.db_locked = False
     global_var.crawler_locked = False
     global_var.is_ready_for_indexing = True
     return
@@ -95,38 +78,9 @@ def crawling():
 # files from start.
 
 
-def individual_file_crawl(list_of_filepath: list):
-    if global_var.crawling_locked:
-        return
-
-    global_var.crawler_locked = True
-
-    for path in list_of_filepath:
-        fileinfo = crawling_and_adding_more_var(path)
-        id = uniqueid(os.path.dirname(path)) 
-        # open that specifice file from where file belongs to in crawled_data
-        crawled_data_file = os.path.join(global_var.data_dir,"crawled_data",id[:2],id)
-        write_file = open(crawled_data_file, 'a')
-        json.dump(fileinfo, write_file)
-        write_file.write('\n')
-        write_file.close()
-        global_var.logger.debug(f'INDIVIDUAL INDEX: {path} ,{crawled_data_file}')
-        # note this file into crawled dir since it has crawled
-        file_contains_crawled_list = os.path.join(global_var.data_dir,"crawled",id[:2],id)
-        lw.list2text([path], file_contains_crawled_list, 'a')
-
-    global_var.crawler_locked = False
-    return
-
-
 def main(path):
-    f = open("/tmp/hell", "w")
-    for file in os.listdir(path):
-        fileinfo = crawling_and_adding_more_var(os.path.join(path,file))
-        json.dump(fileinfo, f)
-        f.write('\n')
-
-    f.close()
+    global_var.data_dir = '/tmp/sample'
+    crawling(False)
     return
 
 
