@@ -157,7 +157,7 @@ def remove_processed_data():
         db.executemany("delete from crawled_data where id = ?",ids)
         return
 
-    meili_uid = db.execute("select distinct meili_indexed_uid from metadata;").fetchall()
+    meili_uid = db.execute("select distinct meili_indexed_uid from metadata where meili_indexed_uid is not null;").fetchall()
     for uid in meili_uid:
         uid = uid[0]
         status = global_var.meili_client.get_task(uid).get('status')
