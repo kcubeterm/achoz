@@ -37,7 +37,7 @@ def configure(user_dir_to_index = None,user_defined_config_file=None, user_defin
         global_var.meili_api_port = config.get('meili_api_port')
         global_var.web_port = config.get('web_port')
         global_var.data_dir = os.path.abspath(config.get('data_dir'))
-        
+        global_var.priority = config.get('priority') 
         global_var.dir_to_index = config.get('dir_to_index')
         if user_dir_to_index:
             global_var.dir_to_index = global_var.dir_to_index + user_dir_to_index

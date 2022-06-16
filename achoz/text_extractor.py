@@ -2,7 +2,7 @@ import os
 import textract
 import global_var
 from mimetypes import guess_extension
-import cleantext
+import text_cleaner
 class extractor:
     def __init__(self):
         self.self = None
@@ -169,8 +169,8 @@ def init(filepath,extension=None):
         if type(raw_text_from_file) == type(bytes()):
             raw_text_from_file = raw_text_from_file.decode()
             
-        ascii_only_string = raw_text_from_file.encode('ascii','ignore').decode()
-        clean_text = cleantext.clean(ascii_only_string,extra_spaces=True, lowercase=True, numbers=False, punct=True)
+        
+        clean_text = text_cleaner.init(raw_text_from_file)
         output['content'] = clean_text
     else:
         return None
@@ -179,4 +179,6 @@ def init(filepath,extension=None):
             
     return output
 
-
+if __name__ == '__main__':
+    print('invoke')
+    print(init('/home/kcubeterm/alchemist/56 FC List 16th Feb 22_compressed.pdf'))

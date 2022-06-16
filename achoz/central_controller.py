@@ -15,8 +15,13 @@ import crawler
 import global_var
 import index_mngr
 import server
-from unique_id_generator import uniqueid
 
+
+def set_priority():
+    if global_var.priority.lower() == 'high':
+        os.nice(0)
+    else:
+        os.nice(19)
 
 def sigterm_handler(_signo,_noimp):
     os.kill(global_var.meili_search_engine_pid,signal.SIGTERM)
@@ -62,6 +67,7 @@ def setting_up_meili():
 
 
 def watcher():
+    global_var.logger.debug('WATCHER FUNCTION INVOCATION')
     """
     collects the list of  changes/modifed file in config.watch_file_changes_list,
 
@@ -193,6 +199,7 @@ def init():
             ## list all file in database.
 
             file_lister.main(global_var.dir_to_index, global_var.dir_to_ignore)
+            set_priority() # it will limit cpu usage of current process and its child.
             Invoke_crawler()
             Invoke_indexer()
             remove_processed_data()

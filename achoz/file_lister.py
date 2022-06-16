@@ -94,9 +94,9 @@ def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None):
                     path = os.path.join(root,file)
                     uid = uniqueid(repr(path))
 
-                    insert_cmd = f"INSERT OR IGNORE INTO METADATA VALUES ('{uid}','{path}',0,0,0,null);"
+                    insert_values = (uid,path,0,0,0,None,)
                     try:
-                        db.execute(insert_cmd)
+                        db.execute("INSERT OR IGNORE INTO METADATA VALUES (?,?,?,?,?,?)",insert_values)
                     except Exception as e:
                         print(e)
                         print('error')

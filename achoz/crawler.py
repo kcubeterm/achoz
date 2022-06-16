@@ -18,7 +18,7 @@ def crawling_and_adding_more_var(path):
     fileinfo['id'] = uniqueid(path)
     fileinfo['title'] = os.path.basename(path)
     fileinfo['abspath'] = path
-    if text.get('content') is not None:
+    if text.get('content'):
         fileinfo['content'] = text.get('content')
     else:
         fileinfo['content'] = "Nothing......"
@@ -79,8 +79,9 @@ def crawling():
 
 
 def main(path):
-    global_var.data_dir = '/tmp/sample'
-    crawling(False)
+    # global_var.data_dir = '/tmp/sample'
+    # crawling(False)
+    print(crawling_and_adding_more_var('/home/kcubeterm/alchemist/56 FC List 16th Feb 22_compressed.pdf').get('content'))
     return
 
 
