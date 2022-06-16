@@ -11,58 +11,88 @@ the goal of achoz is making cregox self-data-searching-life not only easier, but
 
 more details at http://ahoxus.org/achoz
 
-## Installation 
-
-As of now achoz supports linux 64 bit architecure only.
-
+# Installation.
+## Linux (x86_64,aarch64)
 ### Requirement.
- * npm
- * nodejs 
- * poppler-utils
- * antiword
+`python3.8+`
+`meilisearch` 
 
-you need to install typesense server as well. 
+User must have to ensure that you are using same meilisearch version as achoz. Since meilisearch database is not compatible over different version. so achoz have option to install meilisearch for you. 
 
-Install all requirements for debian based distro like ubuntu, linux-mint etc with the following command.
+following packages must be installed in your system. Instructions for Debian and ubuntu. use your own package manager to install it. 
 ```
-wget https://dl.typesense.org/releases/0.22.1/typesense-server-0.22.1-amd64.deb
-sudo apt install nodejs poppler-utils antiword ./typesense-server-0.22.1-amd64.deb
+apt-get install python-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
+flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig
 ```
 
-Once done with with system requirement. install achoz with npm. 
+After that. use pip to install achoz.
 
 ```
-npm install -g achoz
+pip install achoz
 ```
-use sudo if you are not root. 
+
+### Meilisearch
+Once you have done with above. achoz executable should be in your PATH. Now lets install meilisearch. 
+
+`sudo achoz --install-meili`
+
+it will download and install meilisearch binary at `/usr/local/bin/` you could specify another path to install. just make sure that path should be cover by $PATH Environment.
+
+`achoz --install-meili path/to/dir`
+
 
 ## Usage 
 
-Lets suppose you want to make your all file and directories in your home directory searchable. we call it normalize. Just follow four steps and boom. 
+### Quick start
+
+ 
+```
+achoz start -a ~/Documents
+```
+
+for adding more directory, provide comma sepatated list of dirs. like `~/Documents,~/music` 
+
+what above command gonna do is, it will start crawling all documents and file in `documents` directory. and it will start a web server at default port 8990. It will create an config.json at `~/.achoz` , you could add more options at config file or with command-line itself. 
+
+Also using configuration file is recommended way to go with achoz. 
+### Configuration. 
+
+Config file at `~/.achoz/config.json` will create automatically if you run `achoz` with or without option at first time. 
+
+**Sample config file**
+```json
+{
+    "dir_to_index": ["/home/kcubeterm/Documents","/home/kcubeterm/books"],
+    "dir_to_ignore": ["/home/kcubeterm/secrets/","*.git","*.db","*.achoz","*.config"],
+    "web_port": 8990,
+    "meili_api_port": 8989,
+    "data_dir": "/home/kcubeterm/.achoz",
+    "priority": "low"
+}
+```
+#### Explain config
+
+**dir_to_index**: contains list of directory which you are willing to normalize(crawl,index,searchable). command line option `-a dir1,dir2,dir3` does the same.
+
+**dir_to_ignore**: contains list of patterns and directory which you are willing to ignore. one can use this option to ignore specifice extension too. suppose user want to ignore all .db extension, then using *.db will help to ignore any files or directory which has .db extension.
+By Default It will ignore any hidden files or directory (directory which start form period '.') 
+
+**web_port** : Specify on which port web server gonna listen. Default:8990
 
 
-Step 1: Add dir in list. 
+**meili_api_port**: The backend api Meilisearch server gonna listen on it. Default:8989
 
-  `achoz add ~/`
 
-Step 2: Lets invoke crawler to crawl it.
+**data_dir**: Directory where program will keep metadata and database. Default: ~/.achoz
 
-  `achoz crawl `
 
-Step 3: Now start achoz engine. 
+**priority**: (High or Low) It will decide priority of CPU time to be given to achoz program. Default: low
 
-  `achoz engine `
+### Command-line options
+`achoz -h` is enough to know about all command line option. 
 
-  if it runs successfully, open another terminal for next step. let it run. Incase it reporting error like "Failed to start peering service" Try to disable typesense service via your init system, most probably systemctl. `systemctl stop typesense-server.service` and `systemctl disable typesense-server.service` 
-  also see [this issue](https://github.com/kcubeterm/achoz/issues/28)
 
-Step 4: Now index all crawled file. 
 
-  `achoz index`
-
-Boom. you have normalize your home directory. It means you can search any documents, pdf, music, videos, and everthing that was there. Now browse and search string at http://localhost:9097
-
-If you face issues in any of above steps, feel free to report it [here](https://github.com/kcubeterm/achoz/issues)
 
 
 

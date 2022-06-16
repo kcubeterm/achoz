@@ -1,5 +1,5 @@
 /*body {
-    background: url(/public/bg.jpg) no-repeat center center fixed; 
+    background: url(static/img/bg.jpg) no-repeat center center fixed; 
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -11,7 +11,7 @@ html {
     scroll-behavior: smooth;
   }
 body {
-    background-image: url('/public/img/bg.svg');
+    background-image: url('/static/img/bg.svg');
     background-size: cover;
     background-attachment: fixed;
     
@@ -55,10 +55,12 @@ ul {
 }
 
 .filename {
-    color: rgba(11, 186, 230, 0.966);
+    color: rgba(33, 11, 230, 0.966);
     font-weight: bolder;
     overflow-wrap: anywhere;
     font-family: 'Times New Roman', Times, serif;
+    background-color: gray;
+    margin-left: 2;
 }
 .description {
     font-size: 15px;
@@ -87,7 +89,13 @@ input {
     color: rgb(138, 26, 230);
     font: 1em sans-serif;
     font-weight: bolder;
-  }
+}
+em {
+    font-style: normal;
+    font-weight: bold;
+    color: whitesmoke;
+    background-color: darkviolet;
+}
 
 #sbutton {
   width: 40px;

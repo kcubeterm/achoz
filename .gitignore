@@ -1,9 +1,5 @@
-crawler/test/
-crawler/sample/
-node_modules/
-package-lock.json
-filelist.json
-IndexData.jsonln
-*.un~
-test
-sample
+sample/test
+*__pycache__
+*.egg-info
+build
+dist

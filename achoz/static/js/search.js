@@ -24,16 +24,16 @@ function appendData(data) {
     out.innerHTML = ""
     var search_list = ""
     for (var i = 0; i < data.hits.length; i++) {
-        var id = data.hits[i].document.id;
-        var type = data.hits[i].document.type;
+        var id = data.hits[i].id;
+        var mime = data.hits[i].mime;
         var div = document.createElement("div");
-        var abspath = data.hits[i].document.abspath;
-        var filename = data.hits[i].document.name;
+        var abspath = data.hits[i].abspath;
+        var filename = data.hits[i].title;
         var description = '';
         try {
 
-            if (data.hits[i].highlights[0].hasOwnProperty('snippet')) {
-                description = data.hits[i].highlights[0].snippet
+            if (data.hits[i]._formatted.hasOwnProperty('content')) {
+                description = data.hits[i]._formatted.content
             }
         } catch (error) {
             console.log(error)
@@ -42,51 +42,51 @@ function appendData(data) {
         let fileNameHtml = `<a class="filename"> ${filename} </a>`
         let descriptionHtml = `<p class="description" > ${description} </p>`
 
-        switch (type) {
-            case type.match(/video/)?.input:
+        switch (mime) {
+            case mime.match(/video/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
                 ${descriptionHtml}
-                <p class="type" ><i class="fa fa-file-video" aria-hidden="true"></i> ${type} </p> </div>`
+                <p class="type" ><i class="fa fa-file-video" aria-hidden="true"></i> ${mime} </p> </div>`
 
                 break;
-            case type.match(/audio/)?.input:
+            case mime.match(/audio/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
-                <audio controls src=/filereq?id=${id} > Your browser dont support this audio </audio>
+                <audio controls src=/file?id=${id} > Your browser dont support this audio </audio>
                 ${descriptionHtml}
-                <p class="type" > <i class="fa fa-file-audio" aria-hidden="true"></i>${type}</p> </div>
+                <p class="type" > <i class="fa fa-file-audio" aria-hidden="true"></i>${mime}</p> </div>
                 `
                 break;
 
-            case type.match(/image/)?.input:
+            case mime.match(/image/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
-                <div class=result-img><img width=300 src=/filereq?id=${id}></div>
+                <div class=result-img><img width=300 src=/file?id=${id}></div>
                 ${descriptionHtml}
-                <p class="type" > <i class="fa fa-file-image" aria-hidden="true"></i>${type} </p> </div>
+                <p class="type" > <i class="fa fa-file-image" aria-hidden="true"></i>${mime} </p> </div>
                 `
                 break;
 
-            case type.match(/pdf/)?.input:
+            case mime.match(/pdf/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
                 ${descriptionHtml}
-                <p class="type" style="color:red"><i class="fa fa-file-pdf" aria-hidden="true"></i> ${type}</p></div>`
+                <p class="type" style="color:red"><i class="fa fa-file-pdf" aria-hidden="true"></i> ${mime}</p></div>`
                 break;
 
-            case type.match(/text/)?.input:
+            case mime.match(/text/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
                 ${descriptionHtml}
-                <p class="type" style="color:white"><i class="fa fa-file-text" aria-hidden="true"></i> ${type}</p></div>`
+                <p class="type" style="color:white"><i class="fa fa-file-text" aria-hidden="true"></i> ${mime}</p></div>`
                 break;
 
             default:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${filePathHtml}
                 ${descriptionHtml}
-                <p class="type" style="color:red"><i class="fa fa-file-pdf" aria-hidden="true"></i> ${type}  </p></div>`
+                <p class="type" style="color:red"><i class="fa fa-file-pdf" aria-hidden="true"></i> ${mime}  </p></div>`
                 break;
         }
 
