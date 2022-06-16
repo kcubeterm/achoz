@@ -25,8 +25,11 @@ apt-get install python-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils
 flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig
 ```
 
-After that. use pip to install achoz. 
-`pip install achoz`
+After that. use pip to install achoz.
+
+```
+pip install achoz
+```
 
 ### Meilisearch
 Once you have done with above. achoz executable should be in your PATH. Now lets install meilisearch. 
@@ -38,28 +41,55 @@ it will download and install meilisearch binary at `/usr/local/bin/` you could s
 `achoz --install-meili path/to/dir`
 
 
-# Usage 
+## Usage 
 
-`achoz -a ~/Documents`
+### Quick start
 
-what above command gonna do is, it will start crawling all documents and file in `documents` directory. and it will start a web server at default port 8990. It will create an config.json at `~/.achoz` , you could add more options at config file. 
+ 
+```
+achoz start -a ~/Documents
+```
 
-you could just create config file only. and add all those directory in configuration file instead. for more options `achoz -h`
+for adding more directory, provide comma sepatated list of dirs. like `~/Documents,~/music` 
 
-### Sample config file
+what above command gonna do is, it will start crawling all documents and file in `documents` directory. and it will start a web server at default port 8990. It will create an config.json at `~/.achoz` , you could add more options at config file or with command-line itself. 
 
+Also using configuration file is recommended way to go with achoz. 
+### Configuration. 
+
+Config file at `~/.achoz/config.json` will create automatically if you run `achoz` with or without option at first time. 
+
+**Sample config file**
 ```json
 {
     "dir_to_index": ["/home/kcubeterm/Documents","/home/kcubeterm/books"],
     "dir_to_ignore": ["/home/kcubeterm/secrets/","*.git","*.db","*.achoz","*.config"],
     "web_port": 8990,
     "meili_api_port": 8989,
-    "data_dir": "/home/kcubeterm/.achoz"
+    "data_dir": "/home/kcubeterm/.achoz",
+    "priority": "low"
 }
 ```
-One could stop achoz to index specific directory where you keeps, secret or just dont want to index. you could add patterns like above config. 
+#### Explain config
+
+**dir_to_index**: contains list of directory which you are willing to normalize(crawl,index,searchable). command line option `-a dir1,dir2,dir3` does the same.
+
+**dir_to_ignore**: contains list of patterns and directory which you are willing to ignore. one can use this option to ignore specifice extension too. suppose user want to ignore all .db extension, then using *.db will help to ignore any files or directory which has .db extension.
+By Default It will ignore any hidden files or directory (directory which start form period '.') 
+
+**web_port** : Specify on which port web server gonna listen. Default:8990
 
 
+**meili_api_port**: The backend api Meilisearch server gonna listen on it. Default:8989
+
+
+**data_dir**: Directory where program will keep metadata and database. Default: ~/.achoz
+
+
+**priority**: (High or Low) It will decide priority of CPU time to be given to achoz program. Default: low
+
+### Command-line options
+`achoz -h` is enough to know about all command line option. 
 
 
 

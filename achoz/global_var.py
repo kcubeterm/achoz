@@ -38,4 +38,4 @@ no_of_crawled_files = 0
 no_of_indexed_files = 0 
 
 __program__ = 'achoz'
-__version__ = '0.3.50'
+__version__ = '0.3.51'
