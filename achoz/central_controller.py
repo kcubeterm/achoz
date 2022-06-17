@@ -77,20 +77,22 @@ def watcher():
     if global_var.dir_to_ignore:
         patterns_to_be_ignore = [pattern for pattern in global_var.dir_to_ignore if not pattern.startswith('*')]
     if global_var.ignore_hidden:
-        patterns_to_be_ignore.append('.*')
+        patterns_to_be_ignore.append('.*\/\.(.*)')
 
     exclude = pyinotify.ExcludeFilter(patterns_to_be_ignore)
     class eventHandler(pyinotify.ProcessEvent):
-        def add_pathname_in_list(self,event):
-            if event.dir:
-                return
-            file_lister.main(file=event.pathname)
-
+        
         def process_IN_CLOSE_WRITE(self, event):
-            self.add_pathname_in_list(event)
+            global_var.modified_files.append(event.pathname)
+            global_var.logger.debug(f'WATCHER:(modify) {event.pathname}')
+            if len(global_var.modified_files) > 50:
+                file_lister.main(global_var.modified_files,modify=True)
         
         def process_IN_CREATE(self,event):
-            self.add_pathname_in_list(event)
+            global_var.created_files.append(event.pathname)
+            global_var.logger.debug(f'WATCHER:(created) {event.pathname}')
+            if len(global_var.created_files) > 50:
+                file_lister.main(global_var.created_files,create=True)
 
     wm = pyinotify.WatchManager()
     mask = pyinotify.IN_CLOSE_WRITE | pyinotify.IN_CREATE

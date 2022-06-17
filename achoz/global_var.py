@@ -2,6 +2,8 @@ import logging
 import sys
 import os
 
+__program__ = 'achoz'
+__version__ = '0.3.56'
 logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s',handlers=[
         logging.FileHandler(os.path.expanduser('~/.achoz.log'),mode='w'),
         logging.StreamHandler(sys.stdout)
@@ -37,5 +39,6 @@ no_of_total_files = 0
 no_of_crawled_files = 0
 no_of_indexed_files = 0 
 
-__program__ = 'achoz'
-__version__ = '0.3.54'
+# Watcher
+modified_files = []
+created_files = []

@@ -41,7 +41,7 @@ class ignore_filter:
         return dirs
 
 
-def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None):
+def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None,create=None,modify=None):
     l.debug(f'Filelister invocation with option, list_of_dir={list_of_dir},\
      list_of_patterns_to_ignore={list_of_patterns_to_be_ignore}')
     """
@@ -75,10 +75,12 @@ def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None):
     db.execute(table)
     db_connect.commit()
     if file:
-        path = file
-        uid = uniqueid(file)
-        insert_cmd = f"INSERT OR IGNORE INTO METADATA VALUES ('{uid}','{path}',0,0,0,null);"
-        db.execute(insert_cmd)
+        for f in file:
+            uid = uniqueid(f)
+            insert_cmd = f"INSERT OR IGNORE INTO METADATA VALUES ('{uid}','{f}',0,0,0,null);"
+            if modify:
+                insert_cmd = f"update metadata set crawled = 0,error=0,meili_indexed_uid = 1 where id = {uid};"
+            db.execute(insert_cmd)
     else:
         for dir in list_of_dir:
             for root,dirs,files in os.walk(dir,topdown=True):

@@ -21,7 +21,7 @@ User must have to ensure that you are using same meilisearch version as achoz. S
 
 following packages must be installed in your system. Instructions for Debian and ubuntu. use your own package manager to install it. 
 ```
-apt-get install python-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
+apt-get install python3-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
 flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig
 ```
 
