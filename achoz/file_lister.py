@@ -111,10 +111,10 @@ def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None):
 
 if __name__ == "__main__":
     index = ['/home/kcubeterm/sample']
-    ignore = ['*.config','*.git']
+    ignore = ['*.config','*.txt']
     target = '/tmp/sample'   
     print('invoke')
-    global_var.data_dir = '/tmp'                         
-    main(index,target,ignore)
+    global_var.data_dir = target                       
+    main(index,ignore)
 
 

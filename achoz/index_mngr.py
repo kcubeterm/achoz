@@ -2,9 +2,7 @@ import json
 import global_var
 import os
 import sqlite3
-from sys import getsizeof
-
-
+from get_obj_size import _sizeof
 def uid_updater(id:list,uid:str):
     for i in id:
         db.execute(f"update metadata set meili_indexed_uid = {uid} where id = '{i}';")
@@ -54,7 +52,7 @@ def init():
             document['mtime'] = row[4]
 
             documents.append((document))
-            current_size = current_size + getsizeof(document)
+            current_size = current_size + _sizeof(document)
             id_list.append(row[0])
 
         offset = limit + offset

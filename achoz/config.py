@@ -1,9 +1,7 @@
 
-from distutils.util import execute
 import json
 import os
 import meilisearch
-from pytz import common_timezones
 import global_var
 import sqlite3
 
