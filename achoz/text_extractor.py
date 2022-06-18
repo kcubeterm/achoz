@@ -117,9 +117,7 @@ extension_and_determined_handler = {
     ".epub": "epubhandler",
     ".gif": "gifhandler",
     ".html": "htmlhandler",
-    ".jpg": "jpghandler",
     ".json": "jsonhandler",
-    ".mp3": "mp3handler",
     ".ogg": "ogghandler",
     ".pdf": "pdfhandler",
     ".png": "pnghandler",
@@ -128,7 +126,6 @@ extension_and_determined_handler = {
     ".rtf": "rtfhandler",
     ".tiff": "tiffhandler",
     ".txt": "texthandler",
-    ".wav": "wavhandler",
     ".xls": "xlshandler",
     ".xlsx": "xlsxhandler"
 }

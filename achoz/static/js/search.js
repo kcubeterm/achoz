@@ -62,7 +62,7 @@ function appendData(data) {
             case mime.match(/image/)?.input:
                 search_list += `<div class="result"> ${abspathHtml}
                 ${fileNameHtml}
-                <div class=result-img><img width=300 src=/file?id=${id}></div>
+                <div class=result-img><img width=30% src=/file?id=${id}></div>
                 ${descriptionHtml}
                 <p class="type" > <i class="fa fa-file-image" aria-hidden="true"></i>${mime} </p> </div>
                 `

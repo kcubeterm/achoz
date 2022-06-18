@@ -18,7 +18,11 @@ class ignore_filter:
             
             ignore_files = []
             for ext in ext_ignore:
-                ignore_files = [file for file in list_of_files if re.match(ext,file)]
+                for file in list_of_files:
+                    file_ext = os.path.splitext(file)[1].strip('.')
+                    if ext == file_ext:
+                        ignore_files.append(file)
+
 
             filtered_ext = [file for file in list_of_files if file not in ignore_files]
 
@@ -146,6 +150,6 @@ if __name__ == "__main__":
     global_var.dir_to_ignore = ['/home/kcubeterm/sample/pdf']
     global_var.extension_to_ignore = ['txt']  
     files = ['/home/kcubeterm/sample/kcubeterm.txt','/home/kcubeterm/lol.etc']                  
-    main(files=files,modify=True)
+    main(index)
 
 

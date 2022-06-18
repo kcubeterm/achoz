@@ -124,7 +124,7 @@ input:focus {
     
   }
 #searchbar {
-    width: 100%;
+ width: 100%;
  position: relative;
  display: flex;
  box-shadow: 4px 3px 8px 1px #969696;
@@ -163,8 +163,8 @@ input:focus {
     #wrap{
         margin-top: 5%;
         margin-bottom: 10px;
-        width: 70%;
-        left: 12%;
+        width: 65%;
+        left: 19%;
         box-shadow: rgb(245, 238, 245);
         position: -webkit-sticky;
         position: sticky;
