@@ -93,7 +93,11 @@ Config file at `~/.achoz/config.json` will create automatically if you run `acho
 **priority**: (High or Low) It will decide priority of CPU time to be given to achoz program. Default: low
 
 ### Command-line options
-`achoz -h` is enough to know about all command line option. 
+`achoz -h` is enough to know about all command line option.
+
+## Techical issues and info
+
+* Meilisearch consumes too much ram while indexing. if system dont have enough ram. Meilisearch may not function. make sure you have atleast 700+ MB of free RAM.
 
 
 
