@@ -1,8 +1,11 @@
 # achoz
 
+![achoz logo](https://github.com/kcubeterm/achoz/blob/master/achoz/static/img/achoz.png?raw=true)
+
+
 like a web search, but for your personal files. demo [here](https://achoz.ahoxus.org)
 
-what it will do is just normalize your all documents, and later it will be easy to search. Like suppose you read something fantastic in any of your pdf file, but after sometime you forgot the name of that pdf. Here web search may not help you but achoz surely gonna help you to find that file. 
+It will just normalize your all documents, and later it will be easy to search.
 
 ### Story 
 > cregox have a lot of data. files, emails, messages, web links, web content, etc. they also are of different kinds; text, video, audio, apps, etc.
