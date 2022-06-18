@@ -1,4 +1,3 @@
-import json
 import global_var
 import os
 import sqlite3
@@ -10,7 +9,6 @@ def uid_updater(id:list,uid:str):
     
 
 def indexer(documents):
-    print(len(documents))
     index = global_var.meili_client.index(global_var.index_name)
     response_uid = index.add_documents(documents) # => { "uid": 0 }
     if response_uid.get('uid'):
@@ -37,10 +35,9 @@ def init():
     offset = 0
     fetch_data_statement = f"select metadata.id,filepath,atime,ctime,mtime,mime,ext,extrainfo,content from metadata inner join crawled_data on metadata.id = crawled_data.id where meili_indexed_uid is null limit {limit} offset {offset};"
     raw_data = db.execute(fetch_data_statement).fetchall()
-    
     while current_size <= max_size and len(raw_data) != 0:
-        document = dict()
         for row in raw_data:
+            document = dict()
             document['id'] = row[0]
             document['title'] = os.path.basename(row[1])
             document['abspath'] = row[1]
@@ -51,7 +48,6 @@ def init():
             document['ctime'] = row[4]
             document['atime'] = row[3]
             document['mtime'] = row[4]
-
             documents.append((document))
             current_size = current_size + _sizeof(document)
             id_list.append(row[0])
@@ -77,4 +73,9 @@ def init():
     return 
     
 
+def test():
+    init()
 
+if __name__ == '__main__':
+    print('Invoke by test')
+    test()

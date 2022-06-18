@@ -41,8 +41,9 @@ def search_api(request):
 
 @view_config(route_name='file_req')
 def file_req(request):
-    uid = request.params.get('uid')
-    file_path = global_var.meili_client.get_document(uid).get('abspath')
+    id = request.params.get('id')
+    print('uis',id)
+    file_path = global_var.meili_client.index(global_var.index_name).get_document(id).get('abspath')
     return FileResponse(file_path)
 
 @view_config(route_name="health",renderer="json")
@@ -52,7 +53,7 @@ def main():
     with Configurator() as config:
         config.add_route('home',"/")
         config.add_route('search',"/search")
-        config.add_route('file_req',"file")
+        config.add_route('file_req',"/file")
         config.add_route('api','/search-api')
         config.add_route('health','/health')
         config.add_static_view('static', static_path)
