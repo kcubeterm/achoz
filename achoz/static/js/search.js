@@ -19,7 +19,17 @@ function search() {
 }
 
 function appendData(data) {
+    //  query info 
+    number_of_documents = data.nbHits
+    query_info = document.getElementById('query-info')
+    query_string = data.query
+    processing_time = data.processingTimeMs
+    query_info.innerHTML = `<p> Found ${number_of_documents} Documents. Query: ${query_string}. Time: ${processing_time}ms`
 
+    if (number_of_documents == 0) {
+        console.log('zero douments found')
+        return
+    }
     var out = document.getElementById("results");
     out.innerHTML = ""
     var search_list = ""
@@ -105,11 +115,13 @@ function nextHandler() {
 
     page_no++;
     console.log(page_no)
-    document.getElementById('next').href = `/search?q=${input}&page=${page_no}`
-    page_no = page_no - 2;
-    console.log(page_no)
-    document.getElementById('previous').href = `/search?q=${input}&page=${page_no}`
+    previous_no = page_no - 2;
     console.log('done')
+
+    next_pre = document.getElementById('next-pre')
+    next_pre.innerHTML = `
+        <a id="previous" href = /search?q=${input}&page=${previous_no}> <i class="fa fa-angle-double-left"></i></a>
+        <a id="next" href=/search?q=${input}&page=${page_no}><i class="fa fa-angle-double-right"></i></a`
 }
 
 search();
