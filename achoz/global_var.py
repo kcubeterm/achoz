@@ -4,7 +4,7 @@ import sys
 import os
 
 __program__ = 'achoz'
-__version__ = '0.3.56'
+__version__ = '0.3.57'
 logging.basicConfig(format='%(levelname)s %(asctime)s %(message)s',handlers=[
         logging.FileHandler(os.path.expanduser('~/.achoz.log'),mode='w'),
         logging.StreamHandler(sys.stdout)
