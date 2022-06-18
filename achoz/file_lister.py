@@ -1,47 +1,70 @@
-import os 
+import os
+from threading import local 
 from unique_id_generator import uniqueid
-from fnmatch import fnmatch
 import list_write as lw  
 import global_var
 import sqlite3
 import time
+import re
 l = global_var.logger
 
 class ignore_filter:
-    def modify_patterns(self,patterns):
-        modified_patterns = []
-        for pattern in patterns:
-            if os.path.exists(pattern) and os.path.isdir(pattern):
-                modified_patterns.append(os.path.normpath(pattern) + "/*")
+    def files(self,list_of_files,root=None):
+        filtered_ext = []
+        filtered_files = []
+        ## Deal with extesnsion which need to ignore
+        if global_var.extension_to_ignore:
+            ext_ignore = global_var.extension_to_ignore
+            
+            ignore_files = []
+            for ext in ext_ignore:
+                ignore_files = [file for file in list_of_files if re.match(ext,file)]
 
-        return modified_patterns
-    def files(self,root,list_of_files, list_of_patterns=None):
-        if list_of_patterns:
-            files_with_abspath = [os.path.join(root,file) for file in list_of_files]
-            patterns = self.modify_patterns(list_of_patterns)
+            filtered_ext = [file for file in list_of_files if file not in ignore_files]
+
+        patterns = global_var.file_to_ignore
+        if patterns:
+            files_with_abspath = list_of_files
+            if root:
+                files_with_abspath = [os.path.join(root,file) for file in list_of_files]
+            ignore_files = []
             for pattern in patterns:
-                list_of_files = [n for n in files_with_abspath if not fnmatch(n, pattern)]
-                
-            # return filename only, not full path. 
-            list_of_files = [ os.path.basename(name) for name in list_of_files]
+                ignore_files = [file for file in files_with_abspath if re.match(pattern,file)]
+                filtered_files = [file for file in files_with_abspath if file not in ignore_files]
+            
+            if root:
+                # return filename only, not full path.
+                filtered_files = [ os.path.basename(name) for name in filtered_files]
+                filtered_files = [file for file in filtered_files if not filtered_ext]
+        
+        list_of_files = filtered_files + filtered_ext
         return list_of_files
 
     def directory(self,dirs,root,ignore_patterns=None):
-        
-        if global_var.ignore_hidden:
-            dirs  = [dir for dir in dirs if not dir.startswith('.')]
-        if ignore_patterns:
+        ign_hidden_dirs = []
+        filtered_dir = []
+        if global_var.dir_to_ignore:
+            ign_dir = global_var.dir_to_ignore
             dir_name_with_rootpath = [ os.path.join(root,dir) for dir in dirs ]
-            patterns = self.modify_patterns(ignore_patterns)
-            for pattern in patterns:
-                dirs = [dir for dir in dir_name_with_rootpath if not fnmatch(dir,pattern)]
-            
+            i_dirs = []
+            for i in ign_dir:
+                i_dirs = [dir for dir in dir_name_with_rootpath if re.match(i,dir)]
+
+            filtered_dir = [dir for dir in dir_name_with_rootpath if dir not in i_dirs]
             # return list of dir basename only, not full path
-            dirs = [os.path.basename(dir) for dir in dirs]
+            filtered_dir = [os.path.basename(dir) for dir in filtered_dir]
+
+        if global_var.ignore_hidden:
+            [dir for dir in dirs if not dir.startswith('.')]
+            if filtered_dir:
+                filtered_dir  = [dir for dir in filtered_dir if not dir.startswith('.')]
+            else:
+                ign_hidden_dirs = [dir for dir in dirs if not dir.startswith('.')]
+        dirs = filtered_dir + ign_hidden_dirs
         return dirs
 
 
-def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None,create=None,modify=None):
+def main(list_of_dir=None,list_of_patterns_to_be_ignore=None,files=None,create=None,modify=None):
     l.debug(f'Filelister invocation with option, list_of_dir={list_of_dir},\
      list_of_patterns_to_ignore={list_of_patterns_to_be_ignore}')
     """
@@ -74,21 +97,23 @@ def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None,create=None,mo
     '''
     db.execute(table)
     db_connect.commit()
-    if file:
-        for f in file:
+    if files:
+        # list_out_ignore_file
+        files = ignore_filter().files(files) 
+        for f in files:
             uid = uniqueid(f)
             insert_cmd = f"INSERT OR IGNORE INTO METADATA VALUES ('{uid}','{f}',0,0,0,null);"
             if modify:
-                insert_cmd = f"update metadata set crawled = 0,error=0,meili_indexed_uid = 1 where id = {uid};"
+                insert_cmd = f"update metadata set crawled = 0,indexed=0,error=0,meili_indexed_uid = null where id = '{uid}';"
             db.execute(insert_cmd)
-    else:
+    if list_of_dir:
         for dir in list_of_dir:
             for root,dirs,files in os.walk(dir,topdown=True):
                 ## prevent listing those dirs which must be ignore
                 root = os.path.normpath(root)
                 ign = ignore_filter()
-                dirs[:] = ign.directory(dirs,root,list_of_patterns_to_be_ignore)
-                files = ign.files(root,files,list_of_patterns_to_be_ignore)
+                dirs[:] = ign.directory(dirs,root)
+                files = ign.files(files,root)
                 if len(files) == 0:
                     continue
 
@@ -112,11 +137,15 @@ def main(list_of_dir,list_of_patterns_to_be_ignore=None,file=None,create=None,mo
     return
 
 if __name__ == "__main__":
+    # only for testing purpose. 
     index = ['/home/kcubeterm/sample']
     ignore = ['*.config','*.txt']
-    target = '/tmp/sample'   
+    target = '/tmp'   
     print('invoke')
-    global_var.data_dir = target                       
-    main(index,ignore)
+    global_var.data_dir = target 
+    global_var.dir_to_ignore = ['/home/kcubeterm/sample/pdf']
+    global_var.extension_to_ignore = ['txt']  
+    files = ['/home/kcubeterm/sample/kcubeterm.txt','/home/kcubeterm/lol.etc']                  
+    main(files=files,modify=True)
 
 

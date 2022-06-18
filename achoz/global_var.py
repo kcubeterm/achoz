@@ -1,3 +1,4 @@
+from distutils import extension
 import logging
 import sys
 import os
@@ -24,8 +25,9 @@ data_dir = None
 web_port = None
 dir_to_index = []
 dir_to_ignore = []
+file_to_ignore = []
 meili_api_port = None
-
+extension_to_ignore = []
 meili_client = None
 
 is_web_server_started = True

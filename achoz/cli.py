@@ -14,6 +14,8 @@ def config_creator(args,config_path):
     sample_config=dict()
     sample_config['dir_to_index'] = args.add_dirs[0].split(",") if args.add_dirs else []    
     sample_config['dir_to_ignore'] = ['*.git',"*.db",]
+    sample_config['extension_to_ignore'] = ['git','mp3','webm','mp4']
+    sample_config['file_to_ignore'] = []
     sample_config['web_port'] = 8990
     sample_config['meili_api_port'] = 8989
     sample_config['data_dir'] = os.path.expanduser("~") + "/.achoz"

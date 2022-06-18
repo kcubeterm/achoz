@@ -4,6 +4,7 @@ import os
 import sqlite3
 from get_obj_size import _sizeof
 def uid_updater(id:list,uid:str):
+    uid = int(uid)
     for i in id:
         db.execute(f"update metadata set meili_indexed_uid = {uid} where id = '{i}';")
     

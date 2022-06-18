@@ -63,7 +63,9 @@ Config file at `~/.achoz/config.json` will create automatically if you run `acho
 ```json
 {
     "dir_to_index": ["/home/kcubeterm/Documents","/home/kcubeterm/books"],
-    "dir_to_ignore": ["/home/kcubeterm/secrets/","*.git","*.db","*.achoz","*.config"],
+    "dir_to_ignore": ["/home/kcubeterm/secrets"],
+    "extenstion_to_ignore": ["db","git","mp3","webm"],
+    "file_to_ignore": [],
     "web_port": 8990,
     "meili_api_port": 8989,
     "data_dir": "/home/kcubeterm/.achoz",
@@ -72,13 +74,15 @@ Config file at `~/.achoz/config.json` will create automatically if you run `acho
 ```
 #### Explain config
 
-**dir_to_index**: contains list of directory which you are willing to normalize(crawl,index,searchable). command line option `-a dir1,dir2,dir3` does the same.
+**dir_to_index**: contains list of directory which you are willing to normalize(crawl,index,searchable). command line option `-a dir1,dir2,dir3` does the same. Don't use any kind of pattern here(except: '~'). use absolute path. 
 
-**dir_to_ignore**: contains list of patterns and directory which you are willing to ignore. one can use this option to ignore specifice extension too. suppose user want to ignore all .db extension, then using *.db will help to ignore any files or directory which has .db extension.
-By Default It will ignore any hidden files or directory (directory which start form period '.') 
+**dir_to_ignore**: Show your regrex skills here. Patterns can be use to ignore the directory or you can just give absolute path if not advanced patterns. Any hidden directory ignored by default. any pattern you provide will match with directory not file. if you want to ignore files. there is another option.`file_to_ignore` Note: under the hood. it uses `re.match()` so make sure your patterns are compatible to python re.match. 
+
+**extesnion_to_ignore**: Just put extension to which ignore. No pattern. just extension.
+
+**file_to_ignore**: Any python re.match() compatible patterns. It will specifically for files. 
 
 **web_port** : Specify on which port web server gonna listen. Default:8990
-
 
 **meili_api_port**: The backend api Meilisearch server gonna listen on it. Default:8989
 

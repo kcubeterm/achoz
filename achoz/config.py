@@ -1,9 +1,10 @@
 
+from distutils import extension
 import json
 import os
 import meilisearch
 import global_var
-import sqlite3
+from extension_pattern_modi import extension_pattern_modifier as ext_mod
 
 def path_expander(list_of_path):
     output=[]
@@ -37,6 +38,8 @@ def configure(user_dir_to_index = None,user_defined_config_file=None, user_defin
         global_var.data_dir = os.path.abspath(config.get('data_dir'))
         global_var.priority = config.get('priority') 
         global_var.dir_to_index = config.get('dir_to_index')
+        global_var.extension_to_ignore = ext_mod(config.get('extension_to_ignore'))
+        global_var.file_to_ignore = config.get('file_to_ignore')
         if user_dir_to_index:
             global_var.dir_to_index = global_var.dir_to_index + user_dir_to_index
             global_var.dir_to_index = path_expander(global_var.dir_to_index)
