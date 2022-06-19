@@ -32,7 +32,7 @@ def main():
     parser.add_argument('-c','--config',nargs=1,help="Provide config file path. default:~/.achoz/config.json")
     parser.add_argument('-p','--port',nargs=1,type=int,help="port for web server. default:8990")
     parser.add_argument('-d','--data-dir',nargs=1,required=False, help="Provide data dir where programme will keep database etc, default:~/.achoz/")
-    parser.add_argument('--install-meili',nargs='?'const='none',help="Specify where to put meilisearch binary.")
+    parser.add_argument('--install-meili',nargs='?',const='none',help="Specify where to put meilisearch binary.")
     parser.add_argument('-v','--verbose',nargs='?',const='verbose',help='verbose output')
     parser.add_argument('--version',nargs='?',const=global_var.__version__,help='print version of program.')
     args = parser.parse_args()
