@@ -54,6 +54,7 @@ def setting_up_meili():
         'content',
         'abspath'])
     except:
+        global_var.logger.exception('setting up meili failed')
         global_var.logger.error('Setting Up meili not succeeded, please report the issue')
         exit(1)
     db.execute("update stats set value = 1 where key='meili_settings_configured'")

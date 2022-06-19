@@ -38,7 +38,7 @@ def main(bin_dir):
             BIN_DIR=os.path.expanduser(bin_dir)
         TMPDIR = os.environ.get('TMPDIR')
         Binary_name_in_zipfile = 'meilisearch'
-        URL= "https://github.com/kcubeterm/achoz/releases/download/0.2.0/meilisearch_0.28.0_termux_aarch64.zip"
+        URL= "https://github.com/kcubeterm/achoz/releases/download/0.2.0/meilisearch_0.27.2_termux_aarch64.zip"
 
     binary_path = os.path.join(os.path.abspath(os.path.expanduser(BIN_DIR)),'meilisearch')
     if os.path.exists(os.path.join(binary_path,'meilisearch')):
