@@ -145,7 +145,17 @@ def Invoke_web_server_script():
         started = True
 
     return started
-
+def vacuum_db():
+    global_var.logger.debug('VACCUUM DB')
+    if not global_var.db_locked:
+        global_var.db_locked = True
+        db_con = sqlite3.connect(os.path.join(global_var.data_dir,'metadata.db'))
+        db = db_con.cursor()
+        db.execute("VACUUM;")
+        db.close()
+        global_var.db_locked = False
+    
+    return
 def remove_processed_data():
     global_var.logger.debug('REMOVE PROCESSED DATA FUNC INVOKED')
     """it will regularly removes crawled file once it has indexed."""
@@ -173,6 +183,7 @@ def remove_processed_data():
     db.close()
     global_var.db_locked = False
     global_var.logger.debug('REMOVE PROCESSED DATA FUNC EXITED')
+    vacuum_db()
     return
 
 
