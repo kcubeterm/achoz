@@ -50,8 +50,6 @@ def configure(user_dir_to_index = None,user_defined_config_file=None, user_defin
         if user_defined_data_dir:
             global_var.data_dir = user_defined_data_dir
 
-        if not global_var.data_dir:
-            global_var.data_dir = os.path.expanduser('~') + "/" + ".achoz"
 
         if user_defined_web_port:
             global_var.web_port = user_defined_web_port

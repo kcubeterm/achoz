@@ -151,7 +151,9 @@ def remove_processed_data():
     """it will regularly removes crawled file once it has indexed."""
     if global_var.crawling_locked or global_var.indexing_locked or global_var.db_locked:
         return
-    
+    if not global_var.remove_processed_data:
+        return
+
     global_var.db_locked = True
     db_con = sqlite3.connect(os.path.join(global_var.data_dir,'metadata.db'))
     db = db_con.cursor()
@@ -175,15 +177,12 @@ def remove_processed_data():
 
 
 def Invoke_indexer():
-    if not global_var.is_ready_for_indexing:
-        return
-    
     index_mngr.init()
 
 def invoke_schedular():
     schedule.every(20).minutes.do(Invoke_crawler)
-    schedule.every(3).minutes.do(Invoke_indexer)
-    schedule.every(5).minutes.do(remove_processed_data)
+    schedule.every(10).minutes.do(Invoke_indexer)
+    schedule.every(15).minutes.do(remove_processed_data)
     while True:
         schedule.run_pending()
         time.sleep(2)

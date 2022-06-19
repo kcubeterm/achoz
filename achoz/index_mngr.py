@@ -19,6 +19,10 @@ def init():
     global_var.logger.debug('INDEXER INVOCATION')
     if global_var.crawling_locked or global_var.indexing_locked or global_var.db_locked:
        return
+    isIndexing = global_var.meili_client.index(global_var.index_name).get_stats().get('isIndexing')
+    if isIndexing:
+        global_var.logger.debug("SKIPPING INDEXING: meili still indexing")
+        return
     global db_con
     global db
     db_path = os.path.join(global_var.data_dir,'metadata.db')
@@ -27,7 +31,7 @@ def init():
 
     global_var.indexing_locked = True
     global_var.db_locked = True
-    max_size = 80*1000*1000
+    max_size = global_var.max_batch_size
     current_size = 0
     documents = []
     id_list = []
@@ -74,6 +78,8 @@ def init():
     
 
 def test():
+    import meilisearch
+    global_var.meili_client = meilisearch.Client('http://127.0.0.1:' + str(global_var.meili_api_port))
     init()
 
 if __name__ == '__main__':
