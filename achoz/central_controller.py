@@ -222,7 +222,7 @@ def init():
 
         else:
             if not isSearchEngineStarted:
-                global_var.logger.error('Meilisearch Failed to start, probably port already occupied')
+                global_var.logger.error('Meilisearch Failed to start, probably port already occupied, or previous meilisearch never get killed. \n Try to kill with "pkill meilisearch"')
             try:
                 os.kill(global_var.meili_search_engine_pid,signal.SIGTERM)
                 exit(1)
