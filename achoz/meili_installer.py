@@ -5,9 +5,10 @@ import os
 
 def main(bin_dir):
     # check if meiliseaevh is already on path
-    if os.path.exists(os.path.join(bin_dir,'meilisearch')):
-        print("seems like meilisearch is already installed. ")
-        exit(0)
+    if bin_dir == 'none':
+        bin_dir = None
+        BIN_DIR = '/usr/local/bin'
+
     system = platform.system()
     machine = platform.machine()
     supported_os = ['linux', 'Linux']
@@ -19,7 +20,6 @@ def main(bin_dir):
         print(f'{machine} do not have support yet. ')
         exit(0)
 
-    BIN_DIR = '/usr/local/bin'
     TMPDIR = os.environ.get('TMPDIR')
     if not TMPDIR:
         TMPDIR = '/tmp'
@@ -41,6 +41,9 @@ def main(bin_dir):
         URL= "https://github.com/kcubeterm/achoz/releases/download/0.2.0/meilisearch_0.28.0_termux_aarch64.zip"
 
     binary_path = os.path.join(os.path.abspath(os.path.expanduser(BIN_DIR)),'meilisearch')
+    if os.path.exists(os.path.join(binary_path,'meilisearch')):
+        print("seems like meilisearch is already installed. ")
+        exit(0)
     print(f"Binary would be install --> {binary_path}")
     ## download zipped file in tmpdir
     r = get(URL)
