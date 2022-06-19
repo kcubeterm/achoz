@@ -30,14 +30,17 @@ def main(bin_dir):
         URL = "https://github.com/kcubeterm/achoz/releases/download/0.2.0/meilisearch_aarch64.zip"
     if bin_dir:
         BIN_DIR = os.path.expanduser(bin_dir)
-    
-    # if os.environ.get('TERMUX_VERSION'):
+    Binary_name_in_zipfile = 'meilisearch0.27.1'
+    if os.path.expanduser('~') == '/data/data/com.termux/files/home':
         
-    #     BIN_DIR = os.path.join(os.environ.get('PREFIX'), 'bin')
-    #     TMPDIR = os.environ.get('TMPDIR')
-    #     URL="https://github.com/kcubeterm/achoz/releases/download/0.2.0/meilisearch_aarch64.zip"
+        BIN_DIR = os.path.join(os.environ.get('PREFIX'), 'bin')
+        if bin_dir:
+            BIN_DIR=os.path.expanduser(bin_dir)
+        TMPDIR = os.environ.get('TMPDIR')
+        Binary_name_in_zipfile = 'meilisearch'
+        URL= "https://github.com/kcubeterm/achoz/releases/download/0.2.0/meilisearch_0.28.0_termux_aarch64.zip"
 
-    binary_path = os.path.join(BIN_DIR,'meilisearch')
+    binary_path = os.path.join(os.path.abspath(os.path.expanduser(BIN_DIR)),'meilisearch')
     print(f"Binary would be install --> {binary_path}")
     ## download zipped file in tmpdir
     r = get(URL)
@@ -47,7 +50,7 @@ def main(bin_dir):
 
     with zipfile.ZipFile(zip_file) as z:
         with open(binary_path,'wb') as bin:
-            bin.write(z.read('meilisearch0.27.1'))
+            bin.write(z.read(Binary_name_in_zipfile))
 
     os.chmod(binary_path,0o755)
     os.remove(zip_file)
