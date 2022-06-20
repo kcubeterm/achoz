@@ -120,7 +120,6 @@ extension_and_determined_handler = {
     ".json": "jsonhandler",
     ".ogg": "ogghandler",
     ".pdf": "pdfhandler",
-    ".png": "pnghandler",
     ".pptx": "pptxhandler",
     ".ps": "pshandler",
     ".rtf": "rtfhandler",

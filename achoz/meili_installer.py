@@ -1,8 +1,9 @@
 import zipfile
+from cv2 import DESCRIPTOR_MATCHER_BRUTEFORCE_HAMMINGLUT
 from requests import get
 import platform
 import os
-
+import sys
 def main(bin_dir):
     # check if meiliseaevh is already on path
     if bin_dir == 'none':
@@ -44,12 +45,22 @@ def main(bin_dir):
     if os.path.exists(os.path.join(binary_path,'meilisearch')):
         print("seems like meilisearch is already installed. ")
         exit(0)
-    print(f"Binary would be install --> {binary_path}")
+    print(f"Binary would be install at --> {binary_path}")
     ## download zipped file in tmpdir
-    r = get(URL)
     zip_file = os.path.join(TMPDIR,"z")
     with open(zip_file,"wb") as zf:
-        zf.write(r.content)
+        r = get(URL,stream=True)
+        total_length = r.headers.get('content-length')
+        if total_length is None:
+            zf.write(r.content)
+        else:
+            dl = 0
+            for data in r.iter_content(chunk_size=4096):
+                dl += len(data)
+                zf.write(data)
+                done = int(50 * int(dl) / int(total_length))
+                sys.stdout.write("\r[%s%s]" % ('=' * done, ' ' * (50-done)) )    
+                sys.stdout.flush()
 
     with zipfile.ZipFile(zip_file) as z:
         with open(binary_path,'wb') as bin:
@@ -57,6 +68,7 @@ def main(bin_dir):
 
     os.chmod(binary_path,0o755)
     os.remove(zip_file)
+    print(f"\nMeilisearch has been successfully installed at {binary_path}")
     return
 
 if __name__ == "__main__":
