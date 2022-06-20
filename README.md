@@ -24,8 +24,12 @@ User must have to ensure that you are using same meilisearch version as achoz. S
 
 following packages must be installed in your system. Instructions for Debian and ubuntu. use your own package manager to install it. 
 ```
-apt-get install python3-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext tesseract-ocr \
-flac ffmpeg lame libmad0 libsox-fmt-mp3 sox libjpeg-dev swig
+apt-get install python3-dev libxml2-dev libxslt1-dev antiword unrtf poppler-utils pstotext file
+```
+### Termux 
+Termux requirement is bit different. 
+```
+pkg install python3-dev libxml2 libxslt antiword poppler tesseract file
 ```
 
 After that. use pip to install achoz.
@@ -39,7 +43,7 @@ Once you have done with above. achoz executable should be in your PATH. Now lets
 
 `sudo achoz --install-meili`
 
-it will download and install meilisearch binary at `/usr/local/bin/` you could specify another path to install. just make sure that path should be cover by $PATH Environment.
+it will download and install meilisearch binary at `/usr/local/bin/` and for termux it is `$PREFIX/bin` Meilisearch could be install at desire path. just make sure that path should be cover by $PATH Environment. 
 
 `achoz --install-meili path/to/dir`
 
@@ -100,7 +104,7 @@ Config file at `~/.achoz/config.json` will create automatically if you run `acho
 
 ## Techical issues and info
 
-* Meilisearch consumes too much ram while indexing. if system dont have enough ram. Meilisearch may not function. make sure you have atleast 700+ MB of free RAM.
+* Meilisearch consumes too much ram while indexing. if system dont have enough ram. Meilisearch may not function. Ensure you have at least 500+ MB of available RAM.
 
 
 
