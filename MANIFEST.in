@@ -1,6 +1,0 @@
-global-include *.js
-global-include *.html
-global-include *.css
-global-include *.png
-
-include README.md LICENSE
