@@ -1,3 +1,5 @@
+UPDATE: Achoz is rewriting into rust programming lang. which is WIP. progress can be tracked by PR https://github.com/kcubeterm/achoz/pull/42
+
 # achoz
 
 ![achoz logo](https://github.com/kcubeterm/achoz/blob/master/achoz/static/img/achoz.png?raw=true)
