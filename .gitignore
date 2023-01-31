@@ -1,5 +1,2 @@
 sample/test
-*__pycache__
-*.egg-info
-build
-dist
+target/
